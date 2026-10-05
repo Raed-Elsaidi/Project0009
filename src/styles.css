@@ -670,236 +670,190 @@ input,select,textarea,button{max-width:100%}
 }
 @media(max-height:760px) and (max-width:700px){.portal-home.login-page .portal-bismillah-top{margin-top:7px;font-size:13px}.portal-home.login-page .portal-brand img{width:46px;height:46px}.portal-home.login-page .portal-welcome h1{font-size:18px}.portal-home.login-page .portal-welcome p{font-size:9px}.portal-home.login-page .portal-login-card{padding:17px}.portal-home.login-page .portal-login-card .field input,.portal-home.login-page .portal-password-wrap input{min-height:43px}.portal-home.login-page .portal-login-card .btn{min-height:43px}.portal-home.login-page .portal-guidance-logo img{width:90px}}
 
-
-/* =========================================================
-   LOGIN FINAL REFERENCE DESIGN — desktop + mobile
-   ========================================================= */
+/* ===== LOGIN CLEAN FINAL OVERRIDE ===== */
 .portal-home.login-page{
   position:relative!important;
+  width:100%!important;
   min-height:100dvh!important;
   height:100dvh!important;
   overflow:hidden!important;
   display:flex!important;
   flex-direction:column!important;
-  color:#fff!important;
-  background:#d9b37d url('/assets/login-background-clean.png') center center/cover no-repeat!important;
+  isolation:isolate!important;
+  background:#d8b27c!important;
+  filter:none!important;
+}
+.portal-home.login-page::before{
+  content:"";
+  position:absolute!important;
+  inset:0!important;
+  z-index:-2!important;
+  background-image:url('/assets/login-background-code-clean.png')!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-size:cover!important;
+  filter:none!important;
+  transform:none!important;
 }
 .portal-home.login-page .portal-home-overlay{
-  background:linear-gradient(180deg,rgba(20,18,14,.035),rgba(28,21,16,.055) 58%,rgba(28,21,16,.16))!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:-1!important;
+  background:rgba(35,25,17,.08)!important;
   backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+  pointer-events:none!important;
 }
-/* Bismillah: top center */
+.portal-home.login-page > *{
+  filter:none!important;
+}
 .portal-home.login-page .portal-bismillah-top{
   position:absolute!important;
-  z-index:8!important;
-  top:20px!important;
+  top:22px!important;
   left:50%!important;
   transform:translateX(-50%)!important;
+  z-index:10!important;
   margin:0!important;
-  white-space:nowrap!important;
-  font-size:23px!important;
-  line-height:1.25!important;
-  font-weight:800!important;
   color:#fff!important;
-  text-shadow:0 2px 10px rgba(0,0,0,.48)!important;
+  font-size:22px!important;
+  font-weight:800!important;
+  white-space:nowrap!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.5)!important;
 }
-/* Ministry identity: right side on desktop */
 .portal-home.login-page .portal-header{
   position:absolute!important;
-  z-index:8!important;
   inset:0!important;
+  z-index:10!important;
   width:100%!important;
   padding:0!important;
-  display:block!important;
   pointer-events:none!important;
 }
 .portal-home.login-page .portal-header .portal-brand{
   position:absolute!important;
-  top:106px!important;
-  right:5.5vw!important;
+  top:105px!important;
+  right:5vw!important;
+  width:165px!important;
   margin:0!important;
   transform:none!important;
   display:flex!important;
   flex-direction:column!important;
   align-items:center!important;
-  gap:2px!important;
-  width:150px!important;
   text-align:center!important;
+  gap:2px!important;
   color:#fff!important;
-  text-shadow:0 2px 10px rgba(0,0,0,.48)!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.5)!important;
 }
-.portal-home.login-page .portal-brand img{
-  width:67px!important;
-  height:67px!important;
-  margin:0 0 3px!important;
-  object-fit:contain!important;
-  filter:drop-shadow(0 3px 8px rgba(0,0,0,.30))!important;
-}
-.portal-home.login-page .portal-brand div{
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  line-height:1.2!important;
-}
+.portal-home.login-page .portal-brand img{width:68px!important;height:68px!important;object-fit:contain!important;margin:0 0 3px!important;filter:none!important}
+.portal-home.login-page .portal-brand div{display:flex!important;flex-direction:column!important;align-items:center!important;line-height:1.2!important}
 .portal-home.login-page .portal-brand strong{font-size:14px!important;font-weight:900!important}
 .portal-home.login-page .portal-brand span{font-size:15px!important;font-weight:900!important}
-/* Main content */
 .portal-home.login-page .portal-content{
   position:relative!important;
-  z-index:6!important;
+  z-index:5!important;
   flex:1 1 auto!important;
   min-height:0!important;
   width:100%!important;
   margin:0!important;
-  padding:105px 0 88px!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  text-align:center!important;
-  transform:none!important;
-}
-.portal-home.login-page .portal-welcome{
-  width:min(700px,88vw)!important;
-  max-width:none!important;
-  margin:58px 0 15px!important;
-  text-shadow:0 2px 10px rgba(0,0,0,.52)!important;
-}
-.portal-home.login-page .portal-welcome h1{
-  margin:0 0 7px!important;
-  color:#fff!important;
-  font-size:32px!important;
-  line-height:1.25!important;
-  font-weight:900!important;
-}
-.portal-home.login-page .portal-welcome p{
-  margin:0!important;
-  color:#fffdf8!important;
-  font-size:13px!important;
-  line-height:1.75!important;
-}
-/* Login box — centered and generous */
-.portal-home.login-page .portal-login-card{
-  width:min(390px,88vw)!important;
-  padding:25px 25px 23px!important;
-  border-radius:24px!important;
-  box-sizing:border-box!important;
-  background:rgba(255,253,249,.95)!important;
-  border:1px solid rgba(255,255,255,.88)!important;
-  box-shadow:0 28px 75px rgba(45,30,18,.30)!important;
-  color:#352b24!important;
-  backdrop-filter:blur(10px)!important;
-}
-.portal-home.login-page .portal-login-title{margin-bottom:14px!important;gap:10px!important}
-.portal-home.login-page .portal-login-icon{width:44px!important;height:44px!important;border-radius:13px!important;background:#eee3d7!important;color:#704d35!important}
-.portal-home.login-page .portal-login-title span{font-size:10px!important;color:#876b54!important}
-.portal-home.login-page .portal-login-title h2{font-size:25px!important;line-height:1.2!important;margin:1px 0 0!important;color:#352b24!important}
-.portal-home.login-page .portal-login-form{gap:11px!important}
-.portal-home.login-page .portal-login-form .field>span{font-size:12px!important;margin-bottom:6px!important}
-.portal-home.login-page .portal-login-card .field input,
-.portal-home.login-page .portal-password-wrap input{min-height:49px!important;font-size:13px!important;border-radius:12px!important}
-.portal-home.login-page .portal-login-card .btn{min-height:49px!important;border-radius:12px!important;font-size:14px!important;background:linear-gradient(135deg,#8a5b35,#5e3c25)!important}
-/* Guidance logo — right and below ministry on desktop */
-.portal-home.login-page .portal-guidance-logo{
-  position:absolute!important;
-  right:6vw!important;
-  top:46%!important;
-  z-index:7!important;
-  width:180px!important;
-  margin:0!important;
+  padding:0 0 92px!important;
   display:flex!important;
   flex-direction:column!important;
   align-items:center!important;
   justify-content:center!important;
   text-align:center!important;
-  color:#075d54!important;
-  text-shadow:0 1px 5px rgba(255,248,230,.75)!important;
+  transform:none!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
 }
-.portal-home.login-page .portal-guidance-logo img{width:125px!important;height:auto!important;display:block!important}
+.portal-home.login-page .portal-welcome{
+  width:min(700px,88vw)!important;
+  margin:0 0 15px!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.52)!important;
+}
+.portal-home.login-page .portal-welcome h1{margin:0 0 6px!important;color:#fff!important;font-size:31px!important;line-height:1.25!important;font-weight:900!important}
+.portal-home.login-page .portal-welcome p{margin:0!important;color:#fff!important;font-size:13px!important;line-height:1.7!important}
+.portal-home.login-page .portal-login-card{
+  width:min(390px,88vw)!important;
+  padding:25px 25px 23px!important;
+  border-radius:24px!important;
+  background:#fffdf9!important;
+  border:1px solid rgba(255,255,255,.95)!important;
+  box-shadow:0 24px 60px rgba(45,30,18,.28)!important;
+  color:#352b24!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+}
+.portal-home.login-page .portal-guidance-logo{
+  position:absolute!important;
+  right:5.5vw!important;
+  top:47%!important;
+  z-index:10!important;
+  width:180px!important;
+  margin:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  text-align:center!important;
+  color:#075d54!important;
+  text-shadow:0 1px 5px rgba(255,248,230,.8)!important;
+}
+.portal-home.login-page .portal-guidance-logo img{width:125px!important;height:auto!important;display:block!important;filter:none!important}
 .portal-home.login-page .portal-guidance-logo strong{margin-top:-3px!important;font-size:15px!important;font-weight:900!important}
-/* Footer */
 .portal-home.login-page .public-site-footer{
   position:absolute!important;
-  z-index:9!important;
   left:50%!important;
-  bottom:13px!important;
+  bottom:12px!important;
   transform:translateX(-50%)!important;
+  z-index:12!important;
   width:min(900px,90vw)!important;
   margin:0!important;
   padding:10px 14px!important;
   border-radius:17px!important;
-  background:rgba(55,39,27,.72)!important;
-  border:1px solid rgba(255,255,255,.20)!important;
-  backdrop-filter:blur(9px)!important;
-  box-sizing:border-box!important;
+  background:rgba(55,39,27,.82)!important;
+  border:1px solid rgba(255,255,255,.22)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
 }
-.portal-home.login-page .public-site-footer .site-footer-links a{
-  background:rgba(255,255,255,.96)!important;
-  border-color:rgba(255,255,255,.70)!important;
-}
-.portal-home.login-page .public-site-footer .footer-email svg{color:#a94444!important}
-.portal-home.login-page .public-site-footer .footer-facebook svg{color:#1877f2!important}
-.portal-home.login-page .public-site-footer .footer-linkedin svg{color:#0a66c2!important}
-.portal-home.login-page .public-site-footer .footer-whatsapp svg{color:#25d366!important}
-.portal-home.login-page .public-site-footer .site-footer-copy svg{color:#e4bf8a!important}
 
-/* Mobile: match the supplied phone reference */
 @media(max-width:800px){
-  .portal-home.login-page{
-    min-height:100dvh!important;
-    height:100dvh!important;
-    background-position:center center!important;
-    background-size:cover!important;
-  }
-  .portal-home.login-page .portal-bismillah-top{
-    top:18px!important;
-    font-size:16px!important;
-  }
+  .portal-home.login-page::before{background-size:cover!important;background-position:center center!important}
+  .portal-home.login-page .portal-bismillah-top{top:17px!important;font-size:16px!important}
   .portal-home.login-page .portal-header .portal-brand{
-    top:66px!important;
+    top:61px!important;
     right:50%!important;
     transform:translateX(50%)!important;
     width:145px!important;
   }
-  .portal-home.login-page .portal-brand img{width:53px!important;height:53px!important}
+  .portal-home.login-page .portal-brand img{width:54px!important;height:54px!important}
   .portal-home.login-page .portal-brand strong{font-size:11px!important}
   .portal-home.login-page .portal-brand span{font-size:12px!important}
   .portal-home.login-page .portal-content{
     padding:0 10px 82px!important;
     justify-content:flex-start!important;
   }
-  .portal-home.login-page .portal-welcome{
-    width:min(380px,94vw)!important;
-    margin:173px 0 14px!important;
-  }
-  .portal-home.login-page .portal-welcome h1{
-    font-size:21px!important;
-    line-height:1.35!important;
-    margin-bottom:5px!important;
-  }
-  .portal-home.login-page .portal-welcome p{font-size:9.5px!important;line-height:1.65!important}
+  .portal-home.login-page .portal-welcome{width:min(390px,94vw)!important;margin:178px 0 13px!important}
+  .portal-home.login-page .portal-welcome h1{font-size:20px!important;line-height:1.35!important;margin-bottom:5px!important}
+  .portal-home.login-page .portal-welcome p{font-size:9.5px!important;line-height:1.6!important}
   .portal-home.login-page .portal-login-card{
     width:min(390px,94vw)!important;
-    padding:28px 21px 25px!important;
+    padding:28px 20px 25px!important;
     border-radius:23px!important;
   }
-  .portal-home.login-page .portal-login-title{margin-bottom:14px!important}
   .portal-home.login-page .portal-login-title h2{font-size:25px!important}
-  .portal-home.login-page .portal-login-form{gap:11px!important}
-  .portal-home.login-page .portal-login-form .field>span{font-size:11px!important}
   .portal-home.login-page .portal-login-card .field input,
-  .portal-home.login-page .portal-password-wrap input{min-height:49px!important;font-size:12px!important}
-  .portal-home.login-page .portal-login-card .btn{min-height:49px!important;font-size:14px!important}
+  .portal-home.login-page .portal-password-wrap input{min-height:50px!important}
+  .portal-home.login-page .portal-login-card .btn{min-height:50px!important}
   .portal-home.login-page .portal-guidance-logo{
     position:relative!important;
-    right:auto!important;
     top:auto!important;
+    right:auto!important;
     width:auto!important;
     margin:10px auto 0!important;
-    transform:none!important;
   }
   .portal-home.login-page .portal-guidance-logo img{width:105px!important}
-  .portal-home.login-page .portal-guidance-logo strong{font-size:13px!important;margin-top:-3px!important}
+  .portal-home.login-page .portal-guidance-logo strong{font-size:13px!important}
   .portal-home.login-page .public-site-footer{
     left:3vw!important;
     right:3vw!important;
@@ -912,15 +866,9 @@ input,select,textarea,button{max-width:100%}
   .portal-home.login-page .public-site-footer .site-footer-links{gap:6px!important;flex-wrap:nowrap!important}
   .portal-home.login-page .public-site-footer .site-footer-links a{padding:6px!important;min-width:38px!important;justify-content:center!important}
   .portal-home.login-page .public-site-footer .site-footer-links a span{display:none!important}
-  .portal-home.login-page .public-site-footer .site-footer-brand img{width:32px!important;height:32px!important}
-  .portal-home.login-page .public-site-footer .site-footer-brand strong{font-size:9px!important}
-  .portal-home.login-page .public-site-footer .site-footer-brand span{font-size:7px!important}
-  .portal-home.login-page .public-site-footer .site-footer-copy{font-size:7px!important}
 }
-
 @media(max-width:390px){
-  .portal-home.login-page .portal-welcome{margin-top:164px!important}
+  .portal-home.login-page .portal-welcome{margin-top:165px!important}
   .portal-home.login-page .portal-login-card{padding:25px 17px 22px!important}
   .portal-home.login-page .portal-login-title h2{font-size:23px!important}
-  .portal-home.login-page .portal-guidance-logo img{width:94px!important}
 }

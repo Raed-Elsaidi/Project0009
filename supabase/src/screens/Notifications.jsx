@@ -1,1 +1,0 @@
-import React from'react';import{Page,Card}from'../components/UI';export default function Notifications(){return <Page title="الإشعارات"><Card><div className="notice">لا توجد إشعارات جديدة حاليًا.</div></Card></Page>}

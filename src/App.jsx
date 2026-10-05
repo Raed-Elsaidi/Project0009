@@ -1,6 +1,9 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AppLayout from './components/AppLayout'
+import Login from './screens/Login'
+import LoginWelcome from './screens/LoginWelcome'
+import ProgrammerDashboard from './screens/ProgrammerDashboard'
 import Dashboard from './screens/Dashboard'
 import WeeklyProgram from './screens/WeeklyProgram'
 import Students from './screens/Students'
@@ -25,7 +28,6 @@ import DirectorateDashboard from './screens/DirectorateDashboard'
 import Messages from './screens/Messages'
 import Directorates from './screens/Directorates'
 import Schools from './screens/Schools'
-import Login from './screens/Login'
 
 const page = (Component) => <AppLayout><Component /></AppLayout>
 
@@ -34,6 +36,8 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/login-welcome" element={<LoginWelcome />} />
+      <Route path="/programmer-dashboard" element={page(ProgrammerDashboard)} />
       <Route path="/welcome" element={page(DirectorateDashboard)} />
       <Route path="/setup" element={page(Profile)} />
       <Route path="/directorate-dashboard" element={page(DirectorateDashboard)} />

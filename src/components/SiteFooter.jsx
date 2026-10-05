@@ -11,10 +11,10 @@ export default function SiteFooter({ publicPage = false }) {
       </div>
     </div>
     <div className="site-footer-links">
-      <a href="mailto:elsaidiraed@gmail.com" title="البريد الإلكتروني"><Mail size={16}/><span>elsaidiraed@gmail.com</span></a>
-      <a href="https://www.facebook.com/raed.elsaidi" target="_blank" rel="noreferrer" title="Facebook"><Facebook size={16}/><span>Facebook</span></a>
-      <a href="https://www.linkedin.com/in/raed-elsaidi-98b1033a6" target="_blank" rel="noreferrer" title="LinkedIn"><Linkedin size={16}/><span>LinkedIn</span></a>
-      <a href="https://wa.me/970599242087" target="_blank" rel="noreferrer" title="WhatsApp"><MessageCircle size={16}/><span>00970 599 242 087</span></a>
+      <a className="footer-email" href="mailto:elsaidiraed@gmail.com" title="البريد الإلكتروني"><Mail size={16}/><span>elsaidiraed@gmail.com</span></a>
+      <a className="footer-facebook" href="https://www.facebook.com/raed.elsaidi" target="_blank" rel="noreferrer" title="Facebook"><Facebook size={16}/><span>Facebook</span></a>
+      <a className="footer-linkedin" href="https://www.linkedin.com/in/raed-elsaidi-98b1033a6" target="_blank" rel="noreferrer" title="LinkedIn"><Linkedin size={16}/><span>LinkedIn</span></a>
+      <a className="footer-whatsapp" href="https://wa.me/970599242087" target="_blank" rel="noreferrer" title="WhatsApp"><MessageCircle size={16}/><span>00970 599 242 087</span></a>
     </div>
     <div className="site-footer-copy"><Code2 size={14}/> تطوير وبرمجة: Eng. Raed Elsaidi</div>
   </footer>

@@ -1071,38 +1071,113 @@ html,body,#root,.shell{max-width:100%;overflow-x:hidden!important}
   stroke:currentColor!important;
 }
 
-/* ===== 2026-10-05: تطبيق ضبط شاشة الدخول على اللابتوب أيضًا ===== */
-/* إظهار الخلفية كاملة مع طبقة خلفية مموهة تملأ أي فراغ */
-.portal-home.login-page{
-  background-color:#3f3026!important;
-  background-image:url('/assets/login-background.png')!important;
-  background-repeat:no-repeat!important;
-  background-position:center!important;
-  background-size:contain!important;
-  background-attachment:fixed!important;
-}
-.portal-home.login-page::before{
-  content:"";
-  position:absolute;
-  inset:-18px;
-  z-index:0;
-  background:url('/assets/login-background.png') center/cover no-repeat;
-  filter:blur(18px) brightness(.72);
-  transform:scale(1.05);
-}
-.portal-home.login-page .portal-home-overlay{z-index:1!important}
-.portal-home.login-page > *:not(.portal-home-overlay){position:relative;z-index:2}
-
-/* الشعار واسم الوزارة أسفل مستوى البسملة، وليس أعلى منها */
-@media(min-width:601px){
-  .portal-home.login-page .portal-header .portal-brand{
+/* ===== 2026-10-05: Mobile login design matched to approved reference ===== */
+.portal-guidance-logo{display:none}
+@media(max-width:600px){
+  .portal-home.login-page{
     position:relative!important;
-    transform:translateY(58px)!important;
+    min-height:100dvh!important;
+    height:100dvh!important;
+    overflow:hidden!important;
+    background:#6d513b url('/assets/login-background.png') center/100% 100% no-repeat!important;
   }
-  .portal-home.login-page .portal-content > .portal-bismillah-desktop{
-    transform:translateY(-18px)!important;
+  .portal-home.login-page::before{display:none!important}
+  /* إخفاء الشعار المدمج داخل الصورة الأصلية خلف طبقة خفيفة؛ الشعارات الفعلية تظهر من الكود */
+  .portal-home.login-page::after{
+    content:"";
+    position:absolute;
+    z-index:1;
+    top:7%;
+    right:0;
+    width:31%;
+    height:27%;
+    background:rgba(244,230,205,.42);
+    backdrop-filter:blur(9px);
+    -webkit-backdrop-filter:blur(9px);
+    pointer-events:none;
+    border-radius:0 0 0 45%;
   }
-  .portal-home.login-page .portal-welcome{
-    transform:translateY(-18px)!important;
+  .portal-home.login-page > *:not(.portal-home-overlay){position:relative;z-index:2}
+  .portal-home.login-page .portal-home-overlay{z-index:1!important;background:linear-gradient(180deg,rgba(30,22,16,.10),rgba(30,22,16,.18) 55%,rgba(30,22,16,.28))!important}
+
+  .portal-bismillah-mobile{
+    order:1!important;
+    padding:13px 10px 4px!important;
+    font-size:14px!important;
+    transform:none!important;
   }
+  .portal-header{
+    order:2!important;
+    justify-content:center!important;
+    padding:0 10px 2px!important;
+  }
+  .portal-header .portal-brand{
+    margin:0!important;
+    transform:translateY(5px)!important;
+    align-items:center!important;
+    text-align:center!important;
+  }
+  .portal-brand img{width:50px!important;height:50px!important;margin:0!important}
+  .portal-brand strong{font-size:10px!important}
+  .portal-brand span{font-size:12px!important}
+
+  .portal-content{
+    order:3!important;
+    width:min(94vw,440px)!important;
+    margin:0 auto!important;
+    padding:14px 0 4px!important;
+    justify-content:flex-start!important;
+  }
+  .portal-welcome{
+    margin:10px 0 12px!important;
+    transform:none!important;
+    max-width:100%!important;
+  }
+  .portal-welcome h1{font-size:21px!important;line-height:1.35!important;margin:0 0 4px!important}
+  .portal-welcome p{font-size:10px!important;line-height:1.6!important;margin:0!important}
+
+  .portal-login-card{
+    width:100%!important;
+    padding:20px 18px!important;
+    border-radius:22px!important;
+    box-shadow:0 22px 55px rgba(54,36,22,.28)!important;
+  }
+  .portal-login-title{margin-bottom:10px!important}
+  .portal-login-title h2{font-size:23px!important}
+  .portal-login-title span{font-size:10px!important}
+  .portal-login-icon{width:40px!important;height:40px!important}
+  .portal-login-form{gap:9px!important}
+  .portal-login-form .field>span{font-size:11px!important;margin-bottom:5px!important}
+  .portal-login-card .field input,.portal-password-wrap input{min-height:46px!important;font-size:12px!important}
+  .portal-login-card .btn{min-height:46px!important;font-size:13px!important}
+
+  .portal-guidance-logo{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    margin:7px auto 0!important;
+    text-align:center!important;
+    color:#075d54!important;
+    text-shadow:0 1px 4px rgba(255,248,230,.55)!important;
+  }
+  .portal-guidance-logo img{width:118px!important;height:auto!important;object-fit:contain!important;display:block!important}
+  .portal-guidance-logo strong{font-size:15px!important;margin-top:-4px!important;font-weight:900!important}
+
+  .public-site-footer{order:4!important}
+  .public-site-footer .footer-email svg{color:#a94444!important}
+  .public-site-footer .footer-facebook svg{color:#1877f2!important}
+  .public-site-footer .footer-linkedin svg{color:#0a66c2!important}
+  .public-site-footer .footer-whatsapp svg{color:#25d366!important}
+  .public-site-footer .site-footer-copy svg{color:#e4bf8a!important}
+}
+/* Mobile background framing: preserve the original scene proportions and keep the embedded artwork mark outside the visible crop. */
+@media(max-width:600px){
+  .portal-home.login-page{
+    background-size:auto 100%!important;
+    background-position:40% center!important;
+    background-repeat:no-repeat!important;
+    background-color:#d8b98f!important;
+  }
+  .portal-home.login-page::after{display:none!important}
 }

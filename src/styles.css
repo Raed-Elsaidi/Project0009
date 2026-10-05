@@ -1075,3 +1075,87 @@ input,select,textarea,button{max-width:100%}
   .portal-home.login-page .portal-guidance-logo{margin-top:7px!important}
   .portal-home.login-page .portal-guidance-logo img{width:95px!important}
 }
+
+/* ===== FOOTER AT THE VERY BOTTOM ===== */
+.portal-home.login-page .public-site-footer{
+  bottom:0!important;
+  margin-bottom:0!important;
+}
+@media(max-width:800px){
+  .portal-home.login-page .public-site-footer{
+    bottom:0!important;
+    margin-bottom:0!important;
+  }
+}
+
+/* ===== MOBILE LOGIN CARD LARGER ===== */
+@media(max-width:800px){
+  .portal-home.login-page .portal-login-card{
+    width:min(440px,96vw)!important;
+    padding:34px 24px 30px!important;
+    border-radius:26px!important;
+  }
+  .portal-home.login-page .portal-login-title{
+    margin-bottom:17px!important;
+  }
+  .portal-home.login-page .portal-login-icon{
+    width:47px!important;
+    height:47px!important;
+  }
+  .portal-home.login-page .portal-login-title h2{
+    font-size:28px!important;
+  }
+  .portal-home.login-page .portal-login-form{
+    gap:13px!important;
+  }
+  .portal-home.login-page .portal-login-card .field input,
+  .portal-home.login-page .portal-password-wrap input{
+    min-height:56px!important;
+    font-size:14px!important;
+  }
+  .portal-home.login-page .portal-login-card .btn{
+    min-height:56px!important;
+    font-size:16px!important;
+  }
+}
+
+/* ===== MOBILE LOGIN CARD +50% ===== */
+@media(max-width:800px){
+  .portal-home.login-page .portal-login-card{
+    width:min(660px,96vw)!important;
+    padding:51px 36px 45px!important;
+    border-radius:32px!important;
+  }
+  .portal-home.login-page .portal-login-title{
+    margin-bottom:26px!important;
+  }
+  .portal-home.login-page .portal-login-icon{
+    width:70px!important;
+    height:70px!important;
+  }
+  .portal-home.login-page .portal-login-title h2{
+    font-size:42px!important;
+  }
+  .portal-home.login-page .portal-login-form{
+    gap:20px!important;
+  }
+  .portal-home.login-page .portal-login-form .field>span{
+    font-size:16px!important;
+    margin-bottom:8px!important;
+  }
+  .portal-home.login-page .portal-login-card .field input,
+  .portal-home.login-page .portal-password-wrap input{
+    min-height:84px!important;
+    font-size:18px!important;
+    border-radius:16px!important;
+  }
+  .portal-home.login-page .portal-password-wrap button{
+    width:46px!important;
+    height:46px!important;
+  }
+  .portal-home.login-page .portal-login-card .btn{
+    min-height:84px!important;
+    font-size:21px!important;
+    border-radius:16px!important;
+  }
+}

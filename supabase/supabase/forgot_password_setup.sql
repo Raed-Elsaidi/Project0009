@@ -1,0 +1,4 @@
+-- وظيفة forgot-password تستخدم Supabase Auth لتغيير كلمة المرور بعد التحقق من:
+-- اسم المستخدم + رقم الهوية + رقم الهاتف المسجل.
+-- لا يتم تخزين كلمة المرور الجديدة في جداول التطبيق.
+-- بعد نشر الدالة: supabase functions deploy forgot-password --no-verify-jwt

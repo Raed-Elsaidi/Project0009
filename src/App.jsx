@@ -1,7 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AppLayout from './components/AppLayout'
-import WelcomeLanding from './screens/WelcomeLanding'
 import Login from './screens/Login'
 import LoginWelcome from './screens/LoginWelcome'
 import ProgrammerDashboard from './screens/ProgrammerDashboard'
@@ -35,7 +34,7 @@ const page = (Component) => <AppLayout><Component /></AppLayout>
 export default function App() {
   return <BrowserRouter>
     <Routes>
-      <Route path="/" element={<WelcomeLanding />} />
+      <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route path="/login-welcome" element={<LoginWelcome />} />
       <Route path="/programmer-dashboard" element={page(ProgrammerDashboard)} />

@@ -1022,3 +1022,87 @@ html,body,#root,.shell{max-width:100%;overflow-x:hidden!important}
   .portal-header .portal-brand{transform:translateY(7px)!important}
   .portal-welcome{transform:translateY(-6px)!important}
 }
+
+
+/* ===== 2026-10-05: Final public login refinements ===== */
+/* إظهار شاشة تسجيل الدخول مباشرة من الصفحة الرئيسية */
+/* الخلفية على الهاتف تظهر كاملة داخل الشاشة مع خلفية مموهة تملأ المساحة */
+@media(max-width:600px){
+  .portal-home.login-page{
+    background-color:#3f3026!important;
+    background-image:url('/assets/login-background.png')!important;
+    background-repeat:no-repeat!important;
+    background-position:center!important;
+    background-size:contain!important;
+  }
+  .portal-home.login-page::before{
+    content:"";
+    position:absolute;
+    inset:-18px;
+    z-index:0;
+    background:url('/assets/login-background.png') center/cover no-repeat;
+    filter:blur(18px) brightness(.72);
+    transform:scale(1.05);
+  }
+  .portal-home.login-page .portal-home-overlay{z-index:1!important}
+  .portal-home.login-page > *:not(.portal-home-overlay){position:relative;z-index:2}
+
+  /* الشعار واسم الوزارة إلى الأسفل قليلًا */
+  .portal-home.login-page .portal-header .portal-brand{
+    transform:translateY(14px)!important;
+  }
+
+  /* رفع البسملة والعبارة أسفلها قليلًا */
+  .portal-home.login-page .portal-bismillah-mobile{
+    transform:translateY(-5px)!important;
+  }
+  .portal-home.login-page .portal-welcome{
+    transform:translateY(-10px)!important;
+  }
+}
+
+/* تغيير لون أيقونات المبرمج في الفوتر */
+.public-site-footer .site-footer-links a svg{
+  color:#e4bf8a!important;
+  stroke:currentColor!important;
+}
+.public-site-footer .site-footer-copy svg{
+  color:#e4bf8a!important;
+  stroke:currentColor!important;
+}
+
+/* ===== 2026-10-05: تطبيق ضبط شاشة الدخول على اللابتوب أيضًا ===== */
+/* إظهار الخلفية كاملة مع طبقة خلفية مموهة تملأ أي فراغ */
+.portal-home.login-page{
+  background-color:#3f3026!important;
+  background-image:url('/assets/login-background.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:contain!important;
+  background-attachment:fixed!important;
+}
+.portal-home.login-page::before{
+  content:"";
+  position:absolute;
+  inset:-18px;
+  z-index:0;
+  background:url('/assets/login-background.png') center/cover no-repeat;
+  filter:blur(18px) brightness(.72);
+  transform:scale(1.05);
+}
+.portal-home.login-page .portal-home-overlay{z-index:1!important}
+.portal-home.login-page > *:not(.portal-home-overlay){position:relative;z-index:2}
+
+/* الشعار واسم الوزارة أسفل مستوى البسملة، وليس أعلى منها */
+@media(min-width:601px){
+  .portal-home.login-page .portal-header .portal-brand{
+    position:relative!important;
+    transform:translateY(58px)!important;
+  }
+  .portal-home.login-page .portal-content > .portal-bismillah-desktop{
+    transform:translateY(-18px)!important;
+  }
+  .portal-home.login-page .portal-welcome{
+    transform:translateY(-18px)!important;
+  }
+}

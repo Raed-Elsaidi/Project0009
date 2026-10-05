@@ -1,6 +1,9 @@
 import { requireSupabase } from './supabase'
+import { getCustomSession } from './customAuth'
 
 const db = () => requireSupabase()
+
+
 
 let systemProfileCache = null
 
@@ -11,15 +14,24 @@ export async function currentUser() {
 
 async function resolveSystemProfile() {
   if (systemProfileCache) return systemProfileCache
-  const storedId = typeof localStorage !== 'undefined' ? localStorage.getItem('system_profile_id') : null
-  if (!storedId) throw new Error('يجب تسجيل الدخول أولاً.')
-  let q = db().from('profiles').select('*, schools(id,name,code,directorate_id), directorates(id,name,code)').eq('is_active', true).eq('id', storedId)
-  const { data, error } = await q.maybeSingle()
+  const customSession = getCustomSession()
+  const storedId = customSession?.profile_id || (typeof localStorage !== 'undefined' ? localStorage.getItem('system_profile_id') : null)
+  let q = db().from('profiles').select('*, schools(id,name,code,directorate_id), directorates(id,name,code)').eq('is_active', true)
+  if (storedId) {
+    const { data } = await q.eq('id', storedId).maybeSingle()
+    if (data) { systemProfileCache = data; return data }
+  }
+  const { data: ministry } = await q.eq('role', 'MINISTRY').order('created_at', { ascending: true }).limit(1).maybeSingle()
+  if (ministry) {
+    systemProfileCache = ministry
+    if (typeof localStorage !== 'undefined') localStorage.setItem('system_profile_id', ministry.id)
+    return ministry
+  }
+  const { data: first, error } = await db().from('profiles').select('*, schools(id,name,code,directorate_id), directorates(id,name,code)').eq('is_active', true).order('created_at', { ascending: true }).limit(1).maybeSingle()
   if (error) throw error
-  if (!data) throw new Error('لا توجد بيانات موظف نشطة في النظام.')
-  if (typeof localStorage !== 'undefined') localStorage.setItem('system_profile_id', data.id)
-  systemProfileCache = data
-  return data
+  systemProfileCache = first || null
+  if (first && typeof localStorage !== 'undefined') localStorage.setItem('system_profile_id', first.id)
+  return first || null
 }
 
 
@@ -47,10 +59,10 @@ export async function createCounselorRegistry(payload){
 export async function transferCounselor(counselorId, schoolId){
   const {data,error}=await db().from('counselor_registry').update({school_id:schoolId}).eq('id',counselorId).select('*, directorates(id,name), schools(id,name)').single()
   if(error) throw error
-  if(data.id){
-    const {error:pe}=await db().from('profiles').update({school_id:schoolId,directorate_id:data.directorate_id}).eq('id',data.id)
+  if(data.auth_user_id){
+    const {error:pe}=await db().from('profiles').update({school_id:schoolId,directorate_id:data.directorate_id}).eq('id',data.auth_user_id)
     if(pe) throw pe
-    await db().from('user_school_assignments').upsert({user_id:data.id,school_id:schoolId,is_primary:true,start_date:new Date().toISOString().slice(0,10),end_date:null},{onConflict:'user_id,school_id'})
+    await db().from('user_school_assignments').upsert({user_id:data.auth_user_id,school_id:schoolId,is_primary:true,start_date:new Date().toISOString().slice(0,10),end_date:null},{onConflict:'user_id,school_id'})
   }
   return data
 }
@@ -106,10 +118,11 @@ export async function listWeeklyPrograms() {
 }
 
 export async function createWeeklyProgram(payload) {
+  const user = await currentUser()
   const profile = await currentProfile()
-  if (!profile?.id || !profile?.school_id) throw new Error('لم يتم ربط حساب الموظف بمدرسة بعد.')
+  if (!user || !profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
   const { data, error } = await db().from('weekly_programs').insert({
-    counselor_id: profile.id,
+    counselor_id: user.id,
     school_id: profile.school_id,
     ...payload
   }).select().single()
@@ -132,26 +145,6 @@ export async function updateWeeklyItem(id, payload) {
 export async function deleteWeeklyItem(id) {
   const { error } = await db().from('weekly_program_items').delete().eq('id', id)
   if (error) throw error
-}
-
-export async function createActivityRecord(payload){
-  const user=await currentUser(); if(!user) throw new Error('انتهت جلسة الدخول.')
-  const profile=await currentProfile(); if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
-  const {data,error}=await db().from('activities').insert({counselor_id:user.id,school_id:profile.school_id,...payload}).select().single()
-  if(error) throw error
-  return data
-}
-
-export async function getActivityRecord(id){
-  const {data,error}=await db().from('activities').select('*').eq('id',id).single()
-  if(error) throw error
-  return data
-}
-
-export async function updateActivityRecord(id,payload){
-  const {data,error}=await db().from('activities').update(payload).eq('id',id).select().single()
-  if(error) throw error
-  return data
 }
 
 export async function listActiveAcademicData() {
@@ -278,14 +271,17 @@ export async function createSchool(payload) {
   return data
 }
 
-export async function listOrganization(){
-  const [{data:directorates,error:dErr},{data:schools,error:sErr},{data:profiles,error:pErr}]=await Promise.all([
-    db().from('directorates').select('id,name,code').order('name'),
-    db().from('schools').select('id,name,code,directorate_id').order('name'),
-    db().from('profiles').select('id,full_name,role,is_active,directorate_id,school_id,job_title,directorates(id,name),schools(id,name)').eq('is_active',true).order('full_name')
+export async function listOrganization() {
+  const sb = db()
+  const [{ data: directorates, error: dErr }, { data: schools, error: sErr }, { data: profiles, error: pErr }] = await Promise.all([
+    sb.from('directorates').select('*').order('name'),
+    sb.from('schools').select('*, directorates(id,name)').order('name'),
+    sb.from('profiles').select('id,full_name,role,is_active,directorate_id,school_id,job_title,schools(id,name),directorates(id,name)').order('full_name')
   ])
-  if(dErr||sErr||pErr) throw (dErr||sErr||pErr)
-  return {directorates:directorates||[],schools:schools||[],profiles:profiles||[]}
+  if (dErr) throw dErr
+  if (sErr) throw sErr
+  if (pErr) throw pErr
+  return { directorates: directorates || [], schools: schools || [], profiles: profiles || [] }
 }
 
 export async function createAcademicYear({name, start_date=null, end_date=null}) {
@@ -440,68 +436,57 @@ export async function deleteDirectorate(id){const {error}=await db().from('direc
 export async function updateSchool(id,payload){const {data,error}=await db().from('schools').update({name:payload.name,code:payload.code,directorate_id:payload.directorate_id}).eq('id',id).select('*,directorates(id,name,code)').single();if(error) throw error;return data}
 export async function deleteSchool(id){const {error}=await db().from('schools').delete().eq('id',id);if(error) throw error}
 
-export async function loginEmployee(username,password){
-  const {data,error}=await db().rpc('employee_login',{p_username:username.trim().toLowerCase(),p_password:password})
-  if(error) throw error
-  if(!data?.success) throw new Error(data?.message||'اسم المستخدم أو كلمة المرور غير صحيحة.')
-  if(typeof localStorage!=='undefined') localStorage.setItem('system_profile_id',data.profile_id)
-  systemProfileCache=null
-  return data
-}
-
 export async function createEmployeeAccount(payload){
-  const username=payload.username?.trim().toLowerCase()||''
-  const password=payload.password||''
-  if(!username) throw new Error('اسم المستخدم مطلوب.')
-  if(!password) throw new Error('كلمة المرور مطلوبة.')
+  const id=crypto.randomUUID()
   const {data,error}=await db().from('profiles').insert({
-    full_name:payload.full_name.trim(),national_id:payload.national_id?.trim()||null,
-    employee_number:payload.employee_number?.trim()||null,phone:payload.phone?.trim()||null,gender:payload.gender||null,
-    username,directorate_id:payload.directorate_id||null,
-    school_id:payload.school_id||null,role:payload.role,job_title:payload.job_title||'',is_active:true
-  }).select('id,full_name,username,role,directorate_id,school_id,job_title').single()
+    id,
+    full_name:payload.full_name.trim(),
+    username:payload.username?.trim().toLowerCase()||null,
+    national_id:payload.national_id?.trim()||null,
+    employee_number:payload.employee_number?.trim()||null,
+    phone:payload.phone?.trim()||null,
+    gender:payload.gender||null,
+    role:payload.role,
+    directorate_id:payload.directorate_id||null,
+    school_id:payload.school_id||null,
+    job_title:payload.job_title?.trim()||null,
+    is_active:true
+  }).select('id,full_name,username,role,directorate_id,school_id').single()
   if(error) throw error
-  const {error:passwordError}=await db().rpc('employee_set_password',{p_profile_id:data.id,p_password:password})
-  if(passwordError){ await db().from('profiles').delete().eq('id',data.id); throw passwordError }
+  const {error:credentialError}=await db().rpc('custom_create_employee_credential',{p_profile_id:data.id,p_username:payload.username.trim().toLowerCase(),p_password:payload.password})
+  if(credentialError){await db().from('profiles').delete().eq('id',data.id);throw credentialError}
   systemProfileCache=null
-  return {...data,user_id:data.id}
+  return {ok:true,user_id:data.id,profile:data}
 }
 export async function listEmployeeProfiles(){
-  const {data,error}=await db().from('profiles').select('*, directorates(id,name,code), schools(id,name,code,directorate_id)').neq('role','PROGRAMMER').order('full_name')
-  if(error) throw error
-  return data||[]
+  const {data,error}=await db().from('profiles').select('id,full_name,username,national_id,employee_number,phone,gender,role,is_active,directorate_id,school_id,supervisor_id,job_title,schools(id,name,code),directorates(id,name,code)').in('role',['DIRECTORATE','PRINCIPAL','COUNSELOR']).eq('is_active',true).order('full_name');
+  if(error) throw error; return data||[]
 }
 export async function updateEmployeeProfile(profileId,payload){
-  const patch={
-    full_name:payload.full_name,national_id:payload.national_id||null,employee_number:payload.employee_number||null,
-    phone:payload.phone||null,gender:payload.gender||null,school_id:payload.school_id||null,
-    username:payload.username?.trim().toLowerCase()||undefined,job_title:payload.job_title||undefined
-  }
-  const {data,error}=await db().from('profiles').update(patch).eq('id',profileId).select('*, directorates(id,name,code), schools(id,name,code,directorate_id)').single()
+  const {data,error}=await db().from('profiles').update({
+    full_name:payload.full_name,
+    national_id:payload.national_id,
+    employee_number:payload.employee_number,
+    phone:payload.phone,
+    gender:payload.gender,
+    school_id:payload.school_id||null,
+    updated_at:new Date().toISOString()
+  }).eq('id',profileId).select('id,full_name,username,national_id,employee_number,phone,gender,role,is_active,directorate_id,school_id,supervisor_id,job_title,schools(id,name,code),directorates(id,name,code)').single()
   if(error) throw error
-  if(payload.password){
-    const {error:passwordError}=await db().rpc('employee_set_password',{p_profile_id:profileId,p_password:payload.password})
-    if(passwordError) throw passwordError
-  }
-  if(typeof localStorage!=='undefined' && localStorage.getItem('system_profile_id')===profileId) systemProfileCache=null
-  return data||{ok:true}
+  return data
 }
 export async function deleteEmployeeAccount(profileId){
-  const {data,error}=await db().from('profiles').update({is_active:false}).eq('id',profileId).select().single()
+  const {data,error}=await db().from('profiles').update({is_active:false,updated_at:new Date().toISOString()}).eq('id',profileId).select('id,full_name,is_active').single()
   if(error) throw error
-  if(typeof localStorage!=='undefined' && localStorage.getItem('system_profile_id')===profileId) localStorage.removeItem('system_profile_id')
-  return data||{ok:true}
+  return {ok:true,profile:data}
 }
 export async function assignCounselorsToSupervisor(supervisorId,counselorIds){
   const ids=counselorIds||[]
   const {error:clearError}=await db().from('profiles').update({supervisor_id:null}).eq('role','COUNSELOR').eq('supervisor_id',supervisorId)
   if(clearError) throw clearError
-  if(!ids.length) return {ok:true}
-  const {data,error}=await db().from('profiles').update({supervisor_id:supervisorId}).in('id',ids).select('id')
-  if(error) throw error
-  return {ok:true,assigned:data||[]}
+  if(ids.length){const {error}=await db().from('profiles').update({supervisor_id:supervisorId}).in('id',ids);if(error) throw error}
+  return {ok:true}
 }
-
 export const PERMISSION_CATALOG=[
  {key:'directorate-dashboard',label:'الإحصائيات والمتابعة',section:'المتابعة'},
  {key:'directorates',label:'المديريات',section:'الهيكل الإداري'},

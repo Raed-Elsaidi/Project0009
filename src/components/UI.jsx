@@ -1,19 +1,6 @@
 import React from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
-import { Loader2, Eye, EyeOff, ArrowRight, CalendarDays, Clock3 } from 'lucide-react'
-export const Page=({title,sub,actions,children,eyebrow})=>{
- const [params]=useSearchParams();
- const navigate=useNavigate();
- const fromWeekly=params.get('from')==='weekly';
- const weeklyDate=params.get('date')||'';
- const weeklyPeriod=params.get('period')||'';
- return <section className={'page '+(fromWeekly?'from-weekly':'')}>
-  <div className="pagehead"><div><div className="eyebrow">{eyebrow || 'نظام المرشد التربوي'}</div><h1>{title}</h1><p>{sub}</p></div><div className="page-actions">{actions}</div></div>
-  {fromWeekly&&<div className="weekly-context-bar"><div><CalendarDays size={16}/><span>اليوم</span><strong>{weeklyDate||'—'}</strong></div><div><Clock3 size={16}/><span>الحصة</span><strong>{weeklyPeriod||'—'}</strong></div><em>العمل مرتبط بالبرنامج اليومي / الأسبوعي</em></div>}
-  {children}
-  {fromWeekly&&<div className="weekly-back-wrap"><button type="button" className="weekly-back-button" onClick={()=>navigate('/weekly-program')}><ArrowRight size={18}/> رجوع إلى شاشة الجدول اليومي / الأسبوعي</button></div>}
- </section>
-}
+import { Loader2, Eye, EyeOff } from 'lucide-react'
+export const Page=({title,sub,actions,children,eyebrow})=><section className="page"><div className="pagehead"><div><div className="eyebrow">{eyebrow || 'نظام المرشد التربوي'}</div><h1>{title}</h1><p>{sub}</p></div><div className="page-actions">{actions}</div></div>{children}</section>
 export const Card=({children,className=''})=><div className={'card '+className}>{children}</div>
 export const Button=({children,loading=false,variant='',...p})=><button className={'btn '+variant} disabled={loading||p.disabled} {...p}>{loading&&<Loader2 className="spin" size={16}/>} {children}</button>
 export const Input=({label,hint,type,...p})=>{const [show,setShow]=React.useState(false);const isPassword=type==='password';const numericType=['number','tel','date','datetime-local','month','week','time'].includes(type);return <label className={'field '+(isPassword?'password-field':'')}>{label}<div className="input-with-action"><input {...p} type={isPassword?(show?'text':'password'):type} lang={numericType?'en':p.lang} inputMode={p.inputMode||(numericType?'numeric':undefined)} dir={numericType?'ltr':p.dir}/>{isPassword&&<button type="button" className="password-eye" onClick={()=>setShow(v=>!v)} aria-label={show?'إخفاء كلمة المرور':'إظهار كلمة المرور'}>{show?<EyeOff size={17}/>:<Eye size={17}/>}</button>}</div>{hint&&<small>{hint}</small>}</label>}

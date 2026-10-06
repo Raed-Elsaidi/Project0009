@@ -2291,3 +2291,24 @@ body{
     transform-origin:center center!important;
   }
 }
+
+/* ===== USER FINAL MOBILE REQUEST — FORCE APPLY ===== */
+@media (max-width:700px){
+  /* Move the complete upper branding block down by exactly 2cm (≈76px). */
+  .reference-login .reference-login-top{
+    transform:translateY(76px)!important;
+  }
+
+  /* Enlarge the login card itself by 50% from its current rendered size. */
+  .reference-login .reference-login-card{
+    transform:scale(1.5)!important;
+    transform-origin:center center!important;
+    z-index:20!important;
+  }
+
+  /* Keep the login text on the button white. */
+  .reference-login .reference-login-button,
+  .reference-login .reference-login-button *{
+    color:#fff!important;
+  }
+}

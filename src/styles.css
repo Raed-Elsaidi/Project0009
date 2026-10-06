@@ -2383,3 +2383,29 @@ body{
     transform:none!important;
   }
 }
+
+/* ===== FINAL LOGIN DIMENSIONS — 2026-10-06 07:52 ===== */
+/* Desktop: shorten the card by 0.5cm from the top and 1cm from the bottom. */
+@media (min-width:701px){
+  .reference-login .reference-login-card{
+    /* Keep the existing content sizing; tighten the two outer edges. */
+    padding-top:0!important;
+    padding-bottom:0!important;
+    margin-top:19px!important;
+    margin-bottom:38px!important;
+  }
+}
+
+/* Mobile: increase card height by 4cm (~151px) and width by 3cm (~113px). */
+@media (max-width:700px){
+  .reference-login .reference-login-card{
+    width:calc(94vw + 113px)!important;
+    max-width:none!important;
+    min-width:0!important;
+    height:auto!important;
+    min-height:0!important;
+    padding-bottom:241px!important;
+    box-sizing:border-box!important;
+    transform:none!important;
+  }
+}

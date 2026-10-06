@@ -2714,3 +2714,20 @@ body{
     height:680px!important;min-height:680px!important;
   }
 }
+
+/* ===== MOBILE FINAL POSITION ADJUSTMENT — 2026-10-06 ===== */
+@media screen and (max-width:700px){
+  /* Raise the guidance logo by 2cm (~76px), phone only. */
+  .reference-login .reference-guidance-brand{
+    transform:translateY(-76px)!important;
+  }
+
+  /* Raise the login card by 2cm (~76px) without moving its layout container. */
+  .reference-login .reference-login-main > .reference-login-card,
+  .reference-login main.reference-login-main .reference-login-card{
+    height:661px!important;
+    min-height:661px!important;
+    max-height:661px!important;
+    transform:translateY(-76px)!important;
+  }
+}

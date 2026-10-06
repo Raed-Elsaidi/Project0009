@@ -2393,3 +2393,19 @@ body{
     margin:0!important;
   }
 }
+
+/* ===== FIX: guidance logo directly below program title ===== */
+@media (min-width:701px){
+  .reference-login .reference-identities{
+    position:relative!important;
+  }
+  .reference-login .reference-identities .reference-guidance-brand{
+    position:absolute!important;
+    top:72px!important;
+    left:50%!important;
+    right:auto!important;
+    margin:0!important;
+    transform:translateX(calc(-50% - 189px))!important;
+    z-index:10!important;
+  }
+}

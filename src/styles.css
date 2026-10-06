@@ -2257,153 +2257,61 @@ body{
   .reference-login-button{min-height:60px!important;border-radius:13px!important;font-size:15px!important}
 }
 
+/* ===== FINAL REQUEST — MOBILE HEADER + LOGIN BUTTON ===== */
+.reference-login .reference-login-button,
+.reference-login .reference-login-button span,
+.reference-login .reference-login-button svg{
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+}
+.reference-login .reference-login-button:hover{
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  filter:brightness(1.08) !important;
+  transform:translateY(-2px) !important;
+  box-shadow:0 11px 24px rgba(7,83,79,.30) !important;
+}
+.reference-login .reference-login-button:focus-visible{
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  outline:3px solid rgba(215,168,67,.55) !important;
+  outline-offset:2px !important;
+}
 
-/* ===== 2026-10-06: تقليل ارتفاع بطاقة الدخول من الأسفل على اللابتوب ===== */
-@media(min-width:701px){
-  .reference-login-card{
-    transform:scaleY(.86)!important;
-    transform-origin:top center!important;
+@media screen and (max-width:700px){
+  /* Move the complete mobile branding block down by 2cm ≈ 76px. */
+  .reference-login .reference-login-top{
+    margin-top:76px !important;
+    transform:none !important;
+    top:auto !important;
   }
 }
 
-/* ===== 2026-10-06 FINAL MOBILE REQUEST: force exact visual changes ===== */
+/* FINAL MOBILE REQUEST — 2026-10-06 */
 @media (max-width:700px){
-  /* Move the complete top branding block down by 2cm (~76px). */
+  /* Move the complete top identity block down by 2cm ≈ 76px */
   .reference-login .reference-login-top{
-    position:relative!important;
-    transform:translateY(76px)!important;
-    z-index:10!important;
+    position:relative !important;
+    top:76px !important;
   }
 
-  /* Make the login card exactly 150% of its prior visual size.
-     Width is reduced before scaling so the final rendered width remains inside the phone. */
-  .reference-login .reference-login-main{
-    width:100%!important;
-    box-sizing:border-box!important;
-    position:relative!important;
-    z-index:5!important;
-  }
+  /* Make the login card 50% larger visually on mobile */
   .reference-login .reference-login-card{
-    width:64vw!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-    transform:scale(1.5)!important;
-    transform-origin:center center!important;
-  }
-}
-
-/* ===== USER FINAL MOBILE REQUEST — FORCE APPLY ===== */
-@media (max-width:700px){
-  /* Move the complete upper branding block down by exactly 2cm (≈76px). */
-  .reference-login .reference-login-top{
-    transform:translateY(76px)!important;
+    transform:scale(1.5) !important;
+    transform-origin:center center !important;
+    z-index:20 !important;
   }
 
-  /* Enlarge the login card itself by 50% from its current rendered size. */
-  .reference-login .reference-login-card{
-    transform:scale(1.5)!important;
-    transform-origin:center center!important;
-    z-index:20!important;
-  }
-
-  /* Keep the login text on the button white. */
+  /* Force login-button text to white */
   .reference-login .reference-login-button,
   .reference-login .reference-login-button *{
-    color:#fff!important;
-  }
-}
-
-/* ===== FINAL USER REQUEST 2026-10-06 09:40 ===== */
-@media (max-width:700px){
-  /* Push the complete mobile branding block DOWN by 2cm (~76px) in the document flow. */
-  .reference-login .reference-login-top{
-    position:relative!important;
-    margin-top:76px!important;
-    transform:none!important;
-    z-index:10!important;
-  }
-
-  /* Login button text stays WHITE, including mouse hover/focus/active states. */
-  .reference-login .reference-login-button,
-  .reference-login .reference-login-button:hover,
-  .reference-login .reference-login-button:focus,
-  .reference-login .reference-login-button:active,
-  .reference-login .reference-login-button span,
-  .reference-login .reference-login-button svg{
-    color:#fff!important;
-  }
-}
-
-/* Also guarantee white button text on desktop hover. */
-.reference-login .reference-login-button:hover,
-.reference-login .reference-login-button:focus,
-.reference-login .reference-login-button:active,
-.reference-login .reference-login-button *{
-  color:#fff!important;
-}
-
-/* ===== FORCE MOBILE HEADER POSITION — 2026-10-06 ===== */
-@media screen and (max-width: 700px){
-  html body .reference-login .reference-login-top{
-    position:relative !important;
-    top:76px !important;
-    margin-top:0 !important;
-    transform:none !important;
-  }
-
-  html body .reference-login .reference-login-button,
-  html body .reference-login .reference-login-button:hover,
-  html body .reference-login .reference-login-button:focus,
-  html body .reference-login .reference-login-button:active,
-  html body .reference-login .reference-login-button *{
-    color:#ffffff !important;
-  }
-}
-
-/* ===== FINAL REAL MOBILE OVERRIDE ===== */
-@media screen and (max-width:700px){
-  html body .reference-login .reference-login-top{
-    position:relative !important;
-    top:76px !important;
-    margin-top:0 !important;
-    transform:translateY(0) !important;
-    z-index:999 !important;
-  }
-  html body .reference-login .reference-login-button,
-  html body .reference-login .reference-login-button:hover,
-  html body .reference-login .reference-login-button:focus,
-  html body .reference-login .reference-login-button:active,
-  html body .reference-login .reference-login-button *{
-    color:#ffffff !important;
-    -webkit-text-fill-color:#ffffff !important;
-  }
-}
-
-/* ===== ABSOLUTE FINAL MOBILE HEADER FIX ===== */
-@media screen and (max-width: 700px){
-  /* Push the three requested elements down by 2cm (~76px) using layout space. */
-  html body .reference-login .reference-login-top{
-    position:relative !important;
-    top:auto !important;
-    margin-top:0 !important;
-    padding-top:88px !important; /* existing 12px + 76px */
-    transform:none !important;
-  }
-  html body .reference-login .reference-bismillah,
-  html body .reference-login .reference-identities,
-  html body .reference-login .reference-program-title{
-    position:relative !important;
-    top:0 !important;
-    transform:none !important;
-  }
-
-  /* Button label is white in normal and hover states. */
-  html body .reference-login .reference-login-button,
-  html body .reference-login .reference-login-button:hover,
-  html body .reference-login .reference-login-button:focus,
-  html body .reference-login .reference-login-button:active,
-  html body .reference-login .reference-login-button *{
     color:#fff !important;
-    -webkit-text-fill-color:#fff !important;
+  }
+
+  .reference-login .reference-login-button:hover,
+  .reference-login .reference-login-button:hover *{
+    color:#fff !important;
+    filter:brightness(1.10) !important;
+    cursor:pointer !important;
   }
 }

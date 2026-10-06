@@ -2256,3 +2256,12 @@ body{
   .reference-forgot{font-size:11px!important}
   .reference-login-button{min-height:60px!important;border-radius:13px!important;font-size:15px!important}
 }
+
+
+/* ===== 2026-10-06: تقليل ارتفاع بطاقة الدخول من الأسفل على اللابتوب ===== */
+@media(min-width:701px){
+  .reference-login-card{
+    transform:scaleY(.86)!important;
+    transform-origin:top center!important;
+  }
+}

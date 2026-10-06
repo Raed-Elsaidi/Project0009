@@ -2590,9 +2590,43 @@ body{
   .reference-login .reference-footer{order:6!important;}
 }
 
-/* ===== 2026-10-06: Laptop guidance logo position ===== */
-@media (min-width:601px){
-  .portal-home.login-page .reference-login-top .reference-identities .reference-guidance-brand{
-    transform:translate(454px,189px)!important;
+/* ===== FINAL MOBILE REQUEST — guidance logo left + enlarged login card ===== */
+@media screen and (max-width:700px){
+  /* Guidance logo only: align it to the left side of the phone layout. */
+  .reference-login .reference-guidance-brand{
+    width:100%!important;
+    box-sizing:border-box!important;
+    margin:0!important;
+    padding-left:18px!important;
+    padding-right:0!important;
+    align-items:flex-start!important;
+    text-align:left!important;
+    justify-content:flex-start!important;
+  }
+  .reference-login .reference-guidance-brand img{
+    display:block!important;
+  }
+  .reference-login .reference-guidance-brand strong{
+    text-align:left!important;
+  }
+
+  /* Phone only: make the login card substantially larger and remove the old 350px cap. */
+  .reference-login .reference-login-main{
+    width:100vw!important;
+    max-width:100vw!important;
+    padding:8px 10px 16px!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+  .reference-login .reference-login-card{
+    width:calc(100vw - 20px)!important;
+    max-width:none!important;
+    min-width:0!important;
+    height:680px!important;
+    min-height:680px!important;
+    box-sizing:border-box!important;
+    margin:0 auto!important;
+    transform:none!important;
+    overflow:hidden!important;
   }
 }

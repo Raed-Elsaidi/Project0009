@@ -2369,3 +2369,27 @@ body{
 
   /* Do not move or resize the login card. */
 }
+
+
+/* ===== FINAL USER REQUEST — 2026-10-06 11:05 ===== */
+@media (min-width:701px){
+  /* Move the guidance logo 5cm (~189px) to the left. */
+  .reference-login .reference-identities .reference-guidance-brand{
+    transform:translateX(calc(-50% - 189px))!important;
+  }
+  /* Reduce Bismillah font size slightly. */
+  .reference-login .reference-bismillah{
+    font-size:22px!important;
+  }
+}
+
+/* ===== FINAL USER REQUEST — 2026-10-06 11:07 ===== */
+@media (min-width:701px){
+  /* Place the educational guidance logo directly below the program title. */
+  .reference-login .reference-identities .reference-guidance-brand{
+    top:125px!important;
+    left:50%!important;
+    transform:translateX(calc(-50% - 189px))!important;
+    margin:0!important;
+  }
+}

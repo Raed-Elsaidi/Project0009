@@ -2886,7 +2886,7 @@ body{
 /* ===== MOBILE FINAL: raise footer 0.5cm + white login button text ===== */
 @media screen and (max-width:700px){
   .reference-login .reference-footer{
-    bottom:29px!important; /* 10px + ~19px (0.5cm) */
+    bottom:67px!important; /* raise an additional ~1cm (38px) from the previous 0.5cm position */
   }
   .reference-login .reference-login-button,
   .reference-login .reference-login-button.btn{
@@ -2905,3 +2905,14 @@ body{
   .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
 }
 </style>
+
+/* ===== MOBILE FINAL REQUEST: footer raised an additional 1cm ===== */
+@media screen and (max-width:700px){
+  .reference-login .reference-footer{
+    bottom:67px!important;
+    transform:translateY(-38px)!important;
+  }
+  .reference-login .reference-guidance-brand > strong{
+    display:none!important;
+  }
+}

@@ -22,6 +22,7 @@ export default function Login(){
    <div className="portal-home-overlay" aria-hidden="true"/>
    <div className="reference-login-top">
      <div className="reference-bismillah">بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ</div>
+     <h1 className="reference-program-title">برنامج الإرشاد التربوي</h1>
      <div className="reference-identities">
        <div className="reference-guidance-brand">
          <img src="/assets/guidance-logo.png" alt="شعار الإرشاد التربوي"/>
@@ -32,7 +33,6 @@ export default function Login(){
          <div><strong>دولة فلسطين</strong><span>وزارة التربية والتعليم العالي</span></div>
        </div>
      </div>
-     <h1 className="reference-program-title">برنامج الإرشاد التربوي</h1>
    </div>
 
    <main className="reference-login-main">

@@ -2136,12 +2136,26 @@ body{
 }
 
 /* ===== FINAL LOGIN DIMENSIONS — 2026-10-06 ===== */
+/* Desktop: program title sits directly below the Bismillah. */
+@media (min-width:701px){
+  .reference-login .reference-program-title{
+    display:block!important;
+    margin:3px 0 0!important;
+    font-size:24px!important;
+    line-height:1.2!important;
+  }
+}
+
+@media (max-width:700px){
+  .reference-login .reference-program-title{display:none!important}
+}
+
 /* Exact requested card dimensions. These final rules replace all previous dimension overrides. */
 @media (min-width:701px){
   .reference-login .reference-login-card{
     width:470px!important;
-    height:400px!important;
-    min-height:400px!important;
+    height:300px!important;
+    min-height:300px!important;
     max-width:470px!important;
     box-sizing:border-box!important;
     margin-bottom:0!important;

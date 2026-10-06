@@ -2359,3 +2359,22 @@ body{
     color:#ffffff !important;
   }
 }
+
+/* ===== FINAL REAL MOBILE OVERRIDE ===== */
+@media screen and (max-width:700px){
+  html body .reference-login .reference-login-top{
+    position:relative !important;
+    top:76px !important;
+    margin-top:0 !important;
+    transform:translateY(0) !important;
+    z-index:999 !important;
+  }
+  html body .reference-login .reference-login-button,
+  html body .reference-login .reference-login-button:hover,
+  html body .reference-login .reference-login-button:focus,
+  html body .reference-login .reference-login-button:active,
+  html body .reference-login .reference-login-button *{
+    color:#ffffff !important;
+    -webkit-text-fill-color:#ffffff !important;
+  }
+}

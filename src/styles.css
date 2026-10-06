@@ -2336,3 +2336,25 @@ body{
   }
   .reference-login-main{overflow:visible!important;}
 }
+
+
+/* === USER REQUEST 2026-10-06 07:12 — FINAL DIRECT OVERRIDES === */
+/* Desktop: reduce the visible login card from the bottom by about 1cm (38px). */
+@media (min-width:701px){
+  .reference-login .reference-login-card{
+    max-height:calc(100vh - 38px)!important;
+    overflow:hidden!important;
+    padding-bottom:0!important;
+  }
+}
+
+/* Mobile: increase login card height by about 4cm (151px) and width by about 3cm (113px). */
+@media (max-width:700px){
+  .reference-login .reference-login-card{
+    width:calc(94vw + 113px)!important;
+    max-width:none!important;
+    min-height:calc(100% + 151px)!important;
+    padding-bottom:90px!important;
+    box-sizing:border-box!important;
+  }
+}

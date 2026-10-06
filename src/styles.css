@@ -1891,3 +1891,193 @@ body{
   .reference-login .public-site-footer .site-footer-links a{padding:5px!important;min-width:34px!important}
   .reference-login .public-site-footer .site-footer-links a span{display:none!important}
 }
+
+
+/* ===== FINAL REFERENCE STYLE — TEAL / GOLD / CREAM ===== */
+:root{
+  --bg:#f7f0e3;
+  --surface:#fffdf8;
+  --surface2:#e9f1ed;
+  --surface3:#fbf6ea;
+  --text:#183f3d;
+  --muted:#6d7772;
+  --line:#ded9ca;
+  --primary:#087276;
+  --primary2:#00585b;
+  --accent:#d5a83a;
+  --gold:#c99a2f;
+  --gold-soft:#f1e2bc;
+  --danger:#a94d49;
+  --warning:#b18431;
+  --shadow:0 14px 35px rgba(0,72,74,.10);
+  --radius:18px;
+}
+body{
+  background:linear-gradient(rgba(247,240,227,.42),rgba(247,240,227,.52)),url('./assets/educational-guidance-background.png') center/cover fixed no-repeat;
+  color:var(--text);
+}
+.shell aside{
+  background:linear-gradient(180deg,#005f62 0%,#00494d 100%);
+  color:#fff;
+  border:0;
+  box-shadow:-10px 0 35px rgba(0,55,57,.14);
+}
+.shell nav a{color:#e9f4ef}
+.shell nav a.active{
+  background:linear-gradient(90deg,#d5a83a,#c18e25);
+  color:#fff;
+  box-shadow:0 8px 20px rgba(0,0,0,.16);
+}
+.shell nav a:hover{background:rgba(255,255,255,.09)}
+.brand h2,.brand small,.profile-mini strong{color:#fff}
+.brand small{opacity:.72}
+.profile-mini{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.14)}
+.profile-mini small{color:#d8ebe5}
+.avatar{background:#f1dfb7;color:#00585b}
+.security-chip{background:rgba(255,255,255,.09);color:#e6f1ec}
+.logout{background:rgba(201,154,47,.18);border-color:rgba(241,226,188,.28);color:#fff}
+.mobile-menu{color:#00585b;border-color:#d8d1c0}
+.shell main{background:rgba(255,253,248,.18)}
+.page h1{color:#164f4e}
+.eyebrow{color:#ad7e1d}
+.card{background:rgba(255,253,248,.97);border-color:#e3dccd;box-shadow:var(--shadow)}
+.stat-icon{background:#e8f1ed;color:#00676a}
+.stat{color:#00585b}
+.stat-card:after{background:#f0e0b8}
+.btn{background:linear-gradient(135deg,#087276,#00585b);box-shadow:0 9px 18px rgba(0,88,91,.18)}
+.btn.secondary{background:#f1e5c9;color:#6b501e}
+.btn.danger{background:#fff0ed;color:#9a4b45}
+.field{color:#496360}
+.field input,.field textarea,.field select{background:#fffdf9;border-color:#ddd7c9;color:#183f3d}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#c79b38;box-shadow:0 0 0 4px rgba(201,154,47,.12)}
+.table{background:#fffdf9}
+.table th{background:#e9f0eb;color:#075e60}
+.table td{border-bottom-color:#eee7d9}
+.notice{background:#eaf2ed;color:#315c57}
+.badge{background:#e7f0eb;color:#176765}
+.section-title a,.access-arrow{color:#9a701e}
+.searchbar{background:#fffaf1;border-color:#ded7c7}
+.hero-card{background:linear-gradient(135deg,#e9f1ed,#f8edcf);border-color:#ded4bb}
+.hero-card span{color:#08676a}
+.hero-action{background:#00585b}
+.program-summary,.program-meta{background:#fbf6e9;border-color:#e5dbc5}
+.quick-grid a{background:#fffaf1;border-color:#e4dbc9}
+.quick-grid a:hover{border-color:#cda44d;background:#f7edd7}
+.week-card{background:#fffdf9}
+.day-column{background:#fbf6eb;border-color:#e5dccb}
+.program-item{border-color:#e5d9c3;border-right-color:#c6972d}
+.program-item>span{color:#126765}
+.item-actions button{background:#f2e6c9;color:#805f1d}
+.message-tabs button{border-color:#ddd7c9;background:#fffdf9;color:#526662}
+.message-tabs button.active{background:#00585b;border-color:#00585b}
+.message-row.unread{background:#eef4ef}
+.message-avatar{background:#e5f0eb;color:#006467}
+.notes-toolbar,.note-card{background:#fffdf9}
+.note-filters button{border-color:#ddd7c9;background:#fffdf9;color:#6a6258}
+.note-filters button.active{background:#00585b;border-color:#00585b}
+.site-footer{background:rgba(255,253,248,.90);border-color:#ded7c8}
+.site-footer-links a{border-color:#ded7c8;background:#fffdf9;color:#126467}
+.site-footer-copy{color:#a17420}
+
+/* Login matches the supplied reference image. */
+.portal-home.login-page{
+  background:#efe4cf url('/assets/login-background.png') center/cover no-repeat!important;
+}
+.portal-home.login-page .portal-home-overlay{
+  background:linear-gradient(180deg,rgba(255,248,231,.08),rgba(255,248,231,.10) 48%,rgba(0,65,67,.34))!important;
+}
+.portal-bismillah-top{
+  color:#c28e25!important;
+  text-shadow:0 1px 3px rgba(255,250,232,.85)!important;
+  font-size:24px!important;
+  margin:16px 0 4px!important;
+}
+.reference-login-top{
+  position:relative;z-index:3;width:100%;
+}
+.reference-identities{
+  width:min(1100px,94vw);margin:4px auto 0;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  direction:ltr;padding:0 4vw;
+}
+.reference-guidance-brand,.reference-ministry-brand{
+  display:flex;align-items:center;gap:9px;color:#00585b;text-align:center;
+}
+.reference-guidance-brand{flex-direction:column;direction:rtl}
+.reference-ministry-brand{direction:rtl;flex-direction:column;gap:3px;color:#202b29}
+.reference-guidance-brand img{width:88px;height:70px;object-fit:contain}
+.reference-guidance-brand strong{font-size:15px;font-weight:900;margin-top:-8px}
+.reference-ministry-brand img{width:74px;height:74px;object-fit:contain}
+.reference-ministry-brand div{display:flex;flex-direction:column;align-items:center;line-height:1.35}
+.reference-ministry-brand strong{font-size:12px;font-weight:900}
+.reference-ministry-brand span{font-size:14px;font-weight:900}
+.reference-program-title{
+  margin:8px 0 0!important;text-align:center;color:#704814!important;
+  font-size:31px!important;font-weight:900!important;
+  text-shadow:0 1px 2px rgba(255,250,235,.8);
+}
+.reference-program-title:after{
+  content:'◆';display:block;color:#c5962f;font-size:11px;margin-top:2px;
+}
+.reference-login-main{
+  position:relative;z-index:3;flex:1;display:flex;align-items:center;justify-content:center;
+  width:100%;padding:8px 20px 16px;
+}
+.portal-home.login-page .reference-login-card{
+  width:min(430px,92vw)!important;padding:27px 25px!important;
+  border-radius:23px!important;background:rgba(255,253,249,.96)!important;
+  border:1px solid rgba(255,255,255,.9)!important;
+  box-shadow:0 22px 55px rgba(0,55,57,.20)!important;
+  backdrop-filter:blur(7px)!important;
+}
+.reference-login-heading{font-size:27px;font-weight:900;color:#00666a;text-align:center}
+.reference-login-subtitle{text-align:center;color:#77766e;font-size:12px;margin:3px 0 13px}
+.reference-login-card .field{color:#4d625e}
+.reference-login-card .field input,.reference-login-card .portal-password-wrap input{background:#fff;border-color:#ddd9d0;min-height:48px;border-radius:12px}
+.reference-login-card .field input:focus,.reference-login-card .portal-password-wrap input:focus{border-color:#c79b38;box-shadow:0 0 0 3px rgba(201,154,47,.10)}
+.reference-login-card .portal-password-wrap button{color:#66726f}
+.reference-login-options{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 13px;font-size:11px}
+.reference-login-options label{display:flex;align-items:center;gap:6px;color:#333}
+.reference-login-options input{accent-color:#00676a}
+.reference-forgot{border:0;background:none;color:#00839a;font-weight:800;cursor:pointer;padding:0}
+.reference-login-button{width:100%!important;min-height:48px!important;background:linear-gradient(135deg,#087276,#00585b)!important;border-radius:12px!important;font-size:14px!important;box-shadow:0 9px 18px rgba(0,88,91,.18)!important}
+.portal-home.login-page .public-site-footer{
+  width:min(900px,92vw)!important;margin:0 auto 10px!important;padding:9px 16px!important;
+  background:rgba(0,72,74,.90)!important;border:1px solid rgba(241,226,188,.35)!important;
+  border-radius:18px!important;box-shadow:0 12px 30px rgba(0,45,46,.20)!important;
+  backdrop-filter:blur(8px)!important;
+}
+.portal-home.login-page .public-site-footer .site-footer-brand strong,
+.portal-home.login-page .public-site-footer .site-footer-brand span,
+.portal-home.login-page .public-site-footer .site-footer-copy{color:#f5e4b8!important}
+.portal-home.login-page .public-site-footer .site-footer-brand img{border:1px solid rgba(241,226,188,.45)!important}
+.portal-home.login-page .public-site-footer .site-footer-links a{background:transparent!important;border:0!important;color:#fff!important;padding:5px 7px!important}
+.portal-home.login-page .public-site-footer .footer-email svg{color:#f1b44a!important}
+.portal-home.login-page .public-site-footer .footer-facebook svg{color:#69a8ff!important}
+.portal-home.login-page .public-site-footer .footer-linkedin svg{color:#58a6d8!important}
+.portal-home.login-page .public-site-footer .footer-whatsapp svg{color:#5ce18a!important}
+.portal-home.login-page .public-site-footer .site-footer-copy svg{color:#d7a53a!important}
+
+@media(max-width:700px){
+  .portal-home.login-page{background-position:center center!important;background-size:auto 100%!important}
+  .portal-bismillah-top{font-size:17px!important;margin:14px 0 3px!important}
+  .reference-identities{width:96vw;padding:0 14px;margin-top:2px}
+  .reference-guidance-brand img{width:66px;height:55px}
+  .reference-guidance-brand strong{font-size:11px;margin-top:-7px}
+  .reference-ministry-brand img{width:58px;height:58px}
+  .reference-ministry-brand strong{font-size:9px}
+  .reference-ministry-brand span{font-size:10px}
+  .reference-program-title{font-size:22px!important;margin-top:7px!important}
+  .reference-login-main{padding:6px 12px 8px}
+  .portal-home.login-page .reference-login-card{width:min(390px,92vw)!important;padding:22px 17px!important;border-radius:21px!important}
+  .reference-login-heading{font-size:23px}
+  .reference-login-subtitle{font-size:10px;margin-bottom:10px}
+  .reference-login-options{font-size:10px;margin:7px 0 10px}
+  .reference-login-card .field input,.reference-login-card .portal-password-wrap input{min-height:46px;font-size:12px}
+  .reference-login-button{min-height:46px!important;font-size:13px!important}
+  .portal-home.login-page .public-site-footer{width:94vw!important;margin-bottom:5px!important;padding:7px!important}
+  .portal-home.login-page .public-site-footer .site-footer-brand img{width:34px!important;height:34px!important}
+  .portal-home.login-page .public-site-footer .site-footer-brand strong{font-size:9px!important}
+  .portal-home.login-page .public-site-footer .site-footer-brand span{font-size:7px!important}
+  .portal-home.login-page .public-site-footer .site-footer-links a{padding:4px!important}
+}

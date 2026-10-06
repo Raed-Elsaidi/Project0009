@@ -29,7 +29,7 @@ export default function Login(){
        </div>
        <div className="reference-ministry-brand">
          <img src="/assets/ministry-logo.png" alt="شعار وزارة التربية والتعليم"/>
-         <div><strong>دولة فلسطين</strong><span>وزارة التربية والتعليم</span></div>
+         <div><strong>دولة فلسطين</strong><span>وزارة التربية والتعليم العالي</span></div>
        </div>
      </div>
      <h1 className="reference-program-title">برنامج الإرشاد التربوي</h1>

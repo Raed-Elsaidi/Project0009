@@ -2341,3 +2341,21 @@ body{
 .reference-login .reference-login-button *{
   color:#fff!important;
 }
+
+/* ===== FORCE MOBILE HEADER POSITION — 2026-10-06 ===== */
+@media screen and (max-width: 700px){
+  html body .reference-login .reference-login-top{
+    position:relative !important;
+    top:76px !important;
+    margin-top:0 !important;
+    transform:none !important;
+  }
+
+  html body .reference-login .reference-login-button,
+  html body .reference-login .reference-login-button:hover,
+  html body .reference-login .reference-login-button:focus,
+  html body .reference-login .reference-login-button:active,
+  html body .reference-login .reference-login-button *{
+    color:#ffffff !important;
+  }
+}

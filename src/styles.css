@@ -2882,3 +2882,18 @@ body{
   .reference-login .reference-footer .reference-footer a{font-size:6px!important}
   .reference-login .reference-footer .reference-footer-copy{font-size:8px!important}
 }
+
+/* ===== MOBILE FINAL: raise footer 0.5cm + white login button text ===== */
+@media screen and (max-width:700px){
+  .reference-login .reference-footer{
+    bottom:29px!important; /* 10px + ~19px (0.5cm) */
+  }
+  .reference-login .reference-login-button,
+  .reference-login .reference-login-button.btn{
+    color:#fff!important;
+  }
+  .reference-login .reference-login-button svg{
+    color:#fff!important;
+    stroke:#fff!important;
+  }
+}

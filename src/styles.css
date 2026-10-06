@@ -2315,3 +2315,24 @@ body{
     cursor:pointer !important;
   }
 }
+
+
+/* FINAL REQUEST: login sizing and password icon */
+.reference-login .reference-login-button{color:#fff!important;}
+.reference-login .reference-login-button *{color:#fff!important;}
+.reference-login .reference-login-button:hover{color:#fff!important;}
+
+@media (min-width:769px){
+  .reference-login-card{max-height:calc(100% - 38px)!important;padding-bottom:calc(24px - 38px)!important;overflow:hidden!important;}
+}
+
+@media (max-width:768px){
+  .reference-login-card{
+    width:calc(min(94vw,390px) + 113px)!important;
+    max-width:none!important;
+    min-height:calc(100% + 151px)!important;
+    padding-top:52px!important;
+    padding-bottom:48px!important;
+  }
+  .reference-login-main{overflow:visible!important;}
+}

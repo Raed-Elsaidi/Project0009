@@ -2206,3 +2206,53 @@ body{
     margin-top:22px!important;
   }
 }
+
+/* ===== FINAL USER REQUEST — 2026-10-06 10:20 ===== */
+@media (min-width:701px){
+  /* Move the laptop login card 1 cm downward from its previous position. */
+  .reference-login .reference-login-card{
+    height:369px!important;
+    min-height:369px!important;
+    transform:translateY(-76px)!important;
+    padding:22px 24px 18px!important;
+  }
+  /* Slightly reduce the content size so the taller card remains balanced. */
+  .reference-login .reference-login-heading{font-size:25px!important}
+  .reference-login .reference-login-subtitle{font-size:11px!important;margin:4px 0 11px!important}
+  .reference-login-card .portal-login-form{gap:9px!important}
+  .reference-login-card .field input,
+  .reference-login-card .portal-password-wrap input{
+    min-height:45px!important;
+    height:45px!important;
+    font-size:12px!important;
+  }
+  .reference-login-options{font-size:10px!important;margin:1px 1px 8px!important}
+  .reference-login-button{min-height:47px!important;font-size:13px!important}
+  .reference-login-button svg{width:16px!important;height:16px!important}
+}
+
+
+/* Final desktop footer position adjustment: lower by 0.4cm (~15px) */
+@media (min-width: 701px) {
+  .reference-login .reference-footer {
+    transform: translateY(15px) !important;
+  }
+}
+
+/* ===== FINAL USER REQUEST — Ministry / Guidance positioning ===== */
+@media (min-width:701px){
+  /* Raise the ministry logo and ministry name by 2cm (~76px). */
+  .reference-login .reference-ministry-brand{
+    transform:translateY(-76px)!important;
+  }
+  /* Place the guidance logo/label below the ministry name with a 3cm (~113px) gap. */
+  .reference-login .reference-identities{
+    position:relative!important;
+  }
+  .reference-login .reference-guidance-brand{
+    position:absolute!important;
+    right:4vw!important;
+    top:215px!important;
+    margin:0!important;
+  }
+}

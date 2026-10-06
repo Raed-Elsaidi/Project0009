@@ -2208,25 +2208,26 @@ body{
 /* ===== 2026-10-06: آخر تعديلات شاشة تسجيل الدخول ===== */
 /* اللابتوب: تقليل ارتفاع بطاقة تسجيل الدخول بحوالي 2 سم مع الحفاظ على العرض */
 @media(min-width:701px){
+  /* آخر تعديل للابتوب: تقليل ارتفاع بطاقة تسجيل الدخول بمقدار إضافي يقارب 1 سم */
   .reference-login-card{
-    padding-top:8px!important;
-    padding-bottom:7px!important;
+    padding-top:4px!important;
+    padding-bottom:3px!important;
     border-radius:25px!important;
   }
-  .reference-login-heading{font-size:28px!important}
-  .reference-login-subtitle{font-size:12px!important;margin:4px 0 10px!important}
-  .reference-login-card .portal-login-form{gap:9px!important}
-  .reference-login-card .field>span{font-size:11px!important;margin-bottom:4px!important}
+  .reference-login-heading{font-size:27px!important}
+  .reference-login-subtitle{font-size:12px!important;margin:3px 0 7px!important}
+  .reference-login-card .portal-login-form{gap:7px!important}
+  .reference-login-card .field>span{font-size:11px!important;margin-bottom:3px!important}
   .reference-login-card .field input,
   .reference-login-card .portal-password-wrap input{
-    min-height:49px!important;height:49px!important;
+    min-height:44px!important;height:44px!important;
     border-radius:12px!important;font-size:13px!important;
   }
-  .reference-login-options{font-size:11px!important;margin:1px 1px 1px!important}
+  .reference-login-options{font-size:11px!important;margin:0 1px!important}
   .reference-forgot{font-size:11px!important}
-  .reference-login-button{min-height:51px!important;border-radius:11px!important;font-size:14px!important}
-  /* إنزال الفوتر قليلًا */
-  .reference-login .reference-footer{margin-bottom:2px!important}
+  .reference-login-button{min-height:47px!important;border-radius:11px!important;font-size:14px!important}
+  /* إنزال الفوتر للأسفل حوالي 0.5 سم */
+  .reference-login .reference-footer{margin-bottom:0!important;transform:translateY(19px)!important}
 }
 
 /* الهاتف: تنزيل البسملة + الشعار + عبارة البرنامج حوالي 2 سم */

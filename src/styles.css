@@ -2378,3 +2378,32 @@ body{
     -webkit-text-fill-color:#ffffff !important;
   }
 }
+
+/* ===== ABSOLUTE FINAL MOBILE HEADER FIX ===== */
+@media screen and (max-width: 700px){
+  /* Push the three requested elements down by 2cm (~76px) using layout space. */
+  html body .reference-login .reference-login-top{
+    position:relative !important;
+    top:auto !important;
+    margin-top:0 !important;
+    padding-top:88px !important; /* existing 12px + 76px */
+    transform:none !important;
+  }
+  html body .reference-login .reference-bismillah,
+  html body .reference-login .reference-identities,
+  html body .reference-login .reference-program-title{
+    position:relative !important;
+    top:0 !important;
+    transform:none !important;
+  }
+
+  /* Button label is white in normal and hover states. */
+  html body .reference-login .reference-login-button,
+  html body .reference-login .reference-login-button:hover,
+  html body .reference-login .reference-login-button:focus,
+  html body .reference-login .reference-login-button:active,
+  html body .reference-login .reference-login-button *{
+    color:#fff !important;
+    -webkit-text-fill-color:#fff !important;
+  }
+}

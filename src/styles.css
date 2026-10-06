@@ -2312,3 +2312,32 @@ body{
     color:#fff!important;
   }
 }
+
+/* ===== FINAL USER REQUEST 2026-10-06 09:40 ===== */
+@media (max-width:700px){
+  /* Push the complete mobile branding block DOWN by 2cm (~76px) in the document flow. */
+  .reference-login .reference-login-top{
+    position:relative!important;
+    margin-top:76px!important;
+    transform:none!important;
+    z-index:10!important;
+  }
+
+  /* Login button text stays WHITE, including mouse hover/focus/active states. */
+  .reference-login .reference-login-button,
+  .reference-login .reference-login-button:hover,
+  .reference-login .reference-login-button:focus,
+  .reference-login .reference-login-button:active,
+  .reference-login .reference-login-button span,
+  .reference-login .reference-login-button svg{
+    color:#fff!important;
+  }
+}
+
+/* Also guarantee white button text on desktop hover. */
+.reference-login .reference-login-button:hover,
+.reference-login .reference-login-button:focus,
+.reference-login .reference-login-button:active,
+.reference-login .reference-login-button *{
+  color:#fff!important;
+}

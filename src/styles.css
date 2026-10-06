@@ -1672,3 +1672,222 @@ html,body,#root,.shell{max-width:100%;overflow-x:hidden!important}
     width:125px!important;height:auto!important;
   }
 }
+
+/* =========================================================
+   Reference visual system — teal / gold / cream
+   Applied to login + entire application UI
+   ========================================================= */
+:root{
+  --bg:#f5efe5;
+  --surface:#fffdf8;
+  --surface2:#f3eadb;
+  --surface3:#faf6ef;
+  --text:#183f3b;
+  --muted:#766d63;
+  --line:#dfd1bd;
+  --primary:#086c67;
+  --primary2:#07534f;
+  --accent:#d7a843;
+  --gold:#c99a32;
+  --gold-soft:#f1dfb4;
+  --danger:#b85b4f;
+  --warning:#b98545;
+  --shadow:0 14px 38px rgba(35,63,57,.10);
+  --radius:18px;
+}
+body{
+  background:#f5efe5 url('./assets/educational-guidance-background.png') center/cover fixed no-repeat;
+  color:var(--text);
+}
+.btn{background:linear-gradient(135deg,#08756f,#07534f);box-shadow:0 8px 17px rgba(7,83,79,.18)}
+.btn.secondary{background:#f3eadb;color:#07534f;border-color:#dfd1bd}
+.card{background:rgba(255,253,248,.96);border-color:#dfd1bd;box-shadow:var(--shadow)}
+.field input,.field select,.field textarea{background:#fffdf9;border-color:#d9cbb8;color:#24443f}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#c99a32;box-shadow:0 0 0 3px rgba(201,154,50,.12);outline:none}
+.eyebrow{color:#9a7020}
+.page h1{color:#173f3b}
+.shell{background:transparent}
+.shell aside{
+  background:linear-gradient(180deg,#075c58 0%,#064c49 58%,#063f3d 100%);
+  border-left:1px solid rgba(255,255,255,.10);
+  box-shadow:8px 0 28px rgba(18,46,43,.12);
+}
+.brand{border-bottom:1px solid rgba(255,255,255,.10)}
+.brand-mark{background:linear-gradient(145deg,#d7a843,#a8791e);color:#fff;box-shadow:0 10px 20px rgba(0,0,0,.14)}
+.brand h2{color:#fff}.brand small{color:#e7dcc8}
+.profile-mini{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);color:#fff}
+.profile-mini small{color:#d9d2c8}.avatar{background:#d7a843;color:#07534f}
+.shell nav a{color:#f5efe5}
+.shell nav a.active{background:linear-gradient(90deg,#d7a843,#c39431);color:#083f3b;box-shadow:0 7px 20px rgba(0,0,0,.12)}
+.shell nav a:hover{background:rgba(255,255,255,.10)}
+.security-chip{color:#f6ead1;background:rgba(255,255,255,.08)}
+.logout{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14);color:#ffe1d8}
+.mobile-menu{background:#07534f;border-color:#d7a843;color:#fff}
+.shell main{background:rgba(250,246,239,.58)}
+.pagehead p,.stat-label{color:#7d7369}
+.stat-icon{background:#f1dfb4;color:#07534f}
+.stat{color:#07534f}
+.table-wrap,.table-card,.data-table{border-color:#dfd1bd}
+
+/* Exact reference-style public login */
+.reference-login{
+  position:relative!important;min-height:100vh!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;
+  background:#eadfce url('/assets/login-background.png') center/cover no-repeat!important;
+}
+.reference-login .portal-home-overlay{
+  position:absolute!important;inset:0!important;background:linear-gradient(180deg,rgba(255,248,234,.30),rgba(255,248,234,.10) 48%,rgba(5,66,63,.18))!important;backdrop-filter:none!important;
+}
+.reference-login-top{position:relative;z-index:5;flex:0 0 auto;padding:18px 5vw 0;text-align:center}
+.reference-bismillah{color:#bd8a22;font-size:27px;font-weight:800;line-height:1.2;text-shadow:0 1px 2px rgba(255,255,255,.6)}
+.reference-identities{display:flex;align-items:flex-start;justify-content:space-between;direction:ltr;margin-top:2px}
+.reference-guidance-brand,.reference-ministry-brand{display:flex;align-items:center;gap:9px;color:#143f3b;text-shadow:0 1px 3px rgba(255,255,255,.65)}
+.reference-guidance-brand{flex-direction:column;align-items:center;gap:0}
+.reference-guidance-brand img{width:88px;height:70px;object-fit:contain}
+.reference-guidance-brand strong{font-size:15px;font-weight:900}
+.reference-ministry-brand{direction:rtl;flex-direction:column;align-items:center;gap:1px;text-align:center}
+.reference-ministry-brand img{width:76px;height:76px;object-fit:contain}
+.reference-ministry-brand div{display:flex;flex-direction:column;line-height:1.25}
+.reference-ministry-brand strong{font-size:13px;font-weight:900}.reference-ministry-brand span{font-size:15px;font-weight:900}
+.reference-program-title{margin:10px 0 0;color:#76521c;font-size:31px;font-weight:900;line-height:1.25;text-shadow:0 1px 3px rgba(255,255,255,.7)}
+.reference-program-title:after{content:'◆';display:block;font-size:10px;color:#bd8a22;margin:3px auto 0}
+.reference-login-main{position:relative;z-index:5;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:16px 20px 20px}
+.reference-login-card{width:min(390px,92vw)!important;padding:25px 27px 24px!important;border-radius:24px!important;background:rgba(255,253,249,.96)!important;border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 22px 65px rgba(37,31,23,.22)!important}
+.reference-login-heading{text-align:center;color:#08706a;font-size:27px;font-weight:900;line-height:1.2}
+.reference-login-subtitle{text-align:center;color:#746a61;font-size:11px;margin:7px 0 17px}
+.reference-login-card .portal-login-form{gap:11px!important}
+.reference-login-card .field>span{display:block;font-size:11px;font-weight:800;color:#5c5147;margin-bottom:5px}
+.reference-login-card .field input,.reference-login-card .portal-password-wrap input{min-height:49px!important;border:1px solid #d9d0c5!important;border-radius:11px!important;background:#fff!important;color:#2b3e3b!important;font-size:13px!important;padding:0 13px!important}
+.reference-login-card .portal-password-wrap{position:relative}.reference-login-card .portal-password-wrap input{padding-left:45px!important}.reference-login-card .portal-password-wrap button{position:absolute;left:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#7b766f;width:32px;height:32px;display:grid;place-items:center}
+.reference-login-options{display:flex;align-items:center;justify-content:space-between;direction:rtl;font-size:10px;margin:0 1px 1px;color:#303b38}.reference-login-options label{display:flex;align-items:center;gap:4px}.reference-login-options input{accent-color:#08706a;width:16px;height:16px}.reference-forgot{border:0;background:transparent;color:#0787a5;font-size:10px;font-weight:800;cursor:pointer}
+.reference-login-button{min-height:50px!important;border-radius:11px!important;background:linear-gradient(135deg,#08756f,#07534f)!important;font-size:14px!important}
+.reference-login .public-site-footer{position:relative!important;z-index:6!important;flex:0 0 auto!important;width:min(900px,92vw)!important;margin:0 auto 10px!important;padding:9px 14px!important;border-radius:16px!important;background:rgba(5,76,72,.94)!important;border:1px solid rgba(215,168,67,.75)!important;box-shadow:0 -5px 25px rgba(0,0,0,.12)!important;color:#fff!important}
+.reference-login .public-site-footer .site-footer-brand{color:#fff}.reference-login .public-site-footer .site-footer-brand span{color:#eadfcf}.reference-login .public-site-footer .site-footer-copy{color:#e5bd68}.reference-login .public-site-footer .site-footer-links a{background:rgba(255,255,255,.95)!important;border-color:rgba(255,255,255,.7)!important}
+
+@media(max-width:700px){
+  .reference-login{background-position:42% center!important;background-size:auto 100%!important}
+  .reference-login-top{padding:12px 13px 0}
+  .reference-bismillah{font-size:20px}
+  .reference-identities{margin-top:2px}
+  .reference-guidance-brand img{width:68px;height:58px}.reference-guidance-brand strong{font-size:11px}
+  .reference-ministry-brand img{width:58px;height:58px}.reference-ministry-brand strong{font-size:10px}.reference-ministry-brand span{font-size:11px}
+  .reference-program-title{font-size:22px;margin-top:8px}
+  .reference-login-main{padding:12px 10px 14px}
+  .reference-login-card{width:min(94vw,390px)!important;padding:27px 20px 25px!important;border-radius:22px!important}
+  .reference-login-heading{font-size:24px}.reference-login-subtitle{font-size:10px;margin-bottom:15px}
+  .reference-login-card .field input,.reference-login-card .portal-password-wrap input{min-height:52px!important;font-size:13px!important}
+  .reference-login-button{min-height:52px!important;font-size:14px!important}
+  .reference-login .public-site-footer{width:94vw!important;margin-bottom:6px!important;padding:7px 6px!important}
+  .reference-login .public-site-footer .site-footer-brand img{width:30px!important;height:30px!important}
+  .reference-login .public-site-footer .site-footer-brand strong{font-size:9px!important}.reference-login .public-site-footer .site-footer-brand span{font-size:7px!important}
+  .reference-login .public-site-footer .site-footer-copy{font-size:8px!important}
+  .reference-login .public-site-footer .site-footer-links{gap:5px!important;flex-wrap:nowrap!important}.reference-login .public-site-footer .site-footer-links a{padding:5px!important;min-width:34px!important}.reference-login .public-site-footer .site-footer-links a span{display:none!important}
+}
+
+/* Application screens follow the same visual language */
+.shell .page .card,.shell .page .card table,.shell .page .table-wrap{border-color:#dfd1bd}
+.shell .page .card h3,.shell .page .card h2{color:#154642}
+.shell .page .btn{background:linear-gradient(135deg,#08756f,#07534f)}
+.shell .page .btn.secondary{background:#f1dfb4;color:#07534f}
+.shell .page .tabs button.active,.shell .page .filter-chip.active{background:#d7a843!important;color:#173f3b!important;border-color:#c39431!important}
+.shell .page .icon-btn{background:#f1dfb4;color:#07534f}
+.shell .page .code-pill{background:#f1dfb4;color:#07534f}
+
+/* ===== RAED REFERENCE DESIGN — exact teal/gold visual pass ===== */
+.reference-login{
+  background-color:#d8c19d!important;
+  background-image:url('/assets/login-background.png')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  color:#173f3b!important;
+}
+.reference-login .portal-home-overlay{
+  background:linear-gradient(180deg,rgba(255,250,239,.20),rgba(255,250,239,.05) 48%,rgba(4,69,66,.18))!important;
+}
+.reference-login-top{padding-top:16px!important}
+.reference-bismillah{
+  color:#c4932d!important;
+  text-shadow:0 1px 2px rgba(255,255,255,.75)!important;
+}
+.reference-identities{direction:ltr!important;align-items:flex-start!important}
+.reference-guidance-brand,.reference-ministry-brand{
+  color:#123f3c!important;
+  text-shadow:0 1px 3px rgba(255,255,255,.72)!important;
+}
+.reference-guidance-brand strong{color:#075d58!important}
+.reference-ministry-brand strong,.reference-ministry-brand span{color:#182f2d!important}
+.reference-program-title{
+  color:#765318!important;
+  text-shadow:0 1px 3px rgba(255,255,255,.82)!important;
+}
+.reference-program-title:after{color:#c99a32!important}
+.reference-login-card{
+  background:rgba(255,254,250,.97)!important;
+  border:1px solid rgba(255,255,255,.94)!important;
+  box-shadow:0 24px 65px rgba(21,54,50,.22)!important;
+}
+.reference-login-heading{color:#08706a!important}
+.reference-login-subtitle{color:#746e66!important}
+.reference-login-card .field>span{color:#4f5c58!important}
+.reference-login-card .field input,
+.reference-login-card .portal-password-wrap input{
+  border-color:#d8d9d4!important;
+  color:#21433f!important;
+  background:#fff!important;
+}
+.reference-login-card .field input:focus,
+.reference-login-card .portal-password-wrap input:focus{
+  border-color:#c99a32!important;
+  box-shadow:0 0 0 3px rgba(201,154,50,.13)!important;
+  outline:none!important;
+}
+.reference-login-card .portal-password-wrap button{color:#68736f!important}
+.reference-login-options input{accent-color:#08706a!important}
+.reference-forgot{color:#0589a6!important}
+.reference-login-button{
+  background:linear-gradient(135deg,#08756f,#07534f)!important;
+  box-shadow:0 8px 18px rgba(7,83,79,.20)!important;
+}
+.reference-login .public-site-footer{
+  background:rgba(4,78,74,.96)!important;
+  border:1px solid rgba(215,168,67,.78)!important;
+  color:#fff!important;
+}
+.reference-login .public-site-footer .site-footer-brand strong{color:#fff!important}
+.reference-login .public-site-footer .site-footer-brand span{color:#e8ddc8!important}
+.reference-login .public-site-footer .site-footer-copy{color:#e5bd68!important}
+.reference-login .public-site-footer .site-footer-links a{
+  background:transparent!important;
+  border:0!important;
+  color:#f3e5c5!important;
+  box-shadow:none!important;
+}
+.reference-login .public-site-footer .site-footer-links a svg,
+.reference-login .public-site-footer .site-footer-copy svg{color:#d9ab43!important;stroke:currentColor!important}
+
+@media(max-width:700px){
+  .reference-login{background-position:42% center!important;background-size:auto 100%!important}
+  .reference-login-top{padding:10px 12px 0!important}
+  .reference-bismillah{font-size:20px!important;margin:0 0 7px!important}
+  .reference-identities{margin-top:0!important}
+  .reference-guidance-brand img{width:70px!important;height:60px!important}
+  .reference-guidance-brand strong{font-size:11px!important}
+  .reference-ministry-brand img{width:60px!important;height:60px!important}
+  .reference-ministry-brand strong{font-size:10px!important}
+  .reference-ministry-brand span{font-size:11px!important}
+  .reference-program-title{font-size:22px!important;margin-top:9px!important}
+  .reference-login-main{padding:10px 9px 12px!important}
+  .reference-login-card{width:min(94vw,390px)!important;padding:29px 21px 27px!important;border-radius:23px!important}
+  .reference-login-heading{font-size:25px!important}
+  .reference-login-subtitle{font-size:10px!important;margin:7px 0 16px!important}
+  .reference-login-card .portal-login-form{gap:12px!important}
+  .reference-login-card .field input,.reference-login-card .portal-password-wrap input{min-height:50px!important;font-size:13px!important}
+  .reference-login-button{min-height:51px!important;font-size:14px!important}
+  .reference-login .public-site-footer{width:94vw!important;margin-bottom:6px!important;padding:7px 6px!important}
+  .reference-login .public-site-footer .site-footer-brand img{width:31px!important;height:31px!important}
+  .reference-login .public-site-footer .site-footer-brand strong{font-size:9px!important}
+  .reference-login .public-site-footer .site-footer-brand span{font-size:7px!important}
+  .reference-login .public-site-footer .site-footer-copy{font-size:8px!important}
+  .reference-login .public-site-footer .site-footer-links{gap:4px!important;flex-wrap:nowrap!important}
+  .reference-login .public-site-footer .site-footer-links a{padding:5px!important;min-width:34px!important}
+  .reference-login .public-site-footer .site-footer-links a span{display:none!important}
+}

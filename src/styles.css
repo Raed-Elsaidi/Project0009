@@ -2685,3 +2685,32 @@ body{
     margin:0 auto!important;
   }
 }
+
+/* ===== XIAOMI 10S MOBILE LOGIN — FINAL OVERRIDE ===== */
+@media screen and (max-width:700px){
+  html,body,#root{width:100%;max-width:100%;overflow-x:hidden!important;}
+  .reference-login{width:100vw!important;max-width:100vw!important;overflow-x:hidden!important;}
+  .reference-login .reference-login-main{
+    width:100vw!important;max-width:100vw!important;
+    padding:10px 8px 16px!important;margin:0!important;
+    display:flex!important;justify-content:center!important;align-items:flex-start!important;
+    box-sizing:border-box!important;overflow:visible!important;
+  }
+  .reference-login main.reference-login-main > .reference-login-card,
+  .reference-login .reference-login-main > .reference-login-card{
+    display:block!important;flex:0 0 auto!important;
+    width:calc(100vw - 16px)!important;
+    max-width:none!important;min-width:0!important;
+    height:680px!important;min-height:680px!important;max-height:none!important;
+    margin:0 auto!important;padding:30px 24px 26px!important;
+    box-sizing:border-box!important;transform:none!important;
+    overflow:hidden!important;
+  }
+}
+@media screen and (max-width:430px){
+  .reference-login .reference-login-main > .reference-login-card,
+  .reference-login main.reference-login-main .reference-login-card{
+    width:calc(100vw - 16px)!important;
+    height:680px!important;min-height:680px!important;
+  }
+}

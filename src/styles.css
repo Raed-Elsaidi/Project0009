@@ -2776,7 +2776,7 @@ body{
     justify-content:space-between!important;
     flex-wrap:wrap!important;
     gap:6px!important;
-    padding:7px 8px!important;
+    padding:16.5px 8px!important;
   }
   .reference-login .public-site-footer > *{
     min-width:0!important;

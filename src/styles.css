@@ -2269,3 +2269,20 @@ body{
     min-height:388px!important;
   }
 }
+
+/* ===== FINAL USER REQUEST — 2026-10-06 10:37 ===== */
+@media (min-width:701px){
+  /* Move ministry/institution logo + name to the right. */
+  .reference-login .reference-ministry-brand{
+    transform:translate(120px,-76px)!important;
+  }
+  /* Move the educational guidance logo to the right. */
+  .reference-login .reference-guidance-brand{
+    right:calc(4vw - 60px)!important;
+  }
+  /* Raise the educational guidance program title by 0.3cm (~11px). */
+  .reference-login .reference-program-title{
+    margin-top:11px!important;
+    transform:translateY(-11px)!important;
+  }
+}

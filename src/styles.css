@@ -2733,15 +2733,15 @@ body{
 }
 
 
-/* FINAL MOBILE SIZE: reduce login card width by 2cm (~76px), height by 3cm (~113px). Desktop untouched. */
+/* FINAL MOBILE SIZE: height 9cm (~340px), desktop untouched. */
 @media screen and (max-width:700px){
   .reference-login .reference-login-main > .reference-login-card,
   .reference-login main.reference-login-main .reference-login-card{
     width:calc(100vw - 92px)!important;
     max-width:none!important;
     min-width:0!important;
-    height:548px!important;
-    min-height:548px!important;
-    max-height:548px!important;
+    height:340px!important;
+    min-height:340px!important;
+    max-height:340px!important;
   }
 }

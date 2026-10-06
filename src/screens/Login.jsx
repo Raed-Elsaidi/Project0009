@@ -1,5 +1,5 @@
 import React,{useState}from'react'
-import{Eye,EyeOff,LogIn}from'lucide-react'
+import{Eye,EyeOff,LogIn,User,Lock}from'lucide-react'
 import{Card,Button}from'../components/UI'
 import SiteFooter from'../components/SiteFooter'
 import{loginEmployee}from'../services/data'
@@ -41,8 +41,21 @@ export default function Login(){
        <div className="reference-login-subtitle">مرحبًا بك، يرجى تسجيل الدخول للمتابعة</div>
        {error&&<div className="notice error portal-login-error">{error}</div>}
        <form onSubmit={submit} className="portal-login-form">
-         <label className="field"><span>اسم المستخدم</span><input value={username} onChange={e=>setUsername(e.target.value)} autoComplete="username" placeholder="اسم المستخدم"/></label>
-         <label className="field portal-password-field"><span>كلمة المرور</span><div className="portal-password-wrap"><input type={show?'text':'password'} value={password} onChange={e=>setPassword(e.target.value)} autoComplete="current-password" placeholder="كلمة المرور"/><button type="button" onClick={()=>setShow(v=>!v)} aria-label={show?'إخفاء كلمة المرور':'إظهار كلمة المرور'}>{show?<EyeOff size={18}/>:<Eye size={18}/>}</button></div></label>
+         <label className="field reference-input-field">
+           <span>اسم المستخدم</span>
+           <div className="reference-input-wrap">
+             <User size={19} aria-hidden="true"/>
+             <input value={username} onChange={e=>setUsername(e.target.value)} autoComplete="username" placeholder="اسم المستخدم"/>
+           </div>
+         </label>
+         <label className="field portal-password-field reference-input-field">
+           <span>كلمة المرور</span>
+           <div className="portal-password-wrap reference-input-wrap">
+             <Lock size={19} aria-hidden="true"/>
+             <input type={show?'text':'password'} value={password} onChange={e=>setPassword(e.target.value)} autoComplete="current-password" placeholder="كلمة المرور"/>
+             <button type="button" onClick={()=>setShow(v=>!v)} aria-label={show?'إخفاء كلمة المرور':'إظهار كلمة المرور'}>{show?<EyeOff size={18}/>:<Eye size={18}/>}</button>
+           </div>
+         </label>
          <div className="reference-login-options"><label><input type="checkbox"/> <span>تذكرني</span></label><button type="button" onClick={()=>setError('يرجى التواصل مع مسؤول النظام لإعادة تعيين كلمة المرور.')} className="reference-forgot">نسيت كلمة المرور؟</button></div>
          <Button loading={busy} type="submit" className="reference-login-button"><LogIn size={17}/> تسجيل الدخول</Button>
        </form>

@@ -2178,3 +2178,31 @@ body{
   }
 }
 
+
+/* ===== FINAL USER REQUEST — 2026-10-06 ===== */
+@media (min-width:701px){
+  .reference-login .reference-login-card{
+    width:470px!important;
+    height:350px!important;
+    min-height:350px!important;
+    max-width:470px!important;
+    box-sizing:border-box!important;
+    transform:translateY(-38px)!important;
+  }
+  .reference-login .reference-login-button,
+  .reference-login .reference-login-button.btn{
+    color:#fff!important;
+  }
+}
+
+/* ===== FINAL USER REQUEST — 2026-10-06 10:13 ===== */
+@media (min-width:701px){
+  /* Move the laptop login card 2 cm further upward (approx. 76px). */
+  .reference-login .reference-login-card{
+    transform:translateY(-114px)!important;
+  }
+  /* Move the program title 0.5 cm downward (approx. 19px). */
+  .reference-login .reference-program-title{
+    margin-top:22px!important;
+  }
+}

@@ -2265,3 +2265,52 @@ body{
     transform-origin:top center!important;
   }
 }
+
+/* ===== 2026-10-06 FINAL USER REQUEST ===== */
+/* زر تسجيل الدخول: النص أبيض بشكل صريح */
+.reference-login-button,
+.reference-login-button *{
+  color:#fff!important;
+}
+
+/* الهاتف فقط: تنزيل البسملة + الشعار + عبارة البرنامج 2 سم تقريباً */
+@media(max-width:700px){
+  .reference-login-top{
+    transform:translateY(76px)!important;
+  }
+
+  /* الهاتف فقط: تكبير بطاقة تسجيل الدخول 50% من الحجم السابق
+     مع إبقاء العرض ضمن الشاشة حتى لا يحدث قص أفقي */
+  .reference-login-card{
+    width:96vw!important;
+    max-width:96vw!important;
+    padding:68px 24px 58px!important;
+    border-radius:32px!important;
+  }
+  .reference-login-heading{font-size:36px!important;line-height:1.25!important}
+  .reference-login-subtitle{font-size:15px!important;margin:12px 0 24px!important}
+  .reference-login-card .portal-login-form{gap:18px!important}
+  .reference-login-card .field>span{font-size:14px!important;margin-bottom:8px!important}
+  .reference-login-card .field input,
+  .reference-login-card .portal-password-wrap input{
+    min-height:68px!important;
+    height:68px!important;
+    border-radius:16px!important;
+    font-size:17px!important;
+    padding-left:56px!important;
+  }
+  .reference-login-card .portal-password-wrap button{
+    width:46px!important;
+    height:46px!important;
+    left:8px!important;
+  }
+  .reference-login-options{font-size:14px!important;margin:4px 1px 6px!important}
+  .reference-login-options input{width:21px!important;height:21px!important}
+  .reference-forgot{font-size:13px!important}
+  .reference-login-button{
+    min-height:70px!important;
+    height:70px!important;
+    border-radius:15px!important;
+    font-size:18px!important;
+  }
+}

@@ -2821,3 +2821,64 @@ body{
     line-height:1.25!important;
   }
 }
+
+/* ===== MOBILE BOTTOM SECTION — match the requested reference shape ===== */
+@media screen and (max-width:700px){
+  .reference-login{
+    position:relative!important;
+    min-height:100dvh!important;
+    height:auto!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    padding-bottom:0!important;
+    background-position:42% center!important;
+    background-size:auto 100%!important;
+  }
+  /* Gold wave / trim */
+  .reference-login::after{
+    content:""!important;
+    position:absolute!important;
+    z-index:1!important;
+    left:-6%!important;
+    right:-6%!important;
+    bottom:0!important;
+    height:31%!important;
+    background:#d5a83d!important;
+    clip-path:polygon(0 25%,10% 21%,21% 27%,32% 35%,44% 39%,56% 37%,68% 29%,80% 17%,91% 7%,100% 0,100% 100%,0 100%)!important;
+    pointer-events:none!important;
+  }
+  /* Teal lower section, sitting just inside the gold trim */
+  .reference-login::before{
+    content:""!important;
+    position:absolute!important;
+    z-index:2!important;
+    left:-6%!important;
+    right:-6%!important;
+    bottom:0!important;
+    height:30.2%!important;
+    background:#064c4b!important;
+    clip-path:polygon(0 25%,10% 21%,21% 27%,32% 35%,44% 39%,56% 37%,68% 29%,80% 17%,91% 7%,100% 0,100% 100%,0 100%)!important;
+    pointer-events:none!important;
+  }
+  .reference-login .reference-footer{
+    position:absolute!important;
+    z-index:8!important;
+    left:3%!important;
+    right:3%!important;
+    bottom:10px!important;
+    width:auto!important;
+    min-height:68px!important;
+    margin:0!important;
+    padding:7px 8px!important;
+    border-radius:13px!important;
+    background:rgba(3,79,77,.72)!important;
+    border:1px solid rgba(222,178,71,.9)!important;
+    box-shadow:0 -4px 20px rgba(0,0,0,.10)!important;
+    box-sizing:border-box!important;
+  }
+  .reference-login .reference-footer .reference-footer-brand img{width:38px!important;height:27px!important}
+  .reference-login .reference-footer .reference-footer-brand strong{font-size:8px!important}
+  .reference-login .reference-footer .reference-footer-title{font-size:9px!important}
+  .reference-login .reference-footer .reference-footer a{font-size:6px!important}
+  .reference-login .reference-footer .reference-footer-copy{font-size:8px!important}
+}

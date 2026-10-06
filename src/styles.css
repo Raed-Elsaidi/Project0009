@@ -2359,30 +2359,27 @@ body{
   }
 }
 
-/* ===== FINAL LOGIN CARD DIMENSIONS — 2026-10-06 ===== */
-/* 1cm ≈ 38px, 3cm ≈ 113px, 4cm ≈ 151px */
-@media (min-width: 701px){
+/* ===== VERIFIED LOGIN DIMENSIONS FIX — 2026-10-06 ===== */
+/* Desktop: make the card visibly 1cm (~38px) shorter from the bottom. */
+@media (min-width:701px){
   .reference-login .reference-login-card{
-    /* Keep the existing content/layout, but visually shorten the card from the bottom by 1cm. */
-    max-height: calc(100vh - 38px) !important;
-    overflow: hidden !important;
-    padding-bottom: 0 !important;
+    max-height:none!important;
+    height:auto!important;
+    padding-bottom:0!important;
+    margin-bottom:38px!important;
   }
 }
 
-@media (max-width: 700px){
+/* Mobile: add 4cm (~151px) to the card's actual content box and 3cm (~113px) to its width. */
+@media (max-width:700px){
   .reference-login .reference-login-card{
-    /* Increase the actual card width by 3cm. */
-    width: calc(94vw + 113px) !important;
-    max-width: none !important;
-    box-sizing: border-box !important;
-
-    /* Increase the actual card height by 4cm. */
-    padding-bottom: 241px !important;
-    min-height: 0 !important;
-  }
-
-  .reference-login .reference-login-main{
-    overflow: visible !important;
+    width:calc(94vw + 113px)!important;
+    max-width:none!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    padding-bottom:241px!important;
+    box-sizing:border-box!important;
+    transform:none!important;
   }
 }

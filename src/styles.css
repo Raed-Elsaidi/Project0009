@@ -2135,277 +2135,32 @@ body{
  .reference-footer-title{font-size:9px!important;margin-bottom:2px}.reference-footer-links,.reference-footer-right{gap:3px!important}.reference-footer a{font-size:6px!important;gap:3px!important}.reference-footer a svg{width:11px;height:11px}.reference-footer-right{align-items:flex-start}
 }
 
-/* ===== تصغير مربع تسجيل الدخول على الكمبيوتر إلى 70% من الحجم الحالي ===== */
-.reference-login-card{
-  width:min(488px,92vw)!important;
-  padding:33px 32px 29px!important;
-  border-radius:29px!important;
-}
-.reference-login-heading{font-size:33.3px!important}
-.reference-login-subtitle{font-size:14px!important;margin:8px 0 19px!important}
-.reference-login-card .portal-login-form{gap:14px!important}
-.reference-login-card .field>span{font-size:13px!important;margin-bottom:6px!important}
-.reference-login-card .field input,
-.reference-login-card .portal-password-wrap input{
-  min-height:58px!important;height:58px!important;
-  border-radius:14px!important;font-size:15px!important;padding:0 15px 0 43px!important;
-}
-.reference-login-card .portal-password-wrap button{left:8px!important;width:38px!important;height:38px!important}
-.reference-login-options{font-size:13px!important;margin:2px 1px 2px!important}
-.reference-login-options input{width:19px!important;height:19px!important}
-.reference-forgot{font-size:12px!important}
-.reference-login-button{min-height:61px!important;border-radius:13px!important;font-size:17px!important}
-
-@media(max-width:700px){
-  /* على الهاتف لا نوسّع العرض خارج الشاشة؛ نزيد الحجم الداخلي والارتفاع بنسبة مماثلة */
-  .reference-login-card{
-    width:94vw!important;
-    padding:39px 32px 34px!important;
-    border-radius:37px!important;
-  }
-  .reference-login-heading{font-size:36px!important}
-  .reference-login-subtitle{font-size:15px!important;margin:9px 0 23px!important}
-  .reference-login-card .portal-login-form{gap:17px!important}
-  .reference-login-card .field>span{font-size:14px!important;margin-bottom:7px!important}
-  .reference-login-card .field input,
-  .reference-login-card .portal-password-wrap input{
-    min-height:72px!important;height:72px!important;
-    border-radius:17px!important;font-size:17px!important;padding:0 18px 0 55px!important;
-  }
-  .reference-login-card .portal-password-wrap button{left:9px!important;width:47px!important;height:47px!important}
-  .reference-login-options{font-size:14px!important;margin:2px 1px 3px!important}
-  .reference-login-options input{width:22px!important;height:22px!important}
-  .reference-forgot{font-size:13px!important}
-  .reference-login-button{min-height:70px!important;border-radius:16px!important;font-size:18px!important}
-}
-
-/* Desktop reference: place the program title directly beneath the Bismillah,
-   while keeping the two institutional logos at the sides. */
-@media(min-width:701px){
-  .reference-login-top{position:relative!important;}
-  .reference-program-title{
-    position:absolute!important;
-    top:70px!important;
-    left:50%!important;
-    transform:translateX(-50%)!important;
-    width:max-content!important;
-    max-width:80%!important;
-    margin:0!important;
-    z-index:6!important;
-  }
-}
-
-/* Mobile keeps the existing vertical arrangement. */
-@media(max-width:700px){
-  .reference-program-title{
-    position:static!important;
-    transform:none!important;
-    width:auto!important;
-    max-width:none!important;
-  }
-}
-
-/* ===== 2026-10-06: آخر تعديلات شاشة تسجيل الدخول ===== */
-/* اللابتوب: تقليل ارتفاع بطاقة تسجيل الدخول بحوالي 2 سم مع الحفاظ على العرض */
-@media(min-width:701px){
-  /* آخر تعديل للابتوب: تقليل ارتفاع بطاقة تسجيل الدخول بمقدار إضافي يقارب 1 سم */
-  .reference-login-card{
-    padding-top:4px!important;
-    padding-bottom:3px!important;
-    border-radius:25px!important;
-  }
-  .reference-login-heading{font-size:27px!important}
-  .reference-login-subtitle{font-size:12px!important;margin:3px 0 7px!important}
-  .reference-login-card .portal-login-form{gap:7px!important}
-  .reference-login-card .field>span{font-size:11px!important;margin-bottom:3px!important}
-  .reference-login-card .field input,
-  .reference-login-card .portal-password-wrap input{
-    min-height:44px!important;height:44px!important;
-    border-radius:12px!important;font-size:13px!important;
-  }
-  .reference-login-options{font-size:11px!important;margin:0 1px!important}
-  .reference-forgot{font-size:11px!important}
-  .reference-login-button{min-height:47px!important;border-radius:11px!important;font-size:14px!important}
-  /* إنزال الفوتر للأسفل حوالي 0.5 سم */
-  .reference-login .reference-footer{margin-bottom:0!important;transform:translateY(19px)!important}
-}
-
-/* الهاتف: تنزيل البسملة + الشعار + عبارة البرنامج حوالي 2 سم */
-@media(max-width:700px){
-  .reference-login-top{
-    transform:translateY(76px)!important;
-  }
-  /* تكبير بطاقة الدخول بنسبة 50% من حجمها الحالي، مع إبقاء عرضها داخل الشاشة */
-  .reference-login-card{
-    width:96vw!important;
-    padding:58px 24px 50px!important;
-    border-radius:30px!important;
-  }
-  .reference-login-heading{font-size:32px!important}
-  .reference-login-subtitle{font-size:13px!important;margin:10px 0 20px!important}
-  .reference-login-card .portal-login-form{gap:14px!important}
-  .reference-login-card .field>span{font-size:12px!important;margin-bottom:6px!important}
-  .reference-login-card .field input,
-  .reference-login-card .portal-password-wrap input{
-    min-height:60px!important;height:60px!important;
-    border-radius:14px!important;font-size:14px!important;padding-left:50px!important;
-  }
-  .reference-login-card .portal-password-wrap button{width:40px!important;height:40px!important}
-  .reference-login-options{font-size:12px!important;margin:3px 1px 5px!important}
-  .reference-login-options input{width:18px!important;height:18px!important}
-  .reference-forgot{font-size:11px!important}
-  .reference-login-button{min-height:60px!important;border-radius:13px!important;font-size:15px!important}
-}
-
-/* ===== FINAL REQUEST — MOBILE HEADER + LOGIN BUTTON ===== */
-.reference-login .reference-login-button,
-.reference-login .reference-login-button span,
-.reference-login .reference-login-button svg{
-  color:#fff !important;
-  -webkit-text-fill-color:#fff !important;
-}
-.reference-login .reference-login-button:hover{
-  color:#fff !important;
-  -webkit-text-fill-color:#fff !important;
-  filter:brightness(1.08) !important;
-  transform:translateY(-2px) !important;
-  box-shadow:0 11px 24px rgba(7,83,79,.30) !important;
-}
-.reference-login .reference-login-button:focus-visible{
-  color:#fff !important;
-  -webkit-text-fill-color:#fff !important;
-  outline:3px solid rgba(215,168,67,.55) !important;
-  outline-offset:2px !important;
-}
-
-@media screen and (max-width:700px){
-  /* Move the complete mobile branding block down by 2cm ≈ 76px. */
-  .reference-login .reference-login-top{
-    margin-top:76px !important;
-    transform:none !important;
-    top:auto !important;
-  }
-}
-
-/* FINAL MOBILE REQUEST — 2026-10-06 */
-@media (max-width:700px){
-  /* Move the complete top identity block down by 2cm ≈ 76px */
-  .reference-login .reference-login-top{
-    position:relative !important;
-    top:76px !important;
-  }
-
-  /* Make the login card 50% larger visually on mobile */
-  .reference-login .reference-login-card{
-    transform:scale(1.5) !important;
-    transform-origin:center center !important;
-    z-index:20 !important;
-  }
-
-  /* Force login-button text to white */
-  .reference-login .reference-login-button,
-  .reference-login .reference-login-button *{
-    color:#fff !important;
-  }
-
-  .reference-login .reference-login-button:hover,
-  .reference-login .reference-login-button:hover *{
-    color:#fff !important;
-    filter:brightness(1.10) !important;
-    cursor:pointer !important;
-  }
-}
-
-
-/* FINAL REQUEST: login sizing and password icon */
-.reference-login .reference-login-button{color:#fff!important;}
-.reference-login .reference-login-button *{color:#fff!important;}
-.reference-login .reference-login-button:hover{color:#fff!important;}
-
-@media (min-width:769px){
-  .reference-login-card{max-height:calc(100% - 38px)!important;padding-bottom:calc(24px - 38px)!important;overflow:hidden!important;}
-}
-
-@media (max-width:768px){
-  .reference-login-card{
-    width:calc(min(94vw,390px) + 113px)!important;
-    max-width:none!important;
-    min-height:calc(100% + 151px)!important;
-    padding-top:52px!important;
-    padding-bottom:48px!important;
-  }
-  .reference-login-main{overflow:visible!important;}
-}
-
-
-/* === USER REQUEST 2026-10-06 07:12 — FINAL DIRECT OVERRIDES === */
-/* Desktop: reduce the visible login card from the bottom by about 1cm (38px). */
+/* ===== FINAL LOGIN DIMENSIONS — 2026-10-06 ===== */
+/* Exact requested card dimensions. These final rules replace all previous dimension overrides. */
 @media (min-width:701px){
   .reference-login .reference-login-card{
-    max-height:calc(100vh - 38px)!important;
+    width:470px!important;
+    height:400px!important;
+    min-height:400px!important;
+    max-width:470px!important;
+    box-sizing:border-box!important;
+    margin-bottom:0!important;
+    clip-path:none!important;
     overflow:hidden!important;
-    padding-bottom:0!important;
   }
 }
 
-/* Mobile: increase login card height by about 4cm (151px) and width by about 3cm (113px). */
 @media (max-width:700px){
   .reference-login .reference-login-card{
-    width:calc(94vw + 113px)!important;
-    max-width:none!important;
-    min-height:calc(100% + 151px)!important;
-    padding-bottom:90px!important;
+    width:350px!important;
+    height:400px!important;
+    min-height:400px!important;
+    max-width:350px!important;
     box-sizing:border-box!important;
+    margin-bottom:0!important;
+    padding:23px 19px 20px!important;
+    clip-path:none!important;
+    overflow:hidden!important;
   }
 }
 
-/* ===== VERIFIED LOGIN DIMENSIONS FIX — 2026-10-06 ===== */
-/* Desktop: make the card visibly 1cm (~38px) shorter from the bottom. */
-@media (min-width:701px){
-  .reference-login .reference-login-card{
-    max-height:none!important;
-    height:auto!important;
-    padding-bottom:0!important;
-    margin-bottom:38px!important;
-  }
-}
-
-/* Mobile: add 4cm (~151px) to the card's actual content box and 3cm (~113px) to its width. */
-@media (max-width:700px){
-  .reference-login .reference-login-card{
-    width:calc(94vw + 113px)!important;
-    max-width:none!important;
-    min-width:0!important;
-    min-height:0!important;
-    height:auto!important;
-    padding-bottom:241px!important;
-    box-sizing:border-box!important;
-    transform:none!important;
-  }
-}
-
-/* ===== FINAL LOGIN DIMENSIONS — 2026-10-06 07:52 ===== */
-/* Desktop: shorten the card by 0.5cm from the top and 1cm from the bottom. */
-@media (min-width:701px){
-  .reference-login .reference-login-card{
-    /* Keep the existing content sizing; tighten the two outer edges. */
-    padding-top:0!important;
-    padding-bottom:0!important;
-    margin-top:19px!important;
-    margin-bottom:38px!important;
-  }
-}
-
-/* Mobile: increase card height by 4cm (~151px) and width by 3cm (~113px). */
-@media (max-width:700px){
-  .reference-login .reference-login-card{
-    width:calc(94vw + 113px)!important;
-    max-width:none!important;
-    min-width:0!important;
-    height:auto!important;
-    min-height:0!important;
-    padding-bottom:241px!important;
-    box-sizing:border-box!important;
-    transform:none!important;
-  }
-}

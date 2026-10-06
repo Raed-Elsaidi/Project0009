@@ -31,3 +31,11 @@ export default function Students(){
   <Card><div className="section-title"><div><h2><Users size={18}/> عرض بيانات الطلاب</h2><span>يمكن تعديل أو حذف أي طالب من الجدول.</span></div></div><div className="searchbar"><Search size={18}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="ابحث باسم الطالب أو رمزه أو رقم الهوية…"/></div>{loading?<div className="loading">جارٍ تحميل الطلاب…</div>:x.length===0?<Empty title="لا يوجد طلاب" text="اضغط «إضافة بيانات طالب» لإضافة أول طالب."/>:<div className="table-wrap"><table className="table"><thead><tr><th>م</th><th>اسم الطالب</th><th>الرمز</th><th>رقم الهوية</th><th>الجنس</th><th>الصف</th><th>الشعبة</th><th>السنة</th><th>الفصل</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody>{x.map((s,i)=><tr key={s.id}><td>{i+1}</td><td><strong>{s.full_name}</strong></td><td>{s.student_code||'—'}</td><td>{s.national_id||'—'}</td><td>{s.gender||'—'}</td><td>{s.grades?.name||'—'}</td><td>{s.sections?.name||'—'}</td><td>{s.school_years?.name||'—'}</td><td>{s.semesters?.name||'—'}</td><td><span className="badge">{s.is_active?'نشط':'غير نشط'}</span></td><td><div className="row-actions"><button className="icon-btn" title="تعديل" onClick={()=>openEdit(s)}><Edit3 size={15}/></button><button className="icon-btn danger-icon" title="حذف" onClick={()=>remove(s)}><Trash2 size={15}/></button></div></td></tr>)}</tbody></table></div>}</Card>
  </Page>
 }
+
+<style id="mobile-final-adjustments">
+@media (max-width: 700px){
+  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
+  /* Hide only the text label immediately associated with the guidance logo. */
+  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
+}
+</style>

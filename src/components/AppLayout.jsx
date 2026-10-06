@@ -56,3 +56,11 @@ export default function AppLayout({children}){
  const handleNav=useCallback(()=>{clickSound();setOpen(false)},[]);
  return <div className="shell"><button className="mobile-menu" onClick={()=>setOpen(true)} aria-label="فتح القائمة"><Menu size={21}/></button><aside className={open?'open':''}><div className="brand"><div className="brand-mark"><ShieldCheck size={22}/></div><div><h2>{labels[profile?.role]||'نظام الإرشاد'}</h2><small>إدارة ومتابعة الإرشاد التربوي</small></div><button className="close-menu" onClick={()=>setOpen(false)}><X size={19}/></button></div>{profile&&<div className="profile-mini"><div className="avatar">{(profile.full_name||'م').slice(0,1)}</div><div><strong>{profile.full_name}</strong><small>{labels[profile.role]}{profile.directorates?.name?` • ${profile.directorates.name}`:''}{profile.schools?.name?` • ${profile.schools.name}`:''}</small></div></div>}<nav>{items.map(([p,t,I,key])=><NavLink key={p} to={p} onClick={handleNav} className={({isActive})=>isActive?'active':''}><I size={17}/><span>{t}</span>{key==='messages'&&unreadMessages>0&&<b className="sidebar-message-badge">{unreadMessages>99?'99+':unreadMessages}</b>}</NavLink>)}</nav><div className="side-footer"><div className="security-chip"><ShieldCheck size={15}/><span>وضع التشغيل المباشر</span></div><button type="button" className="logout" onClick={()=>{try{localStorage.removeItem('system_profile_id')}catch{};window.location.href='/login'}}><LogOut size={16}/><span>تسجيل الخروج</span></button></div></aside><main>{children}<SiteFooter/></main><ReminderModal note={reminder} onClose={()=>setReminder(null)}/></div>
 }
+
+<style id="mobile-final-adjustments">
+@media (max-width: 700px){
+  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
+  /* Hide only the text label immediately associated with the guidance logo. */
+  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
+}
+</style>

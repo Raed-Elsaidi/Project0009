@@ -16,3 +16,11 @@ export default function ProgrammerDashboard(){
    <Card className="section-card"><h3>الحساب الحالي</h3><p><strong>{profile?.full_name||'مبرمج النظام'}</strong> — {profile?.username||'programmer'}</p><div className="notice">حساب المبرمج لا يظهر ضمن قوائم الموظفين العادية.</div></Card>
  </div>
 }
+
+<style id="mobile-final-adjustments">
+@media (max-width: 700px){
+  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
+  /* Hide only the text label immediately associated with the guidance logo. */
+  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
+}
+</style>

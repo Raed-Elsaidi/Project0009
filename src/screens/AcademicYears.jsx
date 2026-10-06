@@ -21,3 +21,11 @@ export default function AcademicYears(){
   <Card><div className="section-title"><div><h2>السنوات المسجلة</h2><span>السنة النشطة تستخدم افتراضيًا في النظام.</span></div></div>{loading?<div className="loading">جارٍ التحميل...</div>:rows.length===0?<Empty title="لا توجد سنوات دراسية" text="أضف السنة الدراسية الأولى."/>:<div className="table-wrap"><table className="table"><thead><tr><th>السنة الدراسية</th><th>الحالة</th><th>الفصول</th><th>إجراء</th></tr></thead><tbody>{rows.map(y=><tr key={y.id}><td><strong>{yearLabel(y)}</strong></td><td>{y.is_active?<span className="status-badge"><CheckCircle2 size={14}/> نشطة</span>:<span>سابقة</span>}</td><td>{(y.semesters||[]).map(s=>s.name).join(' • ')||'الأول • الثاني'}</td><td>{!y.is_active&&<Button variant="secondary" onClick={()=>activate(y.id)}>تفعيل</Button>}</td></tr>)}</tbody></table></div>}</Card>
  </Page>
 }
+
+<style id="mobile-final-adjustments">
+@media (max-width: 700px){
+  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
+  /* Hide only the text label immediately associated with the guidance logo. */
+  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
+}
+</style>

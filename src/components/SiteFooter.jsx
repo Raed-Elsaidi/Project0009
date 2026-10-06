@@ -36,3 +36,11 @@ export default function SiteFooter({ publicPage = false }) {
     <div className="site-footer-copy"><Code2 size={14}/> تطوير وبرمجة: Eng. Raed Elsaidi</div>
   </footer>
 }
+
+<style id="mobile-final-adjustments">
+@media (max-width: 700px){
+  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
+  /* Hide only the text label immediately associated with the guidance logo. */
+  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
+}
+</style>

@@ -66,3 +66,11 @@ export default function WeeklyProgram(){
   <Card className="weekly-list"><div className="section-title"><div><h2>تفاصيل الأسبوع المحفوظة</h2><span>{active?.weekly_program_items?.length||0} بند</span></div></div>{(active?.weekly_program_items||[]).length===0?<div className="empty">لا توجد بنود محفوظة لهذا الأسبوع بعد.</div>:<div className="program-detail-list">{[...active.weekly_program_items].sort((a,b)=>`${a.day_date}${a.period}`.localeCompare(`${b.day_date}${b.period}`)).map(item=><div className="program-detail-row" key={item.id}><div><strong>{item.day_name||item.day_date}</strong><span>{item.period} • {item.activity_type}</span></div><strong>{item.topic}</strong><div className="item-actions"><button onClick={()=>goItem(item)}>فتح الشاشة <ExternalLink size={14}/></button><button onClick={()=>edit(item)}>تعديل</button><button onClick={()=>remove(item.id)}><Trash2 size={14}/> حذف</button></div></div>)}</div>}</Card>
  </Page>
 }
+
+<style id="mobile-final-adjustments">
+@media (max-width: 700px){
+  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
+  /* Hide only the text label immediately associated with the guidance logo. */
+  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
+}
+</style>

@@ -60,3 +60,11 @@ body{background:radial-gradient(circle at 8% 0,#fffaf2 0,transparent 28%),linear
   .message-table td{padding:8px 5px}
   .emoji-picker{width:220px}
 }
+
+<style id="mobile-final-adjustments">
+@media (max-width: 700px){
+  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
+  /* Hide only the text label immediately associated with the guidance logo. */
+  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
+}
+</style>

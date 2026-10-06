@@ -2409,3 +2409,82 @@ body{
     z-index:10!important;
   }
 }
+
+
+/* ===== FINAL MOBILE LAYOUT — 2026-10-06 11:22 ===== */
+@media (max-width:700px){
+  /* Keep the laptop layout untouched; rebuild only the phone order. */
+  .reference-login{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+  }
+  .reference-login .reference-login-top{
+    display:contents!important;
+  }
+  .reference-login .reference-bismillah{
+    order:1!important;
+    width:100%!important;
+    text-align:center!important;
+    margin:12px 0 4px!important;
+  }
+  .reference-login .reference-program-title{
+    display:block!important;
+    order:2!important;
+    width:100%!important;
+    margin:4px 0 10px!important;
+    text-align:center!important;
+    white-space:nowrap!important;
+    transform:none!important;
+  }
+  .reference-login .reference-identities{
+    display:contents!important;
+  }
+  .reference-login .reference-ministry-brand{
+    order:3!important;
+    position:static!important;
+    transform:none!important;
+    right:auto!important;
+    left:auto!important;
+    margin:0 auto 10px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    text-align:center!important;
+  }
+  .reference-login .reference-guidance-brand{
+    order:4!important;
+    position:static!important;
+    transform:none!important;
+    right:auto!important;
+    left:auto!important;
+    margin:0 auto 12px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    text-align:center!important;
+  }
+  .reference-login .reference-login-main{
+    order:5!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    min-height:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    padding:8px 0 12px!important;
+  }
+  /* Current phone card: 350×400px. Increase both dimensions by 70%. */
+  .reference-login .reference-login-card{
+    width:595px!important;
+    max-width:none!important;
+    height:680px!important;
+    min-height:680px!important;
+    box-sizing:border-box!important;
+    margin:0 auto!important;
+    transform:none!important;
+  }
+  .reference-login .reference-footer{
+    order:6!important;
+  }
+}

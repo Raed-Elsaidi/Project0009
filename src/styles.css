@@ -2916,3 +2916,23 @@ body{
     display:none!important;
   }
 }
+
+
+/* ===== LAPTOP ONLY — final guidance logo position ===== */
+@media (min-width:701px){
+  /* From the current laptop position: +12cm right (~454px), +5cm down (~189px). */
+  .reference-login .reference-identities .reference-guidance-brand{
+    top:261px!important;
+    left:50%!important;
+    right:auto!important;
+    transform:translateX(calc(-50% + 265px))!important;
+    margin:0!important;
+  }
+
+  /* Remove any label/text directly under the guidance logo on laptop only. */
+  .reference-login .reference-guidance-brand > strong,
+  .reference-login .reference-guidance-brand > span,
+  .reference-login .reference-guidance-brand > p{
+    display:none!important;
+  }
+}

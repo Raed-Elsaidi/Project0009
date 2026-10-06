@@ -2488,3 +2488,30 @@ body{
     order:6!important;
   }
 }
+
+
+/* ===== FINAL MOBILE CARD SIZE FIX — phone only ===== */
+@media (max-width:700px){
+  /* Do not change any desktop rules. Allow the mobile card to use the full phone width. */
+  .reference-login{
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+  }
+  .reference-login .reference-login-main{
+    width:100%!important;
+    max-width:none!important;
+    overflow:visible!important;
+    padding:8px 10px 12px!important;
+    box-sizing:border-box!important;
+  }
+  .reference-login .reference-login-card{
+    width:calc(100vw - 20px)!important;
+    max-width:none!important;
+    min-width:0!important;
+    height:680px!important;
+    min-height:680px!important;
+    box-sizing:border-box!important;
+    margin:0 auto!important;
+    transform:none!important;
+  }
+}

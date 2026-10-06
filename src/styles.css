@@ -2311,3 +2311,35 @@ body{
     min-height:388px!important;
   }
 }
+
+
+/* ===== Final desktop header arrangement: 2026-10-06 ===== */
+@media (min-width:601px){
+  .reference-login-top{
+    position:relative!important;
+  }
+  /* العبارة في سطر واحد ومزاحة لليسار 2 سم */
+  .reference-program-title{
+    white-space:nowrap!important;
+    transform:translateX(-76px)!important;
+  }
+  /* شعار الإرشاد تحت العبارة مباشرة */
+  .reference-identities{
+    position:relative!important;
+    height:180px!important;
+    margin-top:4px!important;
+  }
+  .reference-identities .reference-guidance-brand{
+    position:absolute!important;
+    left:50%!important;
+    top:0!important;
+    transform:translateX(-50%)!important;
+  }
+  /* شعار واسم الوزارة إلى أقصى اليمين مع النزول 3 سم */
+  .reference-identities .reference-ministry-brand{
+    position:absolute!important;
+    right:0!important;
+    top:113px!important;
+    margin:0!important;
+  }
+}

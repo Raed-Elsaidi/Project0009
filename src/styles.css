@@ -2898,13 +2898,6 @@ body{
   }
 }
 
-<style id="mobile-final-adjustments">
-@media (max-width: 700px){
-  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
-  /* Hide only the text label immediately associated with the guidance logo. */
-  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
-}
-</style>
 
 /* ===== MOBILE FINAL REQUEST: footer raised an additional 1cm ===== */
 @media screen and (max-width:700px){
@@ -2917,22 +2910,106 @@ body{
   }
 }
 
-
-/* ===== LAPTOP ONLY — final guidance logo position ===== */
-@media (min-width:701px){
-  /* From the current laptop position: +12cm right (~454px), +5cm down (~189px). */
-  .reference-login .reference-identities .reference-guidance-brand{
-    top:261px!important;
-    left:50%!important;
-    right:auto!important;
-    transform:translateX(calc(-50% + 265px))!important;
-    margin:0!important;
+/* ===== MOBILE FOOTER — EXACT REFERENCE STYLE ===== */
+@media screen and (max-width:700px){
+  /* The reference image uses the footer as the full-width lower teal section. */
+  .reference-login::before,
+  .reference-login::after{
+    display:none!important;
   }
 
-  /* Remove any label/text directly under the guidance logo on laptop only. */
-  .reference-login .reference-guidance-brand > strong,
-  .reference-login .reference-guidance-brand > span,
-  .reference-login .reference-guidance-brand > p{
+  .reference-login .public-site-footer.reference-footer{
+    position:absolute!important;
+    z-index:8!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    width:100%!important;
+    height:28%!important;
+    min-height:190px!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:#064c4b!important;
+    box-shadow:none!important;
+    display:block!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
+    transform:none!important;
+  }
+
+  /* Gold curved trim at the top of the footer. */
+  .reference-login .public-site-footer.reference-footer::before{
+    content:""!important;
+    position:absolute!important;
+    z-index:0!important;
+    left:-8%!important;
+    top:-18px!important;
+    width:116%!important;
+    height:62px!important;
+    background:transparent!important;
+    border:0!important;
+    border-top:6px solid #e1b84e!important;
+    border-radius:50% 50% 0 0 / 100% 100% 0 0!important;
+    transform:rotate(-1deg)!important;
+  }
+
+  /* Hide the developer/footer columns on mobile; the reference has only the copyright text. */
+  .reference-login .public-site-footer.reference-footer > *{
     display:none!important;
+  }
+
+  .reference-login .public-site-footer.reference-footer::after{
+    content:"جميع الحقوق محفوظة © 2026\\A وزارة التربية والتعليم"!important;
+    white-space:pre!important;
+    position:absolute!important;
+    z-index:3!important;
+    left:0!important;
+    right:0!important;
+    bottom:28px!important;
+    text-align:center!important;
+    color:rgba(255,255,255,.82)!important;
+    font-size:13px!important;
+    line-height:2!important;
+    font-weight:500!important;
+    font-family:inherit!important;
+  }
+
+  @media (max-height:760px){
+    .reference-login .public-site-footer.reference-footer{
+      height:27%!important;
+      min-height:170px!important;
+    }
+    .reference-login .public-site-footer.reference-footer::after{
+      bottom:22px!important;
+      font-size:11px!important;
+    }
+  }
+}
+
+/* ===== MOBILE FOOTER — add programmer information while keeping reference style ===== */
+@media screen and (max-width:700px){
+  .reference-login .public-site-footer.reference-footer::after{
+    content:"جميع الحقوق محفوظة © 2026\\A وزارة التربية والتعليم\\A\\A تطوير وتنفيذ: Eng. Raed Elsaidi\\A Full Stack Web Developer\\A elsaidiraed@gmail.com\\A 00970 599 242 087"!important;
+    white-space:pre!important;
+    position:absolute!important;
+    z-index:3!important;
+    left:0!important;
+    right:0!important;
+    bottom:12px!important;
+    text-align:center!important;
+    color:rgba(255,255,255,.88)!important;
+    font-size:10px!important;
+    line-height:1.45!important;
+    font-weight:500!important;
+    font-family:inherit!important;
+  }
+  @media (max-height:760px){
+    .reference-login .public-site-footer.reference-footer::after{
+      bottom:8px!important;
+      font-size:8px!important;
+      line-height:1.35!important;
+    }
   }
 }

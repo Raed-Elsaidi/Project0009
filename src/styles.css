@@ -3136,3 +3136,225 @@ body{
 /* Official forms: one wide entry screen, preview only on demand */
 .official-workspace-entry-only{display:block!important;max-width:1500px;margin:0 auto}.generic-form-entry{direction:rtl}.generic-fields-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.generic-fields-grid .field{margin:0}.generic-fields-grid .field textarea{min-height:82px}.official-auto-field.wide{grid-column:span 2}.generic-paper-fields{display:grid;gap:10px;margin-top:18px}.generic-paper-field{display:grid;grid-template-columns:190px 1fr;border-bottom:1px solid #222;min-height:42px;align-items:center}.generic-paper-field strong{font-size:10px}.generic-paper-field span{font-size:10px;padding:7px}.generic-official-document{max-width:850px;margin:0 auto}
 @media(max-width:700px){.generic-fields-grid{grid-template-columns:1fr}.official-auto-field.wide{grid-column:auto}.generic-paper-field{grid-template-columns:115px 1fr}.generic-paper-field strong,.generic-paper-field span{font-size:8px}}
+
+/* ===== MOBILE HEADER + FOOTER VISIBILITY FIX — 2026-10-07 ===== */
+@media screen and (max-width:700px){
+  /* Keep the complete mobile page in normal document flow so the header and footer
+     cannot be covered by the absolute lower decoration. */
+  .reference-login{
+    min-height:100svh!important;
+    height:auto!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:flex-start!important;
+    background-position:42% top!important;
+    background-size:auto 100%!important;
+    padding:0!important;
+  }
+
+  .reference-login::before,
+  .reference-login::after{
+    display:none!important;
+  }
+
+  .reference-login .portal-home-overlay{
+    position:absolute!important;
+    inset:0!important;
+    z-index:0!important;
+    pointer-events:none!important;
+  }
+
+  /* Header: show all four elements on the phone. */
+  .reference-login .reference-login-top{
+    position:relative!important;
+    z-index:10!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    width:100%!important;
+    box-sizing:border-box!important;
+    padding:10px 12px 0!important;
+  }
+
+  .reference-login .reference-bismillah{
+    display:block!important;
+    order:1!important;
+    width:100%!important;
+    margin:0 0 4px!important;
+    text-align:center!important;
+    font-size:18px!important;
+    line-height:1.35!important;
+  }
+
+  .reference-login .reference-program-title{
+    display:block!important;
+    order:2!important;
+    width:100%!important;
+    margin:2px 0 6px!important;
+    text-align:center!important;
+    white-space:nowrap!important;
+    transform:none!important;
+    font-size:21px!important;
+    line-height:1.3!important;
+  }
+
+  .reference-login .reference-identities{
+    display:flex!important;
+    order:3!important;
+    position:relative!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:72px!important;
+    margin:0!important;
+    padding:0!important;
+    box-sizing:border-box!important;
+    align-items:flex-start!important;
+    justify-content:space-between!important;
+    direction:ltr!important;
+  }
+
+  .reference-login .reference-ministry-brand{
+    position:static!important;
+    order:1!important;
+    transform:none!important;
+    margin:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    text-align:center!important;
+    gap:1px!important;
+  }
+
+  .reference-login .reference-ministry-brand img{
+    display:block!important;
+    width:52px!important;
+    height:52px!important;
+    object-fit:contain!important;
+  }
+
+  .reference-login .reference-ministry-brand strong{
+    display:block!important;
+    font-size:9px!important;
+    line-height:1.2!important;
+  }
+
+  .reference-login .reference-ministry-brand span{
+    display:block!important;
+    font-size:9px!important;
+    line-height:1.2!important;
+  }
+
+  .reference-login .reference-guidance-brand{
+    position:static!important;
+    order:2!important;
+    transform:none!important;
+    width:auto!important;
+    margin:0!important;
+    padding:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    text-align:center!important;
+    gap:0!important;
+  }
+
+  .reference-login .reference-guidance-brand img{
+    display:block!important;
+    width:64px!important;
+    height:54px!important;
+    object-fit:contain!important;
+  }
+
+  .reference-login .reference-guidance-brand strong{
+    display:block!important;
+    font-size:10px!important;
+    line-height:1.2!important;
+    margin:0!important;
+  }
+
+  /* Login card remains the existing card; only place it below the visible header. */
+  .reference-login .reference-login-main{
+    position:relative!important;
+    z-index:5!important;
+    order:4!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    min-height:0!important;
+    padding:8px 10px 20px!important;
+    margin:0!important;
+    display:flex!important;
+    align-items:flex-start!important;
+    justify-content:center!important;
+    box-sizing:border-box!important;
+    transform:none!important;
+  }
+
+  .reference-login .reference-login-card{
+    position:relative!important;
+    z-index:6!important;
+    transform:none!important;
+    margin:0 auto!important;
+  }
+
+  /* Footer: visible after the login card, never over the header/card. */
+  .reference-login .public-site-footer.reference-footer{
+    position:relative!important;
+    z-index:8!important;
+    order:5!important;
+    flex:0 0 auto!important;
+    left:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    width:calc(100vw - 20px)!important;
+    min-height:72px!important;
+    height:auto!important;
+    margin:4px auto 10px!important;
+    padding:9px 8px!important;
+    box-sizing:border-box!important;
+    border-radius:13px!important;
+    background:#064c4b!important;
+    border:1px solid rgba(222,178,71,.9)!important;
+    box-shadow:0 -4px 20px rgba(0,0,0,.12)!important;
+    display:grid!important;
+    grid-template-columns:auto 1fr!important;
+    align-items:center!important;
+    gap:8px!important;
+    overflow:hidden!important;
+    transform:none!important;
+  }
+
+  .reference-login .public-site-footer.reference-footer::before{
+    display:none!important;
+  }
+
+  .reference-login .public-site-footer.reference-footer::after{
+    content:"جميع الحقوق محفوظة © 2026\\A وزارة التربية والتعليم\\A تطوير وتنفيذ: Eng. Raed Elsaidi\\A Full Stack Web Developer\\A elsaidiraed@gmail.com | 00970 599 242 087"!important;
+    position:static!important;
+    display:block!important;
+    grid-column:1 / -1!important;
+    white-space:pre-wrap!important;
+    text-align:center!important;
+    color:rgba(255,255,255,.9)!important;
+    font-size:8px!important;
+    line-height:1.45!important;
+    font-weight:500!important;
+    padding:0!important;
+  }
+
+  .reference-login .public-site-footer.reference-footer > *{
+    display:none!important;
+  }
+}
+
+@media screen and (max-width:380px){
+  .reference-login .reference-bismillah{font-size:16px!important}
+  .reference-login .reference-program-title{font-size:19px!important}
+  .reference-login .reference-ministry-brand img{width:48px!important;height:48px!important}
+  .reference-login .reference-guidance-brand img{width:58px!important;height:50px!important}
+  .reference-login .public-site-footer.reference-footer{width:calc(100vw - 14px)!important}
+  .reference-login .public-site-footer.reference-footer::after{font-size:7px!important}
+}

@@ -18,7 +18,7 @@ export default function Profile(){
     <h2>بيانات {role}</h2>
     {error&&<ErrorNotice>{error}</ErrorNotice>}{msg&&<div className="notice">{msg}</div>}
     {d?.role!=='COUNSELOR'?<div className="profile-readonly">
-      <div><b>الاسم</b><span>{d?.full_name||'—'}</span></div>
+      <div><b>الاسم</b><span>{d?.full_name||'—'}</span></div><div><b>اسم المدير</b><span>{d?.manager_name||'—'}</span></div>
       <div><b>الوظيفة</b><span>{role}</span></div>
       <div><b>رقم الهوية</b><span>{d?.national_id||'—'}</span></div>
       <div><b>رقم الهاتف</b><span>{d?.phone||'—'}</span></div>
@@ -30,7 +30,7 @@ export default function Profile(){
       <div className="form-grid two"><Input label="اسم المرشد" value={form.full_name} onChange={e=>setForm({...form,full_name:e.target.value})} disabled={!editable}/><Input label="رقم الهوية" value={form.national_id} onChange={e=>setForm({...form,national_id:e.target.value})} disabled={!editable}/></div>
       <Input label="رقم الهاتف" value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} disabled={!editable}/>
       <div className="form-grid two"><Select label="المديرية" value={form.directorate_id} disabled><option value="">اختر المديرية</option>{dirs.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</Select><Select label="المدرسة" value={form.school_id} disabled><option value="">اختر المدرسة</option>{schools.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</Select></div>
-      <Input label="المسمى الوظيفي" value={form.job_title} disabled/>
+      <Input label="المسمى الوظيفي" value={form.job_title} disabled/><Input label="اسم المدير" value={d?.manager_name||''} disabled/>
       {editable?<Button loading={saving}>حفظ البيانات الشخصية</Button>:<div className="notice">تم استخدام فرصة تعديل البيانات الشخصية. أي نقل للمدرسة أو تعديل إداري يتم بواسطة رئيس القسم.</div>}
     </form>}
    </Card>
@@ -39,10 +39,3 @@ export default function Profile(){
  </Page>
 }
 
-<style id="mobile-final-adjustments">
-@media (max-width: 700px){
-  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
-  /* Hide only the text label immediately associated with the guidance logo. */
-  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
-}
-</style>

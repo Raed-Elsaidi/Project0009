@@ -19,10 +19,3 @@ export default function Dashboard(){
   <div className="dashboard-grid"><Card><div className="section-title"><div><h2>البرنامج الحالي</h2><span>البرنامج المرتبط بالسنة والفصل المحددين</span></div><Link to="/weekly-program">عرض الكل</Link></div>{program?<div className="program-summary"><strong>{program.title||'برنامج أسبوعي'}</strong><span>{program.week_start} — {program.week_end}</span><div className="mini-count">{program.weekly_program_items?.length||0} بند مسجل</div></div>:<div className="empty"><div className="empty-icon">☀</div><strong>لا يوجد برنامج محفوظ لهذا الفصل</strong><span>ابدأ بتسجيل أعمال الأسبوع الحالي.</span><Link className="btn" to="/weekly-program">إنشاء البرنامج</Link></div>}</Card><Card><div className="section-title"><div><h2>اختصارات</h2><span>الوصول السريع للمهام المتكررة</span></div></div><div className="quick-grid"><Link to="/students">👩‍🎓 الطلاب</Link><Link to="/cases">📋 دراسة حالة</Link><Link to="/hot-cases">⚠️ حالة ساخنة</Link><Link to="/notes">📝 ملاحظات</Link><Link to="/reports">📊 التقارير</Link><Link to="/annual-plan">🎯 الخطة السنوية</Link></div></Card></div>
  </Page>
 }
-<style id="mobile-final-adjustments">
-@media (max-width: 700px){
-  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
-  /* Hide only the text label immediately associated with the guidance logo. */
-  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
-}
-</style>

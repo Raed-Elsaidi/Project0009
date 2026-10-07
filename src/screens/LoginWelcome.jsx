@@ -11,10 +11,3 @@ export default function LoginWelcome(){
  return <div className="login-welcome-screen"><div className="login-welcome-card"><div className="login-welcome-icon"><ShieldCheck size={34}/></div>{error?<><h1>تعذر الدخول</h1><p>{error}</p><button onClick={()=>navigate('/login',{replace:true})}>العودة لتسجيل الدخول</button></>:<><div className="eyebrow">دخول ناجح</div><h1>مرحبًا بك، {profile?.full_name||'موظف النظام'}</h1><p>أهلًا بك في نظام الإرشاد التربوي</p><strong className="login-role">{labels[profile?.role]||'موظف'}</strong><div className="countdown-circle"><svg viewBox="0 0 100 100" aria-hidden="true"><circle className="countdown-track" cx="50" cy="50" r="42"/><circle className="countdown-progress" cx="50" cy="50" r="42"/></svg><span>{count}</span></div><small>سيتم فتح الشاشة المناسبة لوظيفتك...</small></>}</div></div>
 }
 
-<style id="mobile-final-adjustments">
-@media (max-width: 700px){
-  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
-  /* Hide only the text label immediately associated with the guidance logo. */
-  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
-}
-</style>

@@ -440,6 +440,29 @@ export async function deleteDirectorate(id){const {error}=await db().from('direc
 export async function updateSchool(id,payload){const {data,error}=await db().from('schools').update({name:payload.name,code:payload.code,directorate_id:payload.directorate_id}).eq('id',id).select('*,directorates(id,name,code)').single();if(error) throw error;return data}
 export async function deleteSchool(id){const {error}=await db().from('schools').delete().eq('id',id);if(error) throw error}
 
+export async function verifyEmployeeIdentity({username,nationalId,phone}){
+  const {data,error}=await db().rpc('employee_verify_identity',{
+    p_username:username.trim().toLowerCase(),
+    p_national_id:nationalId.trim(),
+    p_phone:phone.trim()
+  })
+  if(error) throw error
+  if(!data?.success) throw new Error(data?.message||'البيانات المدخلة غير صحيحة.')
+  return data
+}
+
+export async function resetEmployeePassword({username,nationalId,phone,password}){
+  const {data,error}=await db().rpc('employee_reset_password',{
+    p_username:username.trim().toLowerCase(),
+    p_national_id:nationalId.trim(),
+    p_phone:phone.trim(),
+    p_password:password
+  })
+  if(error) throw error
+  if(!data?.success) throw new Error(data?.message||'البيانات المدخلة غير صحيحة.')
+  return data
+}
+
 export async function loginEmployee(username,password){
   const {data,error}=await db().rpc('employee_login',{p_username:username.trim().toLowerCase(),p_password:password})
   if(error) throw error
@@ -458,7 +481,7 @@ export async function createEmployeeAccount(payload){
     full_name:payload.full_name.trim(),national_id:payload.national_id?.trim()||null,
     employee_number:payload.employee_number?.trim()||null,phone:payload.phone?.trim()||null,gender:payload.gender||null,
     username,directorate_id:payload.directorate_id||null,
-    school_id:payload.school_id||null,role:payload.role,job_title:payload.job_title||'',is_active:true
+    school_id:payload.school_id||null,role:payload.role,job_title:payload.job_title||'',manager_name:payload.manager_name?.trim()||null,is_active:true
   }).select('id,full_name,username,role,directorate_id,school_id,job_title').single()
   if(error) throw error
   const {error:passwordError}=await db().rpc('employee_set_password',{p_profile_id:data.id,p_password:password})
@@ -475,7 +498,7 @@ export async function updateEmployeeProfile(profileId,payload){
   const patch={
     full_name:payload.full_name,national_id:payload.national_id||null,employee_number:payload.employee_number||null,
     phone:payload.phone||null,gender:payload.gender||null,school_id:payload.school_id||null,
-    username:payload.username?.trim().toLowerCase()||undefined,job_title:payload.job_title||undefined
+    username:payload.username?.trim().toLowerCase()||undefined,job_title:payload.job_title||undefined,manager_name:payload.manager_name?.trim()||null
   }
   const {data,error}=await db().from('profiles').update(patch).eq('id',profileId).select('*, directorates(id,name,code), schools(id,name,code,directorate_id)').single()
   if(error) throw error
@@ -577,10 +600,3 @@ export async function deleteStudent(id){
   if(error) throw error
 }
 
-<style id="mobile-final-adjustments">
-@media (max-width: 700px){
-  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
-  /* Hide only the text label immediately associated with the guidance logo. */
-  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
-}
-</style>

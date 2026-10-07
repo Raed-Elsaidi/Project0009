@@ -22,10 +22,3 @@ export const Select=({label,children,...p})=><label className="field">{label}<se
 export const Empty=({title='لا توجد بيانات بعد',text='ابدأ بإضافة أول سجل من النموذج أعلاه.'})=><div className="empty"><div className="empty-icon">✦</div><strong>{title}</strong><span>{text}</span></div>
 export const ErrorNotice=({children})=><div className="notice error">{children}</div>
 
-<style id="mobile-final-adjustments">
-@media (max-width: 700px){
-  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
-  /* Hide only the text label immediately associated with the guidance logo. */
-  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
-}
-</style>

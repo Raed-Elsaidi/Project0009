@@ -28,6 +28,7 @@ import DirectorateDashboard from './screens/DirectorateDashboard'
 import Messages from './screens/Messages'
 import Directorates from './screens/Directorates'
 import Schools from './screens/Schools'
+import OfficialForms from './screens/OfficialForms'
 
 const page = (Component) => <AppLayout><Component /></AppLayout>
 
@@ -44,6 +45,7 @@ export default function App() {
       <Route path="/administration" element={page(Administration)} />
       <Route path="/directorates" element={page(Directorates)} />
       <Route path="/schools" element={page(Schools)} />
+      <Route path="/official-forms/:formId" element={page(OfficialForms)} />
       <Route path="/dashboard" element={page(Dashboard)} />
       <Route path="/weekly-program" element={page(WeeklyProgram)} />
       <Route path="/students" element={page(Students)} />
@@ -69,10 +71,3 @@ export default function App() {
   </BrowserRouter>
 }
 
-<style id="mobile-final-adjustments">
-@media (max-width: 700px){
-  footer, .footer, .site-footer, .app-footer { transform: translateY(-38px) !important; }
-  /* Hide only the text label immediately associated with the guidance logo. */
-  .guidance-logo + .guidance-label, .guidance-logo-text, .guidance-logo + span, .guidance-logo + p { display:none !important; }
-}
-</style>

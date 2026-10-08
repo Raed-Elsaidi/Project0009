@@ -3563,3 +3563,23 @@ body{
   .reference-login .public-site-footer.reference-footer{height:90px!important;min-height:90px!important;max-height:90px!important;}
   .reference-login .public-site-footer.reference-footer::after{font-size:7px!important;}
 }
+
+
+/* ===== FINAL MOBILE LOGIN ORDER: footer at bottom + program title under institution ===== */
+@media screen and (max-width:700px){
+  .reference-login{min-height:100dvh!important;height:100dvh!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;}
+  .reference-login .reference-login-top{order:1!important;flex:0 0 auto!important;width:100%!important;padding:7px 10px 0!important;box-sizing:border-box!important;}
+  .reference-login .reference-bismillah{display:block!important;margin:0 0 4px!important;}
+  .reference-login .reference-identities{display:block!important;margin:0!important;}
+  .reference-login .reference-program-title{display:block!important;position:static!important;width:100%!important;margin:5px 0 7px!important;padding:0!important;text-align:center!important;white-space:nowrap!important;color:#6e4811!important;}
+  .reference-login .reference-login-main{order:2!important;flex:1 1 auto!important;width:100%!important;height:auto!important;min-height:0!important;padding:0 8px 100px!important;margin:0!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;overflow:hidden!important;box-sizing:border-box!important;}
+  .reference-login .reference-login-main > .reference-login-card,.reference-login main.reference-login-main .reference-login-card{margin:0 auto!important;position:relative!important;top:0!important;transform:none!important;}
+  .reference-login .public-site-footer.reference-footer{position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;z-index:100!important;order:3!important;width:100%!important;height:82px!important;min-height:82px!important;max-height:82px!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#064c4b!important;box-shadow:none!important;overflow:hidden!important;}
+  .reference-login .public-site-footer.reference-footer::before{top:-11px!important;height:25px!important;border-top-width:3px!important;}
+  .reference-login .public-site-footer.reference-footer::after{bottom:4px!important;font-size:7px!important;line-height:1.18!important;}
+}
+@media screen and (max-width:390px){
+  .reference-login .reference-program-title{margin-top:4px!important;margin-bottom:5px!important;}
+  .reference-login .public-site-footer.reference-footer{height:76px!important;min-height:76px!important;max-height:76px!important;}
+  .reference-login .public-site-footer.reference-footer::after{font-size:6.5px!important;}
+}

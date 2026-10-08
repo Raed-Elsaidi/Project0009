@@ -61,3 +61,11 @@ body{background:radial-gradient(circle at 8% 0,#fffaf2 0,transparent 28%),linear
   .emoji-picker{width:220px}
 }
 
+
+
+/* DESKTOP LOGIN CARD RAISED 3CM */
+@media (min-width: 769px){
+  .login-card{transform:translateY(-2.5cm) !important;}
+  .login-container .login-card{transform:translateY(-2.5cm) !important;}
+  [class*="login-card"]{transform:translateY(-2.5cm) !important;}
+}

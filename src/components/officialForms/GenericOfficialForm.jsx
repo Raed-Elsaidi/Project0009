@@ -1,5 +1,6 @@
 import React,{useMemo,useState}from'react'
 import{Button}from'../UI'
+import OfficialDocumentHeader from './OfficialDocumentHeader'
 import{Eye,Plus,Trash2,Save,Printer,Maximize2,X}from'lucide-react'
 
 export const FORM_CONFIGS={
@@ -62,8 +63,7 @@ export default function GenericOfficialForm({config,title,profile,academic,form,
 export function GenericOfficialPreview({title,config,profile,academic,form}){
  const rows=form.rows||[]; const vals=form.values||{}; const cols=config.columns||[];
  return <div className="official-document generic-official-document">
-  <div className="official-document-header"><div className="official-doc-side right"><strong>دولة فلسطين</strong><span>وزارة التربية والتعليم</span><span>الإدارة العامة للصحة الشمولية</span></div><img src="/assets/ministry-logo.png" className="official-ministry-logo"/><div className="official-doc-side left"><strong>State of Palestine</strong><span>Ministry of Education</span><span>Directorate General of Comprehensive Health</span></div></div>
-  <div className="official-doc-rule"/><div className="official-doc-heading"><h1>{title}</h1><p>للعام الدراسي {academic.yearName||'................'} — الفصل الدراسي {academic.semesterName||'................'}</p><p>{profile?.schools?.name||''} {profile?.directorates?.name?` — ${profile.directorates.name}`:''}</p></div>
+  <OfficialDocumentHeader/><div className="official-doc-heading"><h1>{title}</h1><p>للعام الدراسي {academic.yearName||'................'} — الفصل الدراسي {academic.semesterName||'................'}</p><p>{profile?.schools?.name||''} {profile?.directorates?.name?` — ${profile.directorates.name}`:''}</p></div>
   {cols.length?<table className="official-doc-table"><thead><tr>{cols.map(c=><th key={c}>{c}</th>)}</tr></thead><tbody>{(rows.length?rows:[{}]).map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{r[c]||' '}</td>)}</tr>)}</tbody></table>:<div className="generic-paper-fields">{config.fields.map(f=><div className="generic-paper-field" key={f}><strong>{f}</strong><span>{vals[f]||'.................................................................'}</span></div>)}</div>}
   <div className="official-signature-block"><div><strong>اسم وتوقيع المرشد التربوي</strong><span>{profile?.full_name||'........................'}</span></div><div><strong>اسم وتوقيع مدير المدرسة</strong><span>{profile?.manager_name||'........................'}</span></div></div>
  </div>

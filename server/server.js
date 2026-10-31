@@ -270,6 +270,4 @@ app.post('/api/admin/set-password', async (req, res) => {
 });
 
 app.get('/health', (_req, res) => res.json({ ok: true, configured: configReady }));
-app.listen(Number(AUTH_API_PORT), () => {
-  console.log(`Custom auth API listening on ${AUTH_API_PORT}; configured=${configReady}`);
-});
+export default app;

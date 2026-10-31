@@ -462,7 +462,7 @@ export async function resetEmployeePassword({username,nationalId,phone,password}
 }
 
 export async function loginEmployee(username, password, remember = true) {
-  const apiBase = String(import.meta.env.VITE_AUTH_API_URL || 'http://localhost:8787').replace(/\/$/, '')
+  const apiBase = import.meta.env.PROD ? '' : String(import.meta.env.VITE_AUTH_API_URL || 'http://localhost:8787').replace(/\/$/, '')
   let response
   try {
     response = await fetch(`${apiBase}/api/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: String(username || '').trim(), password: String(password || '') }) })

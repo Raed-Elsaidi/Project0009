@@ -16,7 +16,8 @@ export function AuthProvider({children}){
    })
    const onStorage=()=>setSession(getCustomSession())
    window.addEventListener('storage',onStorage)
-   return()=>{mounted=false;window.removeEventListener('storage',onStorage)}
+   window.addEventListener('counselor-session-change',onStorage)
+   return()=>{mounted=false;window.removeEventListener('storage',onStorage);window.removeEventListener('counselor-session-change',onStorage)}
  },[])
 
  const logout=async()=>{await logoutEmployee();setSession(null)}

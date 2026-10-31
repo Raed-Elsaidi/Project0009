@@ -1,0 +1,20 @@
+إعداد تسجيل دخول الموظفين — مشروع المرشد التربوي
+
+1) الواجهة:
+   - انسخ .env.example إلى .env.local في جذر المشروع.
+   - املأ VITE_SUPABASE_URL و VITE_SUPABASE_ANON_KEY من إعدادات Supabase.
+   - اترك VITE_AUTH_API_URL=http://localhost:8787 للتجربة المحلية.
+
+2) خادم المصادقة:
+   - افتح مجلد server.
+   - انسخ .env.example إلى .env.
+   - أدخل SUPABASE_URL و SUPABASE_SERVICE_ROLE_KEY و SUPABASE_JWT_SECRET من إعدادات مشروع Supabase.
+   - لا تضع SERVICE_ROLE_KEY في ملف الواجهة أو تشاركه.
+   - شغّل داخل مجلد server: npm install ثم npm start.
+
+3) شغّل الواجهة من مجلد المشروع: npm install ثم npm run dev.
+
+مهم:
+- خادم المصادقة يعتمد على دوال Supabase RPC المستخدمة في طريقة تسجيل دخول الموظفين، ومنها verify_employee_password و verify_supervisor_password.
+- لا يحتوي هذا الملف المضغوط على مفاتيحك السرية؛ أعد إنشاء ملفات البيئة محليًا.
+- لا ترفع ملفات .env أو .env.local إلى مستودع عام.

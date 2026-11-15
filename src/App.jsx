@@ -10,6 +10,7 @@ import Students from './screens/Students'
 import Cases from './screens/Cases'
 import HotCases from './screens/HotCases'
 import Interviews from './screens/Interviews'
+import FocusedInterviews from './screens/FocusedInterviews'
 import Absence from './screens/Absence'
 import Lateness from './screens/Lateness'
 import Dropout from './screens/Dropout'
@@ -28,7 +29,10 @@ import DirectorateDashboard from './screens/DirectorateDashboard'
 import Messages from './screens/Messages'
 import Directorates from './screens/Directorates'
 import Schools from './screens/Schools'
+import SchoolData from './screens/SchoolData'
 import OfficialForms from './screens/OfficialForms'
+import Correspondence from './screens/Correspondence'
+import TransferRequests from './screens/TransferRequests'
 
 const page = (Component) => <AppLayout><Component /></AppLayout>
 
@@ -45,6 +49,7 @@ export default function App() {
       <Route path="/administration" element={page(Administration)} />
       <Route path="/directorates" element={page(Directorates)} />
       <Route path="/schools" element={page(Schools)} />
+      <Route path="/school-data" element={page(SchoolData)} />
       <Route path="/official-forms/:formId" element={page(OfficialForms)} />
       <Route path="/dashboard" element={page(Dashboard)} />
       <Route path="/weekly-program" element={page(WeeklyProgram)} />
@@ -52,6 +57,8 @@ export default function App() {
       <Route path="/cases" element={page(Cases)} />
       <Route path="/hot-cases" element={page(HotCases)} />
       <Route path="/interviews" element={page(Interviews)} />
+      <Route path="/focused-interviews" element={page(FocusedInterviews)} />
+      <Route path="/transfer-requests" element={page(TransferRequests)} />
       <Route path="/absence" element={page(Absence)} />
       <Route path="/lateness" element={page(Lateness)} />
       <Route path="/dropout" element={page(Dropout)} />
@@ -62,6 +69,7 @@ export default function App() {
       <Route path="/reports" element={page(Reports)} />
       <Route path="/notes" element={page(Notes)} />
       <Route path="/messages" element={page(Messages)} />
+      <Route path="/correspondence" element={page(Correspondence)} />
       <Route path="/profile" element={page(Profile)} />
       <Route path="/permissions" element={page(Permissions)} />
       <Route path="/settings" element={page(Settings)} />

@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700&display=swap');
+@import "./premium-reference.css";
 :root{--bg:#f4f8f6;--surface:#fff;--surface2:#edf6f2;--surface3:#f7fbf9;--text:#203a34;--muted:#71837e;--line:#dceae5;--primary:#4f8f7e;--primary2:#376f61;--accent:#d8eee7;--danger:#b85e62;--warning:#b98545;--shadow:0 14px 38px rgba(32,73,61,.08);--radius:20px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:"Cairo","Tajawal",Arial,sans-serif;background:linear-gradient(rgba(244,248,246,.50),rgba(244,248,246,.56)),url("./assets/educational-guidance-background.png") center center/cover fixed no-repeat;color:var(--text);direction:rtl}button,input,textarea,select{font:inherit}button{transition:.2s ease}button:hover:not(:disabled){transform:translateY(-1px)}button:disabled{opacity:.65;cursor:not-allowed}
 .shell{display:flex;min-height:100vh;background:transparent}.shell aside{width:255px;display:flex;flex-direction:column;background:rgba(234,245,241,.93);border-left:1px solid var(--line);padding:18px 14px;position:sticky;top:0;height:100vh;overflow:auto;backdrop-filter:blur(18px);z-index:20}.brand{display:flex;align-items:center;gap:11px;padding:8px 10px 16px}.brand-mark{width:44px;height:44px;border-radius:15px;background:linear-gradient(145deg,#71ad9d,#3b7466);display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 10px 20px rgba(59,116,102,.2)}.brand h2{font-size:17px;margin:0}.brand small{color:var(--muted);font-size:10px}.close-menu{display:none;margin-right:auto;border:0;background:transparent;color:var(--muted)}.profile-mini{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.65);border:1px solid var(--line);padding:10px;border-radius:16px;margin:0 2px 14px}.avatar{width:34px;height:34px;border-radius:11px;background:#d8eee7;color:#376f61;display:grid;place-items:center;font-weight:800}.profile-mini strong{display:block;font-size:12px}.profile-mini small{display:block;color:var(--muted);font-size:10px;margin-top:1px}.shell nav{display:grid;gap:4px;flex:1;min-height:0;overflow:auto}.shell nav a{display:flex;gap:10px;align-items:center;padding:10px 11px;border-radius:13px;color:#416158;text-decoration:none;font-size:12px;font-weight:700}.shell nav a.active{background:#fff;color:var(--primary2);box-shadow:0 7px 20px rgba(37,78,64,.08)}.shell nav a:hover{background:rgba(255,255,255,.72)} .sidebar-message-badge{margin-right:auto;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#a85d4d;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;line-height:1;box-shadow:0 3px 8px rgba(100,50,40,.18)}.side-footer{margin-top:auto;padding-top:14px}.security-chip{display:flex;align-items:center;justify-content:center;gap:6px;color:#55786e;background:#e4f2ed;border-radius:11px;padding:8px;font-size:10px;margin-bottom:8px}.logout{width:100%;border:1px solid #eadede;background:#fff;padding:10px;border-radius:13px;color:#a45353;display:flex;justify-content:center;gap:8px;cursor:pointer}.mobile-menu{display:none;position:fixed;top:12px;right:12px;z-index:30;border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px;color:var(--primary2)}
@@ -170,7 +171,7 @@ body{background:radial-gradient(circle at 5% 0,#efe4d5 0,transparent 25%),linear
 @media(max-width:850px){.shell aside{width:285px}.shell main{padding:20px 16px}.login-side{border-left:0}.pagehead{margin-bottom:18px}}
 @media(max-width:560px){.shell main{padding:14px 11px}.page h1{font-size:23px}.card{border-radius:17px;padding:16px}.login-form-wrap{padding:14px}.login-card{border-radius:22px}}
 
-@import "./premium-reference.css";
+
 
 /* ===== Login background + Ministry portal redesign ===== */
 .login-page-bg{position:relative;min-height:100vh;overflow:hidden;background:#5b4636 url('/assets/login-background.png') center/cover no-repeat fixed;display:block!important}
@@ -3583,3 +3584,262 @@ body{
   .reference-login .public-site-footer.reference-footer{height:76px!important;min-height:76px!important;max-height:76px!important;}
   .reference-login .public-site-footer.reference-footer::after{font-size:6.5px!important;}
 }
+
+/* Structured counselor sidebar groups */
+.sidebar-menu-group{margin:3px 0;color:inherit}
+.sidebar-menu-group>summary{list-style:none;display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:12px;cursor:pointer;font-weight:700;user-select:none}
+.sidebar-menu-group>summary::-webkit-details-marker{display:none}
+.sidebar-menu-group>summary svg:last-child{margin-inline-start:auto;transition:transform .2s}
+.sidebar-menu-group[open]>summary svg:last-child{transform:rotate(180deg)}
+.sidebar-menu-group>summary:hover,.sidebar-menu-group[open]>summary{background:rgba(0,105,102,.09)}
+.sidebar-menu-children{display:grid;gap:3px;padding:4px 10px 8px 0;margin-inline-start:17px;border-inline-start:2px solid rgba(0,105,102,.16)}
+.sidebar-menu-children a{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;text-decoration:none;color:inherit;font-size:.92em}
+.sidebar-menu-children a.active{background:rgba(0,105,102,.12);font-weight:700}
+
+
+/* Annual plan table: compact month columns, wider activity/owner/notes */
+.annual-plan-table { width:100%; table-layout:fixed; }
+.annual-plan-table th, .annual-plan-table td { overflow-wrap:anywhere; }
+.annual-plan-table th:first-child, .annual-plan-table td:first-child { width:24%; min-width:110px; }
+.annual-plan-table th:nth-child(n+2):nth-child(-n+10),
+.annual-plan-table td:nth-child(n+2):nth-child(-n+10) { width:4.2%; min-width:25px; padding-left:2px; padding-right:2px; text-align:center; }
+.annual-plan-table th:nth-child(11), .annual-plan-table td:nth-child(11) { width:16%; min-width:85px; }
+.annual-plan-table th:nth-child(12), .annual-plan-table td:nth-child(12) { width:14%; min-width:75px; }
+
+
+/* Guidance meetings follow-up: compact official heading and identity,
+   with narrow administrative columns and a wider activities column. */
+.guidance-meetings-official .guidance-meetings-title{
+  text-align:center!important;
+  font-size:20px!important;
+  line-height:1.45!important;
+  font-weight:800!important;
+  margin:20px 0 14px!important;
+}
+.guidance-meetings-official .guidance-meetings-counselor{
+  text-align:center!important;
+  font-size:14px!important;
+  line-height:1.5!important;
+  margin:0 0 20px!important;
+}
+.guidance-meetings-official .guidance-meetings-counselor strong{font-size:14px!important;}
+.guidance-meetings-official .guidance-meetings-table{width:100%!important;table-layout:fixed!important;}
+.guidance-meetings-official .guidance-meetings-table th{
+  font-size:9px!important;
+  line-height:1.35!important;
+  padding:6px 2px!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+.guidance-meetings-official .guidance-meetings-table td{
+  font-size:8px!important;
+  line-height:1.4!important;
+  padding:5px 2px!important;
+  vertical-align:top!important;
+  overflow-wrap:anywhere!important;
+}
+.guidance-meetings-official .guidance-meetings-table td:nth-child(7){text-align:right!important;}
+@media screen and (max-width:700px){
+  .guidance-meetings-official .guidance-meetings-title{font-size:18px!important;margin:16px 0 11px!important;}
+  .guidance-meetings-official .guidance-meetings-counselor{font-size:12px!important;margin-bottom:16px!important;}
+  .guidance-meetings-official .guidance-meetings-counselor strong{font-size:12px!important;}
+  .guidance-meetings-official .guidance-meetings-table th{font-size:7.5px!important;padding:5px 1px!important;line-height:1.25!important;}
+  .guidance-meetings-official .guidance-meetings-table td{font-size:6.8px!important;padding:4px 1px!important;line-height:1.3!important;}
+}
+@media print{
+  .guidance-meetings-official .guidance-meetings-title{font-size:16pt!important;margin:12pt 0 10pt!important;}
+  .guidance-meetings-official .guidance-meetings-counselor,
+  .guidance-meetings-official .guidance-meetings-counselor strong{font-size:11pt!important;}
+  .guidance-meetings-official .guidance-meetings-table th{font-size:8pt!important;}
+  .guidance-meetings-official .guidance-meetings-table td{font-size:7.5pt!important;}
+}
+
+/* Directorate and school identification above the group-guidance follow-up title. */
+.guidance-meetings-school-meta{ text-align:center; font-weight:700; font-size:13px; line-height:1.55; margin:12px 0 4px; color:#202020; }
+.guidance-meetings-school-meta div+div{ margin-top:2px; }
+@media screen and (max-width:700px){.guidance-meetings-school-meta{font-size:11px;margin:9px 0 3px;}}
+
+/* Academic year line on the group-guidance meetings official form. */
+.guidance-meetings-academic-year{margin-top:3px;font-size:12px;font-weight:600;}
+@media screen and (max-width:700px){.guidance-meetings-academic-year{font-size:10px;}}
+
+/* Parliament team meeting form */
+.parliament-team-meetings-table{min-width:760px!important;table-layout:fixed}
+.parliament-team-meetings-table td{vertical-align:top}
+.parliament-team-meetings-table td:nth-child(1) .field input,
+.parliament-team-meetings-table td:nth-child(2) .field input{min-width:0;width:100%;padding-inline:4px;text-align:center}
+.parliament-team-meetings-table td:nth-child(5) .field textarea{width:100%;min-width:0;min-height:82px;resize:vertical;line-height:1.6}
+.parliament-attendance-options{display:grid;gap:6px;max-height:150px;overflow:auto;padding:4px;min-width:0}
+.parliament-attendance-options label{display:flex;align-items:center;gap:6px;font-size:10px;white-space:normal;line-height:1.4}
+.parliament-attendance-options input{width:15px;height:15px;flex:0 0 auto;accent-color:#08716d}
+.parliament-attendance-empty{font-size:9px;color:#8b7d70;line-height:1.5}
+.parliament-team-meetings-preview{table-layout:fixed;width:100%}
+.parliament-team-meetings-preview th,.parliament-team-meetings-preview td{word-break:break-word;white-space:normal}
+.generic-save-toast{position:fixed;z-index:100001;top:18px;left:50%;transform:translateX(-50%);width:max-content;max-width:min(92vw,440px);padding:13px 20px;border-radius:14px;background:#fffaf0;color:#174b45;border:1px solid #dfd1bd;box-shadow:0 10px 32px rgba(0,0,0,.2);font-weight:800;text-align:center;font-size:13px;direction:rtl}
+
+/* Parliament student plan: formal landscape table matching the supplied reference. */
+.parliament-plan-table{min-width:1080px;direction:rtl;}
+.parliament-plan-table th,.parliament-plan-table td{white-space:normal;vertical-align:top;}
+.parliament-plan-table td .field textarea{width:100%;min-height:104px;resize:vertical;line-height:1.5;white-space:pre-wrap;}
+.parliament-plan-table td:nth-child(3) .field input{min-height:42px;text-align:center;}
+.parliament-plan-document{page:parliamentPlan;max-width:1120px;padding:18px 20px 22px;}
+.parliament-plan-document .official-doc-heading h1{font-size:20px;font-weight:800;margin-bottom:3px;}
+.parliament-plan-document .official-doc-heading p{font-size:10px;margin:3px 0;}
+.parliament-plan-document .parliament-plan-goal{display:block;margin:7px 0 10px;border-top:1.5px solid #222;border-bottom:1.5px solid #222;padding:5px 8px;}
+.parliament-plan-document .parliament-plan-goal .generic-paper-field{display:grid;grid-template-columns:105px 1fr;min-height:30px;border:0;align-items:start;}
+.parliament-plan-document .parliament-plan-goal .generic-paper-field strong{font-size:10px;font-weight:800;}
+.parliament-plan-document .parliament-plan-goal .generic-paper-field span{font-size:10px;text-align:right;padding:2px 5px;}
+.parliament-plan-preview-table{margin-top:7px;}
+.parliament-plan-preview-table th{background:#e7e7e7!important;font-weight:800;}
+.parliament-plan-preview-table th,.parliament-plan-preview-table td{font-size:8.5px;line-height:1.45;padding:5px 4px;vertical-align:top;text-align:right;}
+.parliament-plan-preview-table td:nth-child(3){text-align:center;vertical-align:middle;}
+.parliament-plan-document .official-signature-block{margin-top:12px;}
+@page parliamentPlan{size:A4 landscape;margin:10mm;}
+@media(max-width:700px){.parliament-plan-document{padding:12px 9px;}.parliament-plan-preview-table th,.parliament-plan-preview-table td{font-size:6.5px;padding:3px 2px;}.parliament-plan-document .parliament-plan-goal .generic-paper-field{grid-template-columns:82px 1fr;}.parliament-plan-document .parliament-plan-goal .generic-paper-field strong,.parliament-plan-document .parliament-plan-goal .generic-paper-field span{font-size:8px;}}
+
+/* Parliament members roster: compact section column and wider role column */
+.parliament-members-table th,
+.parliament-members-table td{white-space:normal;word-break:break-word;vertical-align:middle;}
+.parliament-members-table td:nth-child(3){text-align:center;}
+.parliament-members-table td:nth-child(4) .field select{width:100%;min-width:0;padding:8px 5px;font-size:12px;}
+.parliament-members-table td:nth-child(5) .field input{width:100%;min-width:0;padding-inline:5px;font-size:12px;}
+
+/* Parliament achievements form and attached supporting files */
+.parliament-achievements-table{min-width:760px!important;table-layout:fixed}
+.parliament-achievements-table td{vertical-align:top}
+.parliament-achievements-table td .field textarea{width:100%;min-width:0;min-height:82px;resize:vertical;line-height:1.6;white-space:pre-wrap}
+.parliament-achievement-attachments{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding:12px;border:1px dashed var(--line);border-radius:12px;background:#fffdf8}
+.parliament-achievement-attachment-hint{font-size:10px;color:var(--muted)}
+.parliament-achievement-attachment-list{display:grid;gap:7px;flex-basis:100%}
+.parliament-achievement-attachment{display:flex;align-items:center;gap:8px;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fff}
+.parliament-achievement-attachment span{flex:1;min-width:0;overflow-wrap:anywhere;font-size:11px}
+.parliament-achievement-attachment button{border:0;background:transparent;color:var(--primary2);padding:4px;cursor:pointer}
+.parliament-achievements-preview th,.parliament-achievements-preview td{white-space:normal;word-break:break-word;vertical-align:top}
+.parliament-achievement-preview-attachments{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:7px;border-top:1px solid #aaa;font-size:9px}
+
+/* Parliament achievement attachments: render actual image/PDF content in the official print preview. */
+.parliament-achievement-print-attachments{margin-top:14px;padding-top:9px;border-top:1px solid #999;display:grid;gap:10px;break-inside:auto}
+.parliament-achievement-print-attachments h3{margin:0;font-size:11px;text-align:right}
+.parliament-achievement-print-attachment{display:grid;gap:6px;break-inside:avoid;page-break-inside:avoid;font-size:9px}
+.parliament-achievement-print-attachment>strong{font-size:9px;overflow-wrap:anywhere}
+.parliament-achievement-print-attachment img{display:block;max-width:100%;max-height:240mm;width:auto;height:auto;object-fit:contain;margin:0 auto;border:1px solid #bbb}
+.parliament-achievement-print-attachment iframe{display:block;width:100%;height:240mm;border:1px solid #aaa;background:#fff}
+@media print{
+ .parliament-achievement-print-attachments{break-before:auto;page-break-before:auto}
+ .parliament-achievement-print-attachment img{max-height:250mm;max-width:100%;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+ .parliament-achievement-print-attachment iframe{height:250mm}
+ .parliament-achievement-print-attachment a{color:#111;text-decoration:underline}
+}
+
+/* Make attached image previews explicit and reliable in the official document. */
+.parliament-achievement-image-link{display:block;width:100%;text-align:center;text-decoration:none;}
+.parliament-achievement-print-attachment img{display:block!important;visibility:visible!important;opacity:1!important;max-width:100%;max-height:240mm;width:auto;height:auto;object-fit:contain;margin:8px auto;border:1px solid #bbb;background:#fff;}
+@media print{
+ .parliament-achievement-image-link{display:block!important;}
+ .parliament-achievement-print-attachment img{display:block!important;visibility:visible!important;opacity:1!important;max-height:250mm!important;}
+}
+
+/* Focused interviews: mobile-friendly stacked review rows and centered official title */
+.focused-interviews-official .guidance-meetings-title{
+  display:block!important;width:100%!important;text-align:center!important;
+  font-size:18px!important;line-height:1.45!important;margin:16px auto 14px!important;
+}
+.focused-file-actions{display:flex;gap:7px;align-items:center;justify-content:flex-start;flex-wrap:wrap}
+.focused-review-entry{display:block;width:100%;box-sizing:border-box;margin:14px 0;padding:16px 18px;border:1px solid #dfe7e4;border-radius:16px;background:#f7faf9;color:#35554f}
+.focused-review-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid #dce6e2}
+.focused-review-heading strong{font-size:17px;color:#075d59}
+.focused-review-heading time{font-size:13px;color:#687873;direction:ltr}
+.focused-review-row{display:block;padding:8px 0;border-bottom:1px solid #e8eeeb}
+.focused-review-row:last-child{border-bottom:0}
+.focused-review-row strong{display:block;font-size:14px;color:#355c55;margin-bottom:5px}
+.focused-review-row p{display:block;margin:0;color:#586963;font-size:15px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.focused-transfer-modal{width:min(520px,94vw);padding:22px;background:#fffdf8;border-radius:20px;border:1px solid #e6d8c3;box-shadow:0 20px 60px #102b2833}
+.focused-transfer-modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.focused-transfer-modal-head h3{display:flex;align-items:center;gap:8px;margin:0;color:#075d59}
+.focused-transfer-notice{padding:13px 15px;background:#fff4d9;border-radius:12px;color:#6d5725;line-height:1.8}
+@media(max-width:600px){
+ .focused-file-actions{display:grid;grid-template-columns:1fr 1fr}
+ .focused-file-actions .btn{width:100%;justify-content:center;padding:9px 7px;font-size:11px}
+ .focused-review-entry{padding:13px 14px;margin:11px 0}
+ .focused-review-heading strong{font-size:15px}
+ .focused-review-row strong{font-size:13px}
+ .focused-review-row p{font-size:14px}
+ .focused-interviews-official .guidance-meetings-title{font-size:16px!important;margin:13px auto 11px!important}
+}
+
+/* Focused interviews: horizontal review rows and real destination selectors */
+.focused-review-row{display:grid;grid-template-columns:minmax(145px,34%) minmax(0,1fr);align-items:start;gap:14px;padding:12px 0;border-bottom:1px solid #e8eeeb}
+.focused-review-row strong{margin:0;text-align:right}
+.focused-review-row p{text-align:right}
+.focused-transfer-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+.focused-transfer-fields select,.focused-transfer-fields input{width:100%}
+@media(max-width:600px){.focused-review-row{grid-template-columns:minmax(112px,38%) minmax(0,1fr);gap:8px}.focused-review-row strong{font-size:13px}.focused-review-row p{font-size:14px}.focused-transfer-fields{grid-template-columns:1fr}}
+
+.focused-interviews-official .guidance-meetings-title{text-align:center;margin-inline:auto;font-size:clamp(18px,2.4vw,25px);line-height:1.5}
+
+/* Focused interviews: one horizontal table row per review record */
+.focused-reviews-table-wrap{width:100%;overflow-x:auto;margin-top:14px;border:1px solid #dfe7e4;border-radius:14px;background:#f7faf9}
+.focused-reviews-table{width:100%;min-width:900px;border-collapse:collapse;direction:rtl;table-layout:fixed}
+.focused-reviews-table th,.focused-reviews-table td{padding:13px 11px;text-align:right;vertical-align:top;border-bottom:1px solid #dfe7e4;white-space:normal;overflow-wrap:anywhere;line-height:1.65}
+.focused-reviews-table th{background:#eaf1ee;color:#28534c;font-size:13px;font-weight:800}
+.focused-reviews-table td{color:#586963;font-size:14px}
+.focused-reviews-table tbody tr:last-child td{border-bottom:0}
+.focused-reviews-table td:first-child{font-weight:800;color:#075d59;white-space:nowrap}
+.focused-reviews-table time{direction:ltr;display:inline-block;white-space:nowrap}
+@media(max-width:700px){.focused-reviews-table{min-width:860px}.focused-reviews-table th,.focused-reviews-table td{padding:10px 8px;font-size:12px}}
+
+.focused-transfer-current-place{display:inline-block;margin-top:8px;color:#687b75;font-size:.92em;line-height:1.8}
+
+/* Incoming student transfer requests */
+.transfer-requests-page{max-width:1100px;margin:0 auto;padding:24px 18px}
+.transfer-requests-page .page-header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+.transfer-requests-page .eyebrow{display:flex;align-items:center;gap:8px;color:#987a32;font-weight:800}
+.transfer-requests-page h1{color:#145b56;margin:8px 0;font-size:clamp(23px,4vw,32px)}
+.transfer-requests-page .page-header p{color:#71817c;margin:0}
+.transfer-request-summary{display:flex;align-items:center;gap:12px;padding:16px 20px;background:#f5e7c2;border-radius:16px;margin-bottom:18px;color:#185c56}
+.transfer-request-summary strong{font-size:28px}
+.transfer-request-list{display:grid;gap:16px}
+.transfer-request-card{background:#fffefa;border:1px solid #e4ddce;border-radius:20px;padding:20px;box-shadow:0 8px 24px #173c3510}
+.transfer-request-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:1px solid #eee8dc;padding-bottom:14px}
+.transfer-request-top h3{margin:5px 0;color:#145b56;font-size:21px}
+.transfer-request-top p{margin:0;color:#73817c}
+.request-number{font-size:12px;color:#9b7d35;font-weight:800}
+.request-status{border-radius:999px;padding:7px 12px;font-size:12px;font-weight:800;white-space:nowrap}
+.request-status.pending{background:#fff1d1;color:#8b6820}.request-status.accepted{background:#e3f4e9;color:#267044}.request-status.rejected{background:#fbe8e6;color:#a33b32}
+.transfer-request-details{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:16px 0}
+.transfer-request-details>div{display:grid;grid-template-columns:20px 1fr;gap:4px 8px;color:#71817c}
+.transfer-request-details strong{grid-column:2;color:#294f49}
+.transfer-request-actions{display:flex;gap:10px;flex-wrap:wrap;border-top:1px solid #eee8dc;padding-top:16px}
+.transfer-request-actions button,.transfer-modal-actions button,.transfer-requests-page .page-header button{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer}
+.transfer-requests-page .btn-success{background:#08766e;color:white}.transfer-requests-page .btn-danger{background:#f8e5e2;color:#9d352e}.transfer-requests-page .btn-secondary{background:#f3e6c4;color:#245b55}
+.transfer-requests-page button:disabled{opacity:.55;cursor:not-allowed}
+.transfer-requests-page .alert{padding:13px 16px;border-radius:12px;margin:12px 0}.transfer-requests-page .alert-error{background:#fbe8e6;color:#983b32}.transfer-requests-page .alert-success{background:#e5f4e9;color:#236b40}
+.transfer-requests-page .empty-state{display:flex;flex-direction:column;align-items:center;gap:10px;padding:48px 18px;background:#fffefa;border-radius:18px;color:#71817c}
+.transfer-modal-backdrop{position:fixed;inset:0;background:#142d2bb8;z-index:1000;display:grid;place-items:center;padding:16px}
+.transfer-modal{width:min(100%,520px);background:#fffefa;border-radius:22px;padding:22px;box-shadow:0 20px 60px #0003}
+.transfer-modal-head{display:flex;justify-content:space-between;align-items:center}.transfer-modal h2{color:#145b56;font-size:22px}.transfer-modal p{color:#687a74}
+.transfer-modal label{display:block;color:#365c55;font-weight:800;margin:16px 0}.transfer-modal select{display:block;width:100%;margin-top:8px;padding:13px;border:1px solid #d9d0bd;border-radius:12px;background:white;color:#244b45;font:inherit}
+.transfer-modal-actions{display:flex;gap:10px;margin-top:22px}.transfer-modal .icon-close{border:0;background:#f4e8ca;border-radius:10px;padding:8px;color:#155c55}
+@media(max-width:650px){.transfer-request-details{grid-template-columns:1fr}.transfer-request-top{flex-direction:column}.transfer-requests-page .page-header{align-items:flex-start}.transfer-modal{max-height:90vh;overflow:auto}}
+
+/* Transfer request decision dialogs: centered and readable on mobile */
+.transfer-confirm-backdrop{position:fixed!important;inset:0!important;z-index:10050!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:18px!important;background:rgba(12,35,32,.62)!important}
+.transfer-confirm-modal{width:min(520px,94vw)!important;max-height:88vh;overflow:auto;margin:auto!important;text-align:right}
+.transfer-confirm-modal p{font-size:16px;line-height:1.9}
+.transfer-confirm-modal .btn-danger,
+.transfer-request-actions .btn-danger{background:#b83b35!important;color:#fff!important;border:1px solid #a52e29!important}
+.transfer-confirm-modal .btn-danger:disabled{opacity:.65}
+.transfer-result-modal{text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+.transfer-result-modal h2{color:#145b56;margin:0}
+.transfer-result-modal p{margin:0 0 8px}
+.transfer-result-mark{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#e1f3e8;color:#247448}
+.transfer-result-modal .btn-success{background:#08766e!important;color:#fff!important}
+
+/* Make the incoming-transfer rejection dialog visible and centered */
+.transfer-confirm-backdrop{position:fixed!important;inset:0!important;z-index:20000!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:18px!important;background:rgba(8,35,32,.68)!important}
+.transfer-confirm-modal,.transfer-result-modal{width:min(520px,94vw)!important;max-height:88vh;overflow:auto;margin:auto!important}
+.transfer-confirm-modal p,.transfer-result-modal p{line-height:1.9}
+.transfer-confirm-modal .btn-danger{background:#b73532!important;color:#fff!important;border-color:#a32c29!important}
+.transfer-confirm-modal .btn-danger:disabled{opacity:.65}
+.transfer-result-modal{text-align:center}
+.transfer-result-modal h2{color:#12635d}

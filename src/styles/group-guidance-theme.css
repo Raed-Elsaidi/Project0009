@@ -1,0 +1,166 @@
+/* Unified visual language for Group Guidance screens and official documents */
+.group-guidance-theme {
+  --gg-teal:#006b68; --gg-teal-dark:#075653; --gg-gold:#d6a62e;
+  --gg-gold-soft:#f3e4b9; --gg-cream:#fffdf7; --gg-line:#dfd4bf;
+  --gg-ink:#244b47; direction:rtl;
+}
+.group-guidance-theme .card,
+.group-guidance-theme [class*="Card"],
+.group-guidance-theme .official-entry-card {
+  border-radius:24px !important; border:1px solid var(--gg-line) !important;
+  background:rgba(255,253,247,.96) !important;
+  box-shadow:0 8px 24px rgba(52,43,25,.07) !important;
+}
+.group-guidance-theme h1,.group-guidance-theme h2,.group-guidance-theme h3,
+.group-guidance-theme h4 { color:var(--gg-teal-dark); letter-spacing:0; }
+.group-guidance-theme input:not([type=checkbox]),
+.group-guidance-theme select,.group-guidance-theme textarea {
+  border:1px solid #d9cfbd !important; border-radius:15px !important;
+  background:#fffdf8 !important; color:#294c48 !important;
+  min-height:46px; font-family:inherit; box-shadow:none !important;
+}
+.group-guidance-theme input:focus,.group-guidance-theme select:focus,
+.group-guidance-theme textarea:focus { outline:2px solid rgba(0,107,104,.18) !important; border-color:var(--gg-teal) !important; }
+.group-guidance-theme button {
+  border-radius:16px; font-family:inherit; transition:transform .15s ease,filter .15s ease;
+}
+.group-guidance-theme button:active { transform:translateY(1px); }
+.group-guidance-theme table { color:#294744; }
+.group-guidance-theme th { background:#f1e2b7 !important; color:#31544e !important; font-weight:800; }
+.group-guidance-theme td { background:rgba(255,255,255,.82); }
+.group-guidance-theme .group-guidance-group-card {
+  border-radius:22px !important; background:rgba(255,253,247,.97) !important;
+  box-shadow:0 7px 20px rgba(45,39,26,.07) !important;
+}
+.group-guidance-theme .group-guidance-notice { background:#e8f4ee !important; color:#17634f !important; border:1px solid #c9e2d6; border-radius:16px !important; }
+.group-guidance-theme .official-entry-card {
+  padding:24px !important; border-radius:26px !important;
+}
+.group-guidance-plan .official-entry-card { background:#fff !important; }
+.group-guidance-plan .official-document-header,
+.group-guidance-theme .official-document-header {
+  border-bottom:2px solid #252525 !important; padding-bottom:14px !important; margin-bottom:20px !important;
+}
+.group-guidance-plan h2 { color:#174f4b !important; font-weight:800; }
+.group-guidance-plan .field { display:flex; flex-direction:column; gap:8px; color:#31544e; font-weight:700; }
+.group-guidance-plan .field input { width:100%; box-sizing:border-box; }
+.group-guidance-plan .official-entry-table { border:1px solid #222 !important; }
+.group-guidance-plan .official-entry-table th { background:#f1e2b7 !important; border:1px solid #222 !important; }
+.group-guidance-plan .official-entry-table td { border:1px solid #222 !important; }
+.group-guidance-plan .official-entry-table textarea { min-width:130px !important; min-height:90px !important; border:0 !important; border-radius:0 !important; background:transparent !important; }
+.group-assessment-theme .form-grid { gap:16px !important; }
+.group-assessment-theme table { border-radius:14px; overflow:hidden; }
+.group-assessment-theme table input { min-height:42px; }
+@media(max-width:640px) {
+ .group-guidance-theme .official-entry-card { padding:14px !important; }
+ .group-guidance-plan .official-entry-table { min-width:720px !important; }
+ .group-guidance-theme .card { padding:16px !important; }
+}
+
+/* Final alignment with the official forms visual system */
+.group-guidance-theme { font-size:14px; }
+.group-guidance-theme h1 { font-size:clamp(20px,3vw,26px)!important; }
+.group-guidance-theme h2 { font-size:clamp(17px,2.5vw,21px)!important; }
+.group-guidance-theme h3 { font-size:16px!important; }
+.group-guidance-theme label,.group-guidance-theme input,.group-guidance-theme select,
+.group-guidance-theme textarea,.group-guidance-theme button,.group-guidance-theme th,
+.group-guidance-theme td { font-size:13px; }
+.group-guidance-theme .group-guidance-top-actions { display:flex; justify-content:flex-start; margin:0 0 12px; }
+.group-guidance-theme .group-guidance-top-actions .btn { min-height:40px; padding:9px 15px; }
+.group-guidance-theme .btn-primary,.group-guidance-theme button[class*="primary"] { background:#006b68!important; border-color:#006b68!important; }
+.group-guidance-theme .btn-secondary,.group-guidance-theme button[class*="secondary"] { background:#f3e4b9!important; border-color:#ead7a4!important; color:#075653!important; }
+.group-guidance-theme .official-document-header { border:0!important; border-radius:0!important; background:#fff!important; box-shadow:none!important; }
+.group-guidance-theme .official-doc-side strong { font-size:13px!important; }
+.group-guidance-theme .official-doc-side span { font-size:8px!important; }
+.group-guidance-official-preview { margin:16px 0; padding:12px; border:1px solid #dfd4bf; border-radius:18px; background:#f1e8d9; }
+.group-guidance-preview-actions { display:flex; justify-content:flex-start; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+.group-guidance-paper { max-width:900px; margin:0 auto; padding:24px; background:#fff; color:#171717; border:1px solid #222; font-family:"Amiri","Times New Roman",serif; direction:rtl; }
+.group-guidance-paper h2 { text-align:center; color:#111!important; margin:16px 0; font-size:19px!important; }
+.group-guidance-paper p { text-align:center; font-size:11px; }
+.group-guidance-paper .official-document-header { margin-bottom:8px; }
+.group-guidance-paper .official-doc-side strong { font-size:13px!important; }
+.group-guidance-paper .official-doc-side span { font-size:8px!important; }
+.group-guidance-paper table { width:100%; border-collapse:collapse; table-layout:fixed; margin-top:14px; }
+.group-guidance-paper th,.group-guidance-paper td { border:1px solid #222; padding:7px 5px; text-align:center; vertical-align:middle; font-size:10px; color:#111; background:#fff!important; overflow-wrap:anywhere; }
+.group-guidance-paper th { background:#f3e4b9!important; }
+.group-guidance-paper td small { display:block; margin-top:3px; font-size:8px; }
+.group-guidance-paper-meta { display:flex; gap:8px 16px; flex-wrap:wrap; justify-content:space-between; font-size:10px; margin:12px 0; }
+@media(max-width:640px) {
+ .group-guidance-theme .card { padding:13px!important; }
+ .group-guidance-theme label,.group-guidance-theme input,.group-guidance-theme select,
+ .group-guidance-theme textarea,.group-guidance-theme button,.group-guidance-theme th,
+ .group-guidance-theme td { font-size:12px; }
+ .group-guidance-paper { padding:12px 9px; }
+ .group-guidance-paper th,.group-guidance-paper td { font-size:8px; padding:4px 2px; }
+}
+@media print {
+ body * { visibility:hidden!important; }
+ .group-guidance-paper,.group-guidance-paper * { visibility:visible!important; }
+ .group-guidance-paper { position:absolute; inset:0 auto auto 0; width:100%; max-width:none; margin:0; border:0; box-shadow:none; }
+ .group-guidance-preview-actions,.mobile-menu,.shell aside,.shell main>footer { display:none!important; }
+}
+
+
+/* Enforce the same compact page heading, fields, and action buttons
+   across all Group Guidance screens, including the shared Page component. */
+.group-guidance-theme .pagehead { margin-bottom: 14px !important; gap: 10px !important; }
+.group-guidance-theme .pagehead .eyebrow { font-size: 11px !important; margin-bottom: 4px !important; }
+.group-guidance-theme .pagehead h1 { font-size: 23px !important; line-height: 1.45 !important; margin: 0 0 5px !important; }
+.group-guidance-theme .pagehead p { font-size: 13px !important; line-height: 1.7 !important; margin: 0 !important; }
+.group-guidance-theme .section-title h2 { font-size: 17px !important; line-height: 1.5 !important; }
+.group-guidance-theme .section-title span,
+.group-guidance-theme .selected-work-type { font-size: 12px !important; }
+.group-guidance-theme .card { padding: 17px !important; margin-bottom: 13px !important; }
+.group-guidance-theme .form-grid { gap: 12px !important; }
+.group-guidance-theme label,
+.group-guidance-theme .field > span { font-size: 12px !important; }
+.group-guidance-theme input:not([type=checkbox]),
+.group-guidance-theme select { min-height: 43px !important; padding: 9px 12px !important; font-size: 13px !important; }
+.group-guidance-theme textarea { min-height: 82px !important; padding: 10px 12px !important; font-size: 13px !important; }
+.group-guidance-theme .btn { min-height: 40px !important; padding: 9px 15px !important; font-size: 13px !important; font-weight: 700 !important; }
+.group-guidance-theme .group-guidance-top-actions { margin: 0 0 12px !important; }
+.group-guidance-theme .group-guidance-top-actions .btn { min-height: 40px !important; }
+.group-guidance-theme .official-entry-card { padding: 18px !important; }
+.group-guidance-theme .official-entry-card h2 { font-size: 20px !important; }
+.group-guidance-theme .official-document-header { display: grid !important; grid-template-columns: 1fr auto 1fr !important; align-items: center !important; gap: 12px !important; }
+.group-guidance-theme .official-ministry-logo { width: 58px !important; height: 58px !important; object-fit: contain !important; }
+.group-guidance-theme .official-doc-side { line-height: 1.5 !important; }
+.group-guidance-theme .official-doc-side strong { font-size: 12px !important; }
+.group-guidance-theme .official-doc-side span { font-size: 8px !important; }
+.group-guidance-theme .group-guidance-paper { font-size: 11px !important; }
+@media(max-width:640px) {
+ .group-guidance-theme .pagehead h1 { font-size: 20px !important; }
+ .group-guidance-theme .pagehead p { font-size: 12px !important; }
+ .group-guidance-theme .card { padding: 13px !important; }
+ .group-guidance-theme .official-entry-card { padding: 13px !important; }
+ .group-guidance-theme .official-ministry-logo { width: 46px !important; height: 46px !important; }
+}
+
+
+/* Group assessment: wider student-name column, compact question columns;
+   omit grade/section from the printed and on-screen roster. */
+.group-assessment-theme table { table-layout: fixed; }
+.group-assessment-theme table th:first-child,
+.group-assessment-theme table td:first-child { width: 160px; min-width: 160px; }
+.group-assessment-theme .group-assessment-preview-table th:first-child,
+.group-assessment-theme .group-assessment-preview-table td:first-child { width: 22%; min-width: 22%; }
+.group-assessment-theme .group-assessment-preview-table th:not(:first-child),
+.group-assessment-theme .group-assessment-preview-table td:not(:first-child) { width: auto; }
+.group-assessment-theme .group-guidance-paper table { table-layout: fixed; }
+.group-assessment-theme .group-guidance-paper th,
+.group-assessment-theme .group-guidance-paper td { padding: 5px 3px; }
+.group-assessment-theme .group-guidance-paper th:first-child,
+.group-assessment-theme .group-guidance-paper td:first-child { width: 22%; font-weight: 700; }
+.group-assessment-theme .group-guidance-paper th:not(:first-child),
+.group-assessment-theme .group-guidance-paper td:not(:first-child) { width: auto; }
+
+
+/* Final assessment table proportions: visibly wider name column and compact question cells. */
+.group-assessment-theme .group-assessment-preview-table { width:100% !important; table-layout:fixed !important; }
+.group-assessment-theme .group-assessment-preview-table th:first-child,
+.group-assessment-theme .group-assessment-preview-table td:first-child { width:28% !important; min-width:28% !important; white-space:normal; overflow-wrap:anywhere; }
+.group-assessment-theme .group-assessment-preview-table th:not(:first-child),
+.group-assessment-theme .group-assessment-preview-table td:not(:first-child) { width:auto !important; min-width:0 !important; }
+.group-assessment-theme .group-assessment-preview-table th,
+.group-assessment-theme .group-assessment-preview-table td { padding:5px 3px !important; font-size:9px !important; }
+.group-assessment-theme .group-assessment-preview-table tbody td:first-child { font-size:10px !important; font-weight:700; }

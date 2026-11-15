@@ -4,7 +4,7 @@ import { Button, Input, Select, Textarea } from '../UI'
 
 const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس']
 const topics=['نفسية','سلوكية','تربوية']
-const people=['مدير المدرسة','معلم','ولي الأمر','مؤسسات أخرى']
+const people=['مدير المدرسة','معلم','ولي الأمر','مؤسسات أخرى','تدريب خريجي الجامعات']
 const emptyRow=(date='',day='')=>({day,date,time:'',person:'',topic:'',actions:''})
 
 export function createMeetingRow(date,day){ return emptyRow(date,day) }

@@ -3,15 +3,15 @@ import crypto from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 
 const app = express();
-app.use(express.json({ limit: '32kb' }));
+app.use(express.json({ limit: '2mb' }));
 
 const {
   SUPABASE_URL,
   SUPABASE_SERVICE_ROLE_KEY,
   SUPABASE_SECRET_KEY,
   SUPABASE_JWT_SECRET,
-  AUTH_API_PORT = '8787',
-  ALLOWED_ORIGIN = 'http://localhost:5173',
+  AUTH_API_PORT = '8901',
+  ALLOWED_ORIGIN = 'http://localhost:5189',
   BOOTSTRAP_SECRET
 } = process.env;
 
@@ -269,5 +269,101 @@ app.post('/api/admin/set-password', async (req, res) => {
   }
 });
 
+
+const OFFICIAL_FORM_IDS = new Set([
+  'meeting-principal',
+  'meeting-teacher',
+  'meeting-parents',
+  'group-session-details',
+  'group-session-summary',
+  'group-counseling-plan'
+]);
+
+app.get('/api/official-forms', async (req, res) => {
+  if (!requireReady(res)) return;
+  try {
+    const profile = await profileForToken(req);
+    if (!profile) return res.status(401).json({ error: 'انتهت الجلسة.' });
+
+    const requested = String(req.query.form_ids || req.query.form_id || '')
+      .split(',').map(value => value.trim()).filter(Boolean);
+    if (!requested.length || requested.some(id => !OFFICIAL_FORM_IDS.has(id))) {
+      return res.status(400).json({ error: 'معرّف النموذج غير صالح.' });
+    }
+
+    let query = db.from('official_form_records')
+      .select('id,form_id,counselor_id,school_id,school_year_id,semester_id,form_data,updated_at')
+      .eq('counselor_id', profile.id)
+      .in('form_id', requested);
+
+    if (req.query.school_year_id) query = query.eq('school_year_id', String(req.query.school_year_id));
+    if (req.query.semester_id) query = query.eq('semester_id', String(req.query.semester_id));
+
+    const { data, error } = await query.order('updated_at', { ascending: false });
+    if (error) throw error;
+    return res.json({ records: data || [] });
+  } catch (error) {
+    console.error('Official forms read failed:', error);
+    return res.status(500).json({ error: 'تعذر تحميل بيانات النماذج من قاعدة البيانات.' });
+  }
+});
+
+app.post('/api/official-forms', async (req, res) => {
+  if (!requireReady(res)) return;
+  try {
+    const profile = await profileForToken(req);
+    if (!profile) return res.status(401).json({ error: 'انتهت الجلسة.' });
+
+    const formId = String(req.body?.form_id || '');
+    if (!OFFICIAL_FORM_IDS.has(formId)) {
+      return res.status(400).json({ error: 'معرّف النموذج غير صالح.' });
+    }
+
+    const formData = req.body?.form_data;
+    if (!formData || typeof formData !== 'object' || Array.isArray(formData)) {
+      return res.status(400).json({ error: 'بيانات النموذج غير صالحة.' });
+    }
+
+    const schoolYearId = req.body?.school_year_id || null;
+    const semesterId = req.body?.semester_id || null;
+    let find = db.from('official_form_records').select('id')
+      .eq('form_id', formId).eq('counselor_id', profile.id);
+    find = schoolYearId ? find.eq('school_year_id', schoolYearId) : find.is('school_year_id', null);
+    find = semesterId ? find.eq('semester_id', semesterId) : find.is('semester_id', null);
+    const { data: existing, error: findError } = await find.maybeSingle();
+    if (findError) throw findError;
+
+    const payload = {
+      form_id: formId,
+      counselor_id: profile.id,
+      school_id: req.body?.school_id || null,
+      school_year_id: schoolYearId,
+      semester_id: semesterId,
+      form_data: formData,
+      updated_at: new Date().toISOString()
+    };
+
+    let result;
+    if (existing?.id) {
+      result = await db.from('official_form_records').update(payload)
+        .eq('id', existing.id).eq('counselor_id', profile.id)
+        .select('id,form_id,school_year_id,semester_id,form_data,updated_at').single();
+    } else {
+      result = await db.from('official_form_records').insert(payload)
+        .select('id,form_id,school_year_id,semester_id,form_data,updated_at').single();
+    }
+    if (result.error) throw result.error;
+    return res.json({ record: result.data });
+  } catch (error) {
+    console.error('Official forms save failed:', error);
+    return res.status(500).json({ error: 'تعذر حفظ بيانات النموذج في قاعدة البيانات.' });
+  }
+});
+
 app.get('/health', (_req, res) => res.json({ ok: true, configured: configReady }));
 export default app;
+
+const port = Number(process.env.AUTH_API_PORT) || 8901;
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Auth API listening on port ${port}`);
+});

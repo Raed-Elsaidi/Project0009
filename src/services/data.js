@@ -2,6 +2,7 @@ import { requireSupabase } from './supabase'
 import { decodeCustomToken, setCustomToken } from './customSession'
 
 const db = () => requireSupabase()
+export const requireSemesterReportClient = () => db()
 export async function testEmployeeIdentity() {
   const { data, error } = await db().rpc('test_auth_uid')
   if (error) throw error
@@ -87,10 +88,11 @@ export async function updateMyProfile(payload) {
 
 
 
-export async function listStudents() {
-  const { data, error } = await db().from('students')
-    .select('*, grades(id,name), sections(id,name), school_years(id,name), semesters(id,name), student_counselors!inner(counselor_id,is_primary,ended_at)')
-    .order('full_name')
+export async function listStudents(schoolId=null) {
+  let query = db().from('students')
+    .select('*, grades(id,name), sections(id,name), school_years(id,name), student_counselors!inner(counselor_id,is_primary,ended_at)')
+  if (schoolId) query = query.eq('school_id', schoolId)
+  const { data, error } = await query.order('full_name')
   if (error) throw error
   return data || []
 }
@@ -152,12 +154,12 @@ export async function updateActivityRecord(id,payload){
   return data
 }
 
-export async function listActiveAcademicData() {
+export async function listActiveAcademicData(schoolId=null) {
   const sb = db()
   const [{ data: years, error: yErr }, { data: semesters, error: sErr }, { data: grades, error: gErr }] = await Promise.all([
     sb.from('school_years').select('*').order('start_date', { ascending: false, nullsFirst: false }).order('name', { ascending: false }),
     sb.from('semesters').select('*').order('start_date', { ascending: false }),
-    sb.from('grades').select('*').order('sort_order')
+    (schoolId ? sb.from('grades').select('*').eq('school_id',schoolId) : sb.from('grades').select('*')).order('sort_order')
   ])
   if (yErr) throw yErr
   if (sErr) throw sErr
@@ -544,6 +546,7 @@ export const PERMISSION_CATALOG=[
  {key:'directorate-dashboard',label:'الإحصائيات والمتابعة',section:'المتابعة'},
  {key:'directorates',label:'المديريات',section:'الهيكل الإداري'},
  {key:'schools',label:'المدارس',section:'الهيكل الإداري'},
+ {key:'school-data',label:'بيانات المدرسة',section:'الهيكل الإداري'},
  {key:'administration',label:'إدارة الموظفين / المرشدين',section:'الموظفون'},
  {key:'weekly-program',label:'البرنامج اليومي/الأسبوعي',section:'الإرشاد التربوي'},
  {key:'dashboard',label:'ملخص أعمالي',section:'الإرشاد التربوي'},
@@ -551,13 +554,21 @@ export const PERMISSION_CATALOG=[
  {key:'cases',label:'دراسة الحالات',section:'الإرشاد التربوي'},
  {key:'hot-cases',label:'الحالات الساخنة',section:'الإرشاد التربوي'},
  {key:'interviews',label:'المقابلات والاستشارات',section:'الإرشاد التربوي'},
+ {key:'focused-interviews',label:'المقابلات الفردية المركزة',section:'الإرشاد التربوي'},
+ {key:'transfer-requests',label:'طلبات النقل الواردة',section:'الإرشاد التربوي'},
  {key:'absence',label:'الغياب',section:'المتابعة الطلابية'},
  {key:'lateness',label:'التأخر الصباحي',section:'المتابعة الطلابية'},
  {key:'dropout',label:'التسرب',section:'المتابعة الطلابية'},
+ {key:'health-cases',label:'الحالات الصحية',section:'المتابعة الطلابية'},
  {key:'activities',label:'الأنشطة',section:'البرامج الإرشادية'},
+ {key:'parliament',label:'البرلمان',section:'البرامج الإرشادية'},
  {key:'group-counseling',label:'الإرشاد الجمعي',section:'البرامج الإرشادية'},
  {key:'guidance',label:'الإرشاد التوجيهي',section:'البرامج الإرشادية'},
+ {key:'career-guidance',label:'التوجيه المهني',section:'البرامج الإرشادية'},
+ {key:'meetings',label:'الاجتماعات',section:'البرامج الإرشادية'},
  {key:'annual-plan',label:'الخطة السنوية',section:'الخطط والتقارير'},
+ {key:'semester-report',label:'التقرير الفصلي',section:'الخطط والتقارير'},
+ {key:'correspondence',label:'الصادر والوارد',section:'الخطط والتقارير'},
  {key:'reports',label:'التقارير',section:'الخطط والتقارير'},
  {key:'notes',label:'دفتر الملاحظات',section:'الأدوات'},
  {key:'notifications',label:'الإشعارات',section:'التواصل'},
@@ -598,7 +609,7 @@ export async function createStudent(payload){
   const user=await currentUser(); if(!user) throw new Error('انتهت جلسة الدخول.')
   const profile=await currentProfile(); if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
   const {school_id,...studentPayload}=payload
-  const {data:student,error}=await db().from('students').insert({school_id:school_id||profile.school_id,...studentPayload}).select('*, grades(id,name), sections(id,name), school_years(id,name), semesters(id,name)').single()
+  const {data:student,error}=await db().from('students').insert({school_id:school_id||profile.school_id,...studentPayload}).select('*, grades(id,name), sections(id,name), school_years(id,name)').single()
   if(error) throw error
   const {error:assignError}=await db().from('student_counselors').upsert({student_id:student.id,counselor_id:user.id,is_primary:true,ended_at:null},{onConflict:'student_id,counselor_id'})
   if(assignError) throw assignError
@@ -606,13 +617,41 @@ export async function createStudent(payload){
 }
 export async function updateStudent(id,payload){
   const {school_id,...studentPayload}=payload
-  const {data,error}=await db().from('students').update(studentPayload).eq('id',id).select('*, grades(id,name), sections(id,name), school_years(id,name), semesters(id,name)').single()
+  const {data,error}=await db().from('students').update(studentPayload).eq('id',id).select('*, grades(id,name), sections(id,name), school_years(id,name)').single()
   if(error) throw error
   return data
 }
 export async function deleteStudent(id){
   const {error}=await db().from('students').delete().eq('id',id)
   if(error) throw error
+}
+
+export async function importStudentsFromExcel(rows){
+  const user=await currentUser(); if(!user) throw new Error('انتهت جلسة الدخول.')
+  const profile=await currentProfile(); if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة.')
+  if(!Array.isArray(rows)||!rows.length) throw new Error('لا توجد بيانات للاستيراد.')
+  const ids=rows.map(r=>String(r.national_id||''))
+  if(ids.some(id=>!/^[0-9]{9}$/.test(id))) throw new Error('يوجد رقم هوية غير صحيح؛ يجب أن يتكون من 9 أرقام.')
+  if(new Set(ids).size!==ids.length) throw new Error('يوجد رقم هوية مكرر داخل ملف Excel.')
+  const {data:existing,error:checkError}=await db().from('students').select('national_id').eq('school_id',profile.school_id).in('national_id',ids)
+  if(checkError) throw checkError
+  if(existing?.length) throw new Error(`لم يتم النسخ؛ رقم الهوية ${existing[0].national_id} مسجل مسبقًا في المدرسة.`)
+  const payload=rows.map(r=>({school_id:profile.school_id,student_code:r.student_code,school_year_id:r.school_year_id,national_id:String(r.national_id),full_name:r.full_name,grade_id:r.grade_id,section_id:r.section_id,phone:r.phone||null,notes:r.notes||null}))
+  const {data:inserted,error}=await db().from('students').insert(payload).select('id')
+  if(error) throw error
+  const assignments=inserted.map(s=>({student_id:s.id,counselor_id:user.id,is_primary:true,ended_at:null}))
+  const {error:assignError}=await db().from('student_counselors').upsert(assignments,{onConflict:'student_id,counselor_id'})
+  if(assignError) throw assignError
+  return inserted
+}
+
+export async function deleteAllStudentsForSchool(){
+  const profile=await currentProfile()
+  if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة.')
+  if(String(profile.role||'').toUpperCase()!=='COUNSELOR') throw new Error('هذه العملية متاحة للمرشد التربوي فقط.')
+  const {data,error}=await db().from('students').delete().eq('school_id',profile.school_id).select('id')
+  if(error) throw error
+  return data?.length||0
 }
 
 
@@ -653,4 +692,218 @@ export async function deleteRecord(table, id) {
 export async function requestPasswordReset(payload){
   const {data,error}=await db().rpc('request_password_reset',{p_username:payload.username.trim().toLowerCase(),p_national_id:payload.national_id.trim()});
   if(error) throw error; return data
+}
+
+
+// Ministry correspondence (outgoing / incoming)
+export async function listMinistryCorrespondence(schoolYearId, recordType) {
+  let query = db().from('ministry_correspondence')
+    .select('*, school_years(id,name), ministry_correspondence_attachments(*)')
+    .eq('school_year_id', schoolYearId)
+    .order('correspondence_date', { ascending: false })
+    .order('serial_number', { ascending: false });
+  if (recordType) query = query.eq('record_type', recordType);
+  const { data, error } = await query;
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createMinistryCorrespondence(payload) {
+  const profile = await currentProfile();
+  if (!profile?.id) throw new Error('انتهت جلسة الدخول.');
+  const { data, error } = await db().from('ministry_correspondence').insert({
+    counselor_id: profile.id,
+    school_id: profile.school_id || null,
+    school_year_id: payload.school_year_id,
+    record_type: payload.record_type,
+    correspondence_date: payload.correspondence_date,
+    title: payload.title.trim(),
+    details: payload.details?.trim() || null
+  }).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateMinistryCorrespondence(id, payload) {
+  const { data, error } = await db().from('ministry_correspondence').update({
+    correspondence_date: payload.correspondence_date,
+    title: payload.title.trim(),
+    details: payload.details?.trim() || null
+  }).eq('id', id).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteMinistryCorrespondence(id) {
+  const { data: attachments, error: readError } = await db().from('ministry_correspondence_attachments').select('storage_path').eq('correspondence_id', id);
+  if (readError) throw readError;
+  if (attachments?.length) {
+    const { error: storageError } = await db().storage.from('ministry-correspondence').remove(attachments.map(a => a.storage_path));
+    if (storageError) throw storageError;
+  }
+  const { error } = await db().from('ministry_correspondence').delete().eq('id', id);
+  if (error) throw error;
+}
+
+export async function addMinistryCorrespondenceAttachment(correspondenceId, file) {
+  const profile = await currentProfile();
+  if (!profile?.id) throw new Error('انتهت جلسة الدخول.');
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) throw new Error('حجم الملف يجب ألا يتجاوز 10 MB.');
+  const safeName = file.name.replace(/[^\w.\-\u0600-\u06FF ]/g, '_');
+  const path = `${profile.id}/${crypto.randomUUID()}-${safeName}`;
+  const { error: uploadError } = await db().storage.from('ministry-correspondence').upload(path, file, { contentType: file.type || 'application/octet-stream' });
+  if (uploadError) throw uploadError;
+  const { error } = await db().from('ministry_correspondence_attachments').insert({
+    correspondence_id: correspondenceId, file_name: file.name, storage_path: path,
+    mime_type: file.type || null, size_bytes: file.size
+  });
+  if (error) {
+    await db().storage.from('ministry-correspondence').remove([path]);
+    throw error;
+  }
+}
+
+export async function openMinistryCorrespondenceAttachment(path) {
+  const { data, error } = await db().storage.from('ministry-correspondence').createSignedUrl(path, 600);
+  if (error) throw error;
+  window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+}
+
+// Parliament achievements supporting files use the existing private correspondence storage bucket.
+export async function uploadParliamentAchievementAttachment(file) {
+  const profile = await currentProfile();
+  if (!profile?.id) throw new Error('انتهت جلسة الدخول.');
+  if (!file) return null;
+  if (file.size > 10 * 1024 * 1024) throw new Error('حجم الملف يجب ألا يتجاوز 10 MB.');
+  const allowed = /\.(png|jpe?g|gif|webp|bmp|pdf|docx?|xlsx?|pptx?|od[tp])$/i;
+  if (!allowed.test(file.name)) throw new Error('نوع الملف غير مدعوم. أرفق صورة أو ملف Office أو PDF.');
+  // Use the same single-folder object-key shape as the working ministry-correspondence uploads.
+  // Keep the original filename only as metadata; never place user-supplied filename characters in the storage key.
+  const extension = file.name.match(/\.([a-z0-9]+)$/i)?.[1]?.toLowerCase() || 'bin';
+  const path = `${profile.id}/${crypto.randomUUID()}.${extension}`;
+  const { error } = await db().storage.from('ministry-correspondence').upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+  if (error) throw error;
+  return { file_name: file.name, storage_path: path, mime_type: file.type || null, size_bytes: file.size, created_at: new Date().toISOString() };
+}
+
+export async function openParliamentAchievementAttachment(path) {
+  const { data, error } = await db().storage.from('ministry-correspondence').createSignedUrl(path, 600);
+  if (error) throw error;
+  window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+}
+
+export async function getParliamentAchievementAttachmentUrl(path) {
+  if (!path) throw new Error('مسار المرفق غير متوفر.');
+  const { data, error } = await db().storage.from('ministry-correspondence').createSignedUrl(path, 60 * 30);
+  if (error) throw error;
+  return data.signedUrl;
+}
+
+export async function deleteParliamentAchievementAttachment(path) {
+  if (!path) return;
+  const { error } = await db().storage.from('ministry-correspondence').remove([path]);
+  if (error) throw error;
+}
+
+
+// Focused individual interview files (one file per student per academic year)
+export async function listFocusedInterviewFiles(schoolYearId=''){
+  let q=db().from('focused_interview_student_files').select('*, focused_interview_reviews(*)').order('created_at',{ascending:false})
+  if(schoolYearId) q=q.eq('school_year_id',schoolYearId)
+  const {data,error}=await q
+  if(error) throw error
+  return data||[]
+}
+export async function createFocusedInterviewFile(payload){
+  const user=await currentUser(); if(!user) throw new Error('انتهت جلسة الدخول.')
+  const profile=await currentProfile(); if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
+  const {data,error}=await db().from('focused_interview_student_files').insert({counselor_id:user.id,school_id:profile.school_id,...payload}).select().single()
+  if(error) throw error
+  return data
+}
+export async function addFocusedInterviewReview(payload){
+  const {data,error}=await db().from('focused_interview_reviews').insert(payload).select().single()
+  if(error) throw error
+  return data
+}
+
+
+export async function listSchoolGrades(schoolId){
+  let q=db().from('grades').select('id,name,sort_order,school_id,directorate_id').order('sort_order').order('name')
+  if(schoolId) q=q.eq('school_id',schoolId)
+  const {data,error}=await q
+  if(error) throw error
+  return data||[]
+}
+export async function createSchoolGrade({name,school_id,directorate_id,sort_order=0}){
+  const {data,error}=await db().from('grades').insert({name:name.trim(),school_id,directorate_id,sort_order}).select().single()
+  if(error) throw error
+  return data
+}
+export async function updateSchoolGrade(id,payload){
+  const {data,error}=await db().from('grades').update({name:payload.name.trim(),sort_order:payload.sort_order}).eq('id',id).select().single()
+  if(error) throw error
+  return data
+}
+export async function deleteSchoolGrade(id){
+  const {error}=await db().from('grades').delete().eq('id',id)
+  if(error) throw error
+}
+export async function createSchoolSection({name,school_id,grade_id}){
+  const {data,error}=await db().from('sections').insert({name:name.trim(),school_id,grade_id}).select().single()
+  if(error) throw error
+  return data
+}
+export async function updateSchoolSection(id,payload){
+  const {data,error}=await db().from('sections').update({name:payload.name.trim()}).eq('id',id).select().single()
+  if(error) throw error
+  return data
+}
+export async function deleteSchoolSection(id){
+  const {error}=await db().from('sections').delete().eq('id',id)
+  if(error) throw error
+}
+
+export async function createStudentTransferRequest(payload) {
+  const user = await currentUser()
+  if (!user?.id) throw new Error('انتهت جلسة الدخول.')
+  const profile = await currentProfile()
+  if (!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة حالية.')
+  const { data, error } = await db().from('student_transfer_requests').insert({
+    student_id: payload.student_id,
+    school_year_id: payload.school_year_id || null,
+    from_school_id: profile.school_id,
+    to_school_id: payload.to_school_id,
+    from_grade_id: payload.from_grade_id || null,
+    from_section_id: payload.from_section_id || null,
+    requested_by: user.id,
+    status: 'pending'
+  }).select().single()
+  if (error) throw error
+  return data
+}
+
+
+// Incoming student transfer requests for the current receiving school.
+export async function listIncomingStudentTransferRequests() {
+  const profile = await currentProfile()
+  if (!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة.')
+  const { data, error } = await db()
+    .from('student_transfer_requests')
+    .select('*, students(id,full_name,student_code,national_id,grades(name),sections(name)), from_school:schools!student_transfer_requests_from_school_id_fkey(id,name,directorates(name)), to_school:schools!student_transfer_requests_to_school_id_fkey(id,name,directorates(name))')
+    .eq('to_school_id', profile.school_id)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data || []
+}
+
+export async function decideStudentTransferRequest({ requestId, decision, gradeId = null, sectionId = null, note = null }) {
+  const rpcName = decision === 'accepted' ? 'accept_student_transfer_request' : 'reject_student_transfer_request'
+  const args = decision === 'accepted'
+    ? { p_request_id: requestId, p_grade_id: gradeId, p_section_id: sectionId }
+    : { p_request_id: requestId, p_note: note }
+  const { data, error } = await db().rpc(rpcName, args)
+  if (error) throw error
+  return data
 }

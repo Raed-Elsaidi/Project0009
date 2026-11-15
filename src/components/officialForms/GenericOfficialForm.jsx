@@ -1,7 +1,9 @@
-import React,{useMemo,useState}from'react'
+import React,{useEffect,useMemo,useState}from'react'
 import{Button}from'../UI'
 import OfficialDocumentHeader from './OfficialDocumentHeader'
-import{Eye,Plus,Trash2,Save,Printer,Maximize2,X}from'lucide-react'
+import{Eye,Plus,Trash2,Save,Printer,Maximize2,X,Paperclip,FileText,ExternalLink}from'lucide-react'
+import{uploadParliamentAchievementAttachment,openParliamentAchievementAttachment,deleteParliamentAchievementAttachment,getParliamentAchievementAttachmentUrl}from'../../services/data'
+import{useRef}from'react'
 
 export const FORM_CONFIGS={
  'meeting-summary':{fields:['الشخص الذي تمت مقابلته','المجموع العام','ملاحظات'],columns:['الشخص الذي تمت مقابلته','المجموع العام','ملاحظات'],rows:['مدير المدرسة','المعلم','ولي الأمر','مؤسسات أخرى']},
@@ -25,46 +27,176 @@ export const FORM_CONFIGS={
  'morning-radio':{fields:['اليوم','التاريخ','موضوع الإذاعة','الفئة المستهدفة','المشاركون','الأهداف','الملاحظات'],columns:[]},
  'seminars-workshops':{fields:['اليوم','التاريخ','الموضوع','نوع النشاط','الفئة المستهدفة','القائم بالنشاط','الجهة التي يعمل بها','أهداف النشاط','التوصيات'],columns:[]},
  'wall-magazine':{fields:['اليوم','التاريخ','موضوع المجلة','الفئة المستهدفة','المشاركون في الإعداد','الأهداف','الملاحظات'],columns:[]},
+ 'posters':{fields:[],columns:['التاريخ','موضوع الملصق','الفئة المستهدفة','مكان العرض','عدد المستفيدين','ملاحظات']},
  'group-session-summary':{fields:['المجموعة العلاجية رقم','المشكلة','عدد أفراد المجموعة','أهداف الجلسة','موضوع الجلسة','الإجراءات','النتائج','ملاحظات'],columns:[]},
  'group-session-details':{fields:['رقم المجموعة','المشكلة','عدد أفراد المجموعة','عدد الجلسات','وصف المشكلة','خطة التدخل','المتابعة','ملاحظات'],columns:[]},
  'group-sessions-monitor':{fields:['الموضوع','مجموع عدد اللقاءات','الصفوف المستفيدة','عدد الطلبة','ملاحظات'],columns:['الموضوع','مجموع عدد اللقاءات','الصفوف المستفيدة','عدد الطلبة','ملاحظات']},
- 'guidance-meetings-followup':{fields:['اسم المرشد/ة','اليوم/التاريخ','الحصة','الصف','الموضوع','الأهداف','ملاحظات الأنشطة'],columns:['اليوم/التاريخ','الحصة','الصف','الموضوع','الأهداف','ملاحظات الأنشطة']},
+ 'guidance-meetings-followup':{fields:['اسم المرشد/ة التربوي/ة'],columns:['اليوم/التاريخ','الصف','الشعبة','الحصة','الموضوع','الأهداف','الأنشطة','ملاحظات']},
  'guidance-meetings-monitor':{fields:['الموضوع','مجموع عدد اللقاءات','الصفوف','عدد المستفيدين','ملاحظات'],columns:['الموضوع','مجموع عدد اللقاءات','الصفوف','عدد المستفيدين','ملاحظات']},
  'weekly-program-form':{fields:['اليوم','التاريخ','النشاط/الفعالية','الفئة المستهدفة','المكان','الزمن','ملاحظات'],columns:['اليوم','التاريخ','النشاط/الفعالية','الفئة المستهدفة','المكان','الزمن','ملاحظات']},
- 'annual-plan':{fields:['الهدف','المخرجات','الأنشطة','الفترة الزمنية','الحالة/وضع الإنجاز','الملاحظات'],columns:[]},
+ 'annual-plan':{annualPlan:true,multipleGoals:true,fields:['الهدف العام'],columns:['النشاط الاستراتيجي','9','10','11','12','1','2','3','4','5','المسؤول / جهة التنفيذ','ملاحظات']},
+ 'career-guidance-monitor':{fields:['الهدف','الفئة المستهدفة','ملاحظات'],columns:['التاريخ','الموضوع','الصفوف المستفيدة','عدد الطلبة','ملاحظات']},
+ 'career-guidance-followup':{fields:['اسم المرشد/ة','ملاحظات عامة'],columns:['التاريخ','الحصة','الصف','الموضوع','الأهداف','الإجراءات','التوصيات']},
+ 'parliament-plan':{parliamentPlan:true,fields:['الهدف العام'],columns:['الهدف الخاص','الإجراءات والأنشطة','الفترة الزمنية','النتائج المتوقعة','ملاحظات','مهمة التنفيذ']},
+ 'parliament-members':{fields:[],columns:['اسم الطالب','الصف','الشعبة','الصفة في الفريق','ملاحظات'],studentRoster:true},
+ 'parliament-team-meetings':{fields:[],columns:['اليوم','التاريخ','موضوع الاجتماع','الحضور','القرارات والتوصيات'],parliamentTeamMeeting:true},
+ 'parliament-achievements':{fields:[],columns:['اليوم','التاريخ','النشاط (نوعه /اسمه)','الهدف منه','الموجز'],parliamentAchievement:true},
+ 'health-cases':{fields:[],columns:['التاريخ','رمز الطالب','الصف والشعبة','نوع الحالة الصحية','الإجراء / الإحالة','المتابعة']},
+ 'meeting-principal':{meetingForm:true,fields:[],columns:['التاريخ','الموضوع','ملخص الاجتماع','التوصيات']},
+ 'meeting-teacher':{meetingForm:true,fields:[],columns:['التاريخ','اسم المعلم/ة','الموضوع','التوصيات']},
+ 'meeting-parents':{meetingForm:true,fields:[],columns:['التاريخ','ولي الأمر','اسم الطالب','الموضوع','التوصيات']},
  'plan':{fields:['الهدف','مخرج رقم','النشاط','الشهر','الحالة/وضع الإنجاز','ملاحظات'],columns:['مخرج رقم','الأنشطة','10','11','12','الحالة/وضع الإنجاز','ملاحظات']},
  'semester-report':{fields:['مقدمة وخلفية','أهم الإنجازات','عرض تحليلي للإنجازات','التحديات والصعوبات','الفرص','أهم الأنشطة للفصل القادم','ملاحظات'],columns:[]}
 }
 
-const inputFor=(label,value,onChange)=><div className="field"><span>{label}</span>{label.includes('الأهداف')||label.includes('الإجراءات')||label.includes('ملاحظات')||label.includes('وصف')||label.includes('التشخيص')||label.includes('خطة')||label.includes('النتائج')||label.includes('الموضوع')||label.includes('التوصيات')||label.includes('المشكلة')?<textarea value={value||''} onChange={e=>onChange(e.target.value)} rows={2}/>:<input value={value||''} onChange={e=>onChange(e.target.value)}/>}</div>
+const idAnnualPlan=config=>config?.annualPlan===true
 
-export default function GenericOfficialForm({config,title,profile,academic,form,onChange,onShowPreview,onSave}){
- const rows=form.rows||[{}];
+const PARLIAMENT_ROLES=['رئيس/ة البرلمان','نائب/ة أول/ى','نائب/ة ثاني/ة','سكرتير/ة البرلمان','رئيس/ة اللجنة الإعلامية','عضو اللجنة الإعلامية','عضو اللجنة الإعلامية','رئيس/ة اللجنة الثقافية','عضو اللجنة الثقافية','عضو اللجنة الثقافية','رئيس/ة لجنة الدعم و المناصرة','عضو لجنة الدعم و المناصرة','عضو لجنة الدعم و المناصرة']
+
+const inputFor=(label,value,onChange)=><div className="field"><span>{label}</span>{label.includes('الأهداف')||label.includes('الهدف')||label.includes('الإجراءات')||label.includes('الأنشطة')||label.includes('النشاط')||label.includes('ملاحظات')||label.includes('وصف')||label.includes('التشخيص')||label.includes('خطة')||label.includes('النتائج')||label.includes('المخرج')||label.includes('الموضوع')||label.includes('الفئة المستهدفة')||label.includes('مهمة التنفيذ')||label.includes('التوصيات')||label.includes('المشكلة')?<textarea value={value||''} onChange={e=>onChange(e.target.value)} rows={2}/>:<input value={value||''} onChange={e=>onChange(e.target.value)}/>}</div>
+
+const GOAL_ORDINALS=['الأول','الثاني','الثالث','الرابع','الخامس','السادس','السابع','الثامن','التاسع','العاشر']
+const goalOrdinal=i=>GOAL_ORDINALS[i]||String(i+1)
+const annualGoalFields=(values={})=>{
+ const count=Math.max(1,Number(values.annual_goal_count)||1)
+ return Array.from({length:count},(_,i)=>({
+  title:`الهدف الخاص ${goalOrdinal(i)}`,
+  goalKey:`الهدف الخاص ${i+1}`,
+  outputs:[`المخرج الأول للهدف الخاص ${i+1}`,`المخرج الثاني للهدف الخاص ${i+1}`,`المخرج الثالث للهدف الخاص ${i+1}`]
+ }))
+}
+
+export default function GenericOfficialForm({config,title,profile,academic,form,students=[],grades=[],sections=[],onChange,onShowPreview,onSave}){
+ const [goalDialog,setGoalDialog]=React.useState(null)
+ const [goalDraft,setGoalDraft]=React.useState({goal:'',outputs:['','','']})
+ const [notice,setNotice]=React.useState(null)
+ const isMeetingForm=config?.meetingForm===true
+ const isStudentRoster=config?.studentRoster===true
+ const isParliamentMeeting=config?.parliamentTeamMeeting===true
+ const isParliamentAchievement=config?.parliamentAchievement===true
+ const achievementFileInput=useRef(null)
+ const [achievementUploading,setAchievementUploading]=useState(false)
+ const [parliamentMembers,setParliamentMembers]=useState([])
+ const [rosterGrade,setRosterGrade]=useState('')
+ const [rosterSection,setRosterSection]=useState('')
+ const [rosterStudent,setRosterStudent]=useState('')
+ const todayLocal=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+ const dateColumn=isParliamentMeeting?'التاريخ':config?.columns?.[0]
+ const dayNameForDate=value=>{if(!value)return '';const d=new Date(`${value}T12:00:00`);return new Intl.DateTimeFormat('ar', {weekday:'long'}).format(d)}
+ const newRow=()=>isMeetingForm?{[dateColumn]:todayLocal()}:isParliamentMeeting?{'اليوم':dayNameForDate(todayLocal()),'التاريخ':todayLocal(),'الحضور':[]}:isParliamentAchievement?{'اليوم':dayNameForDate(todayLocal()),'التاريخ':todayLocal(),'النشاط (نوعه /اسمه)':'','الهدف منه':'','الموجز':''}:{}
+ const rosterSections=sections.filter(x=>!rosterGrade||String(x.grade_id)===String(rosterGrade))
+ const rosterMatches=students.filter(x=>(!rosterGrade||String(x.grade_id)===String(rosterGrade))&&(!rosterSection||String(x.section_id)===String(rosterSection)))
+ const addRosterStudent=()=>{const student=students.find(x=>String(x.id)===String(rosterStudent));if(!student)return;if(rows.some(r=>String(r.student_id)===String(student.id))){setNotice('هذا الطالب مضاف بالفعل.');return}const gradeName=student.grades?.name||grades.find(g=>String(g.id)===String(student.grade_id))?.name||'';const sectionName=student.sections?.name||sections.find(x=>String(x.id)===String(student.section_id))?.name||'';onChange({...form,rows:[...rows,{student_id:student.id,name:student.full_name,grade_id:student.grade_id,section_id:student.section_id,grade:gradeName,section:sectionName,role:'',notes:''}]});setRosterStudent('')}
+ const rows=isStudentRoster?(form.rows||[]).filter(r=>r?.student_id||r?.name):form.rows?.length?form.rows:[newRow()]
+ React.useEffect(()=>{if(!isParliamentMeeting)return;try{const saved=JSON.parse(localStorage.getItem('official-form-parliament-members')||'null');setParliamentMembers((saved?.rows||[]).filter(r=>r?.name||r?.full_name).map(r=>({id:r.student_id||r.id||r.name,name:r.name||r.full_name})).filter((r,i,a)=>a.findIndex(x=>String(x.id)===String(r.id))===i))}catch{setParliamentMembers([])}},[isParliamentMeeting])
+ React.useEffect(()=>{if(!isParliamentMeeting)return;const current=form.rows||[];if(!current.length){onChange({...form,rows:[newRow()]});return}let changed=false;const normalized=current.map(r=>{const date=r['التاريخ']||'';const day=r['اليوم']||dayNameForDate(date);if(r['اليوم']!==day){changed=true;return {...r,'اليوم':day}}return r});if(changed)onChange({...form,rows:normalized})},[isParliamentMeeting,form.rows])
+ React.useEffect(()=>{if(!notice)return;const timer=window.setTimeout(()=>setNotice(null),2000);return()=>window.clearTimeout(timer)},[notice])
+ React.useEffect(()=>{
+  if(!isMeetingForm)return
+  const current=form.rows||[]
+  if(!current.length){onChange({...form,rows:[newRow()]});return}
+  if(!current[0]?.[dateColumn])onChange({...form,rows:current.map((row,i)=>i===0?{...row,[dateColumn]:todayLocal()}:row)})
+ },[isMeetingForm,form.rows])
  const updateRow=(i,k,v)=>onChange({...form,rows:rows.map((r,idx)=>idx===i?{...r,[k]:v}:r)})
- const add=()=>onChange({...form,rows:[...rows,{}]})
- const del=i=>onChange({...form,rows:rows.filter((_,idx)=>idx!==i)})
+ const updateParliamentDate=(i,value)=>onChange({...form,rows:rows.map((r,idx)=>idx===i?{...r,'التاريخ':value,'اليوم':dayNameForDate(value)}:r)})
+ const updateAttendance=(i,memberName,checked)=>{const current=Array.isArray(rows[i]?.['الحضور'])?rows[i]['الحضور']:String(rows[i]?.['الحضور']||'').split('،').map(x=>x.trim()).filter(Boolean);const next=checked?[...current,memberName]:current.filter(x=>x!==memberName);updateRow(i,'الحضور',next)}
+ const add=()=>onChange({...form,rows:[...rows,newRow()]})
+ const del=i=>onChange({...form,rows:rows.length>1?rows.filter((_,idx)=>idx!==i):isStudentRoster?[]:[newRow()]})
+ const beginEditGoal=i=>{
+  const n=i+1, ord=['الأول','الثاني','الثالث']
+  setGoalDraft({goal:form.values?.[`الهدف الخاص ${n}`]||'',outputs:ord.map(o=>form.values?.[`المخرج ${o} للهدف الخاص ${n}`]||'')})
+  setGoalDialog({type:'edit',index:i})
+ }
+ const commitGoalEdit=()=>{
+  const n=goalDialog.index+1, ord=['الأول','الثاني','الثالث'], values={...(form.values||{}),[`الهدف الخاص ${n}`]:goalDraft.goal}
+  ord.forEach((o,j)=>values[`المخرج ${o} للهدف الخاص ${n}`]=goalDraft.outputs[j])
+  onChange({...form,values});setGoalDialog(null);setNotice('تم تعديل الهدف ومخرجاته بنجاح')
+ }
+ const askDeleteGoal=i=>setGoalDialog({type:'delete',index:i})
+ const commitGoalDelete=()=>{
+  const count=annualGoalFields(form.values).length, i=goalDialog.index, old=form.values||{}, values={...old}, ord=['الأول','الثاني','الثالث']
+  for(let n=i+1;n<count;n++){
+   values[`الهدف الخاص ${n}`]=old[`الهدف الخاص ${n+1}`]||''
+   ord.forEach(o=>values[`المخرج ${o} للهدف الخاص ${n}`]=old[`المخرج ${o} للهدف الخاص ${n+1}`]||'')
+  }
+  delete values[`الهدف الخاص ${count}`];ord.forEach(o=>delete values[`المخرج ${o} للهدف الخاص ${count}`])
+  values.annual_goal_count=Math.max(1,count-1)
+  onChange({...form,values});setGoalDialog(null);setNotice('تم حذف الهدف بنجاح')
+ }
+ const saveWithNotice=async()=>{try{await onSave?.();setNotice('تم حفظ البيانات بنجاح')}catch(e){setNotice(e?.message||'تعذر حفظ البيانات')}}
+ const uploadAchievementFiles=async event=>{const files=Array.from(event.target.files||[]);if(!files.length)return;setAchievementUploading(true);try{const uploaded=[];for(const file of files){uploaded.push(await uploadParliamentAchievementAttachment(file))}onChange({...form,attachments:[...(form.attachments||[]),...uploaded]});setNotice(`تم رفع ${uploaded.length} مرفق بنجاح`)}catch(e){setNotice(e?.message||'تعذر رفع المرفق')}finally{setAchievementUploading(false);event.target.value=''}}
+ const removeAchievementFile=async attachment=>{try{await deleteParliamentAchievementAttachment(attachment.storage_path);onChange({...form,attachments:(form.attachments||[]).filter(a=>a.storage_path!==attachment.storage_path)});setNotice('تم حذف المرفق')}catch(e){setNotice(e?.message||'تعذر حذف المرفق')}}
+ const openAchievementFile=async attachment=>{try{await openParliamentAchievementAttachment(attachment.storage_path)}catch(e){setNotice(e?.message||'تعذر فتح المرفق')}}
  const fields=config.fields||[];const tableMode=(config.columns||[]).length>0
  return <div className="generic-form-entry">
-   <div className="official-workspace-head"><div><h2>{title}</h2><p>نموذج إدخال إلكتروني — البيانات تنعكس تلقائيًا على النموذج الرسمي.</p></div><div className="official-workspace-actions"><Button onClick={onShowPreview}><Eye size={16}/> عرض النموذج الرسمي</Button><Button variant="secondary" onClick={onSave}><Save size={16}/> حفظ</Button></div></div>
+   <div className="official-workspace-head"><div><h2>{title}</h2><p>نموذج إدخال إلكتروني — البيانات تنعكس تلقائيًا على النموذج الرسمي.</p></div><div className="official-workspace-actions"><Button onClick={onShowPreview}><Eye size={16}/> عرض النموذج الرسمي</Button><Button variant="secondary" onClick={saveWithNotice}><Save size={16}/> حفظ</Button></div></div>
    <div className="official-entry-card">
     <div className="official-entry-section-title"><div><strong>البيانات التلقائية</strong><span>يتم جلبها من ملف المرشد وإعدادات النظام</span></div></div>
     <div className="official-auto-grid"><div className="official-auto-field"><span>السنة الدراسية</span><strong>{academic.yearName||'—'}</strong></div><div className="official-auto-field"><span>الفصل الدراسي</span><strong>{academic.semesterName||'—'}</strong></div><div className="official-auto-field"><span>اسم المرشد التربوي</span><strong>{profile?.full_name||'—'}</strong></div><div className="official-auto-field"><span>اسم المدير</span><strong>{profile?.manager_name||'—'}</strong></div><div className="official-auto-field wide"><span>المدرسة</span><strong>{profile?.schools?.name||'—'}</strong></div><div className="official-auto-field"><span>المديرية</span><strong>{profile?.directorates?.name||'—'}</strong></div></div>
     <div className="official-auto-note">المعلومات الإدارية لا تحتاج إلى إعادة إدخالها في كل نموذج.</div>
-    {tableMode?<>
+    {config.multipleGoals&&<div className="annual-goals-editor">
+      {inputFor('الهدف العام',form.values?.['الهدف العام'],v=>onChange({...form,values:{...(form.values||{}),['الهدف العام']:v}}))}
+      {annualGoalFields(form.values).map((goal,i)=><section className="annual-goal-card" key={goal.goalKey}>
+       <h3>{goal.title}</h3>
+       {inputFor(goal.title,form.values?.[goal.goalKey],v=>onChange({...form,values:{...(form.values||{}),[goal.goalKey]:v}}))}
+       <div className="annual-goal-outputs">{goal.outputs.map((label,j)=><React.Fragment key={label}>{inputFor(`المخرج ${goalOrdinal(j)} للهدف الخاص ${goalOrdinal(i)}`,form.values?.[label],v=>onChange({...form,values:{...(form.values||{}),[label]:v}}))}</React.Fragment>)}</div>
+       <div style={{display:'flex',gap:8,justifyContent:'flex-start',marginTop:10}}><Button variant="secondary" onClick={()=>beginEditGoal(i)}>تعديل الهدف</Button><Button color="danger" onClick={()=>askDeleteGoal(i)}>حذف الهدف</Button></div>
+      </section>)}
+      <Button onClick={()=>onChange({...form,values:{...(form.values||{}),annual_goal_count:annualGoalFields(form.values).length+1}})}><Plus size={15}/> إضافة هدف خاص</Button>
+     </div>}
+     {fields.length>0&&tableMode&&!config.multipleGoals&&<div className="generic-fields-grid">{fields.map(f=><React.Fragment key={f}>{inputFor(f,form.values?.[f],v=>onChange({...form,values:{...(form.values||{}),[f]:v}}))}</React.Fragment>)}</div>}
+    {isStudentRoster?<><div className="generic-fields-grid">
+      <div className="field"><span>الصف</span><select value={rosterGrade} onChange={e=>{setRosterGrade(e.target.value);setRosterSection('');setRosterStudent('')}}><option value="">جميع الصفوف</option>{grades.map(g=><option key={g.id} value={g.id}>{g.name}</option>)}</select></div>
+      <div className="field"><span>الشعبة</span><select value={rosterSection} onChange={e=>{setRosterSection(e.target.value);setRosterStudent('')}}><option value="">جميع الشعب</option>{rosterSections.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select></div>
+      <div className="field"><span>اسم الطالب</span><select value={rosterStudent} onChange={e=>setRosterStudent(e.target.value)}><option value="">اختر الطالب</option>{rosterMatches.map(x=><option key={x.id} value={x.id}>{x.full_name} — {x.grades?.name||''} / {x.sections?.name||''}</option>)}</select></div>
+      <div className="field" style={{alignSelf:'end'}}><Button onClick={addRosterStudent} disabled={!rosterStudent}><Plus size={15}/> إضافة الطالب المختار</Button></div>
+     </div><div className="official-rows-head"><strong>أعضاء البرلمان المضافون ({rows.length})</strong></div>
+     <div className="official-entry-table-wrap"><table className="official-entry-table parliament-members-table" style={{tableLayout:"fixed",width:"100%"}}><colgroup><col style={{width:"26%"}}/><col style={{width:"13%"}}/><col style={{width:"8%"}}/><col style={{width:"31%"}}/><col style={{width:"17%"}}/><col style={{width:"5%"}}/></colgroup><thead><tr>{config.columns.map(c=><th key={c}>{c}</th>)}<th>حذف</th></tr></thead><tbody>{rows.map((row,i)=><tr key={i}><td>{row.name||row['اسم الطالب']||'—'}</td><td>{row.grade||row['الصف']||'—'}</td><td>{row.section||row['الشعبة']||'—'}</td><td><div className="field"><select value={row.role||''} onChange={e=>updateRow(i,'role',e.target.value)}><option value="">اختر الصفة</option>{PARLIAMENT_ROLES.map((role,index)=><option key={`${index}-${role}`} value={role}>{role}</option>)}</select></div></td><td><div className="field"><input value={row.notes||''} onChange={e=>updateRow(i,'notes',e.target.value)}/></div></td><td><button className="official-delete-row" onClick={()=>del(i)}><Trash2 size={14}/></button></td></tr>)}</tbody></table></div>
+    </>:tableMode?<>
       <div className="official-rows-head"><strong>سجل البيانات</strong><Button onClick={add}><Plus size={15}/> إضافة سجل</Button></div>
-      <div className="official-entry-table-wrap"><table className="official-entry-table"><thead><tr>{config.columns.map(c=><th key={c}>{c}</th>)}<th>حذف</th></tr></thead><tbody>{rows.map((row,i)=><tr key={i}>{config.columns.map(c=><td key={c}><div className="field"><input value={row[c]||''} onChange={e=>updateRow(i,c,e.target.value)}/></div></td>)}<td><button className="official-delete-row" onClick={()=>del(i)}><Trash2 size={14}/></button></td></tr>)}</tbody></table></div>
+      <div className="official-entry-table-wrap"><table className={`official-entry-table ${idAnnualPlan(config)? "annual-plan-table":""} ${isParliamentMeeting?'parliament-team-meetings-table':''} ${isParliamentAchievement?'parliament-achievements-table':''} ${config.parliamentPlan?'parliament-plan-table':''}`} style={idAnnualPlan(config)||isParliamentMeeting||isParliamentAchievement||config.parliamentPlan?{tableLayout:"fixed",width:"100%"}:undefined}>{config.parliamentPlan&&<colgroup><col style={{width:'16%'}}/><col style={{width:'22%'}}/><col style={{width:'8%'}}/><col style={{width:'19%'}}/><col style={{width:'15%'}}/><col style={{width:'15%'}}/><col style={{width:'5%'}}/></colgroup>}{idAnnualPlan(config)&&<colgroup><col style={{width:"22%"}}/>{Array.from({length:9},(_,i)=><col key={i} style={{width:"5.5%"}}/>)}<col style={{width:"12%"}}/><col style={{width:"12%"}}/><col style={{width:"4.5%"}}/></colgroup>}{isParliamentMeeting&&<colgroup><col style={{width:'10%'}}/><col style={{width:'12%'}}/><col style={{width:'19%'}}/><col style={{width:'23%'}}/><col style={{width:'31%'}}/><col style={{width:'5%'}}/></colgroup>}{isParliamentAchievement&&<colgroup><col style={{width:'10%'}}/><col style={{width:'13%'}}/><col style={{width:'24%'}}/><col style={{width:'20%'}}/><col style={{width:'28%'}}/><col style={{width:'5%'}}/></colgroup>}<thead>{idAnnualPlan(config)?<><tr><th rowSpan={2}>النشاط الاستراتيجي</th><th colSpan={4}>الفصل الأول</th><th colSpan={5}>الفصل الثاني</th><th rowSpan={2}>المسؤول / جهة التنفيذ</th><th rowSpan={2}>ملاحظات</th><th rowSpan={2}>حذف</th></tr><tr>{['9','10','11','12','1','2','3','4','5'].map(m=><th key={m}>{m}</th>)}</tr></>:<tr>{config.columns.map(c=><th key={c}>{c}</th>)}<th>حذف</th></tr>}</thead><tbody>{rows.map((row,i)=><tr key={i}>{config.columns.map(c=><td key={c}>{(isParliamentMeeting||isParliamentAchievement)&&c==='اليوم'?<div className="field"><input value={row[c]||dayNameForDate(row['التاريخ'])} readOnly aria-label="اليوم"/></div>:(isParliamentMeeting||isParliamentAchievement)&&c==='التاريخ'?<div className="field"><input type="date" value={row[c]||''} onChange={e=>updateParliamentDate(i,e.target.value)}/></div>:isParliamentMeeting&&c==='الحضور'?<div className="parliament-attendance-options">{parliamentMembers.length?parliamentMembers.map(member=><label key={member.id}><input type="checkbox" checked={(Array.isArray(row[c])?row[c]:String(row[c]||'').split('،').map(x=>x.trim())).includes(member.name)} onChange={e=>updateAttendance(i,member.name,e.target.checked)}/><span>{member.name}</span></label>):<span className="parliament-attendance-empty">أضف أعضاء البرلمان أولًا من بند الأسماء</span>}</div>:<div className="field">{(isParliamentMeeting&&c==='القرارات والتوصيات')||(isParliamentAchievement&&['النشاط (نوعه /اسمه)','الهدف منه','الموجز'].includes(c))||(config.parliamentPlan&&['الهدف الخاص','الإجراءات والأنشطة','النتائج المتوقعة','ملاحظات','مهمة التنفيذ'].includes(c))?<textarea rows={config.parliamentPlan?4:3} value={row[c]||''} onChange={e=>updateRow(i,c,e.target.value)}/>:<input type={(isMeetingForm&&c===dateColumn)||(isParliamentAchievement&&c==='التاريخ')?'date':'text'} value={row[c]||''} onChange={e=>updateRow(i,c,e.target.value)}/>}</div>}</td>)}<td><button className="official-delete-row" onClick={()=>del(i)}><Trash2 size={14}/></button></td></tr>)}</tbody></table></div>{isParliamentAchievement&&<div className="parliament-achievement-attachments"><input ref={achievementFileInput} type="file" hidden multiple accept=".png,.jpg,.jpeg,.gif,.webp,.bmp,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation" onChange={uploadAchievementFiles}/><Button variant="secondary" onClick={()=>achievementFileInput.current?.click()} disabled={achievementUploading}><Paperclip size={16}/>{achievementUploading?'جارٍ رفع المرفقات...':'إضافة المرفقات'}</Button><span className="parliament-achievement-attachment-hint">صور أو ملفات Office أو PDF (حتى 10 MB لكل ملف)</span>{(form.attachments||[]).length>0&&<div className="parliament-achievement-attachment-list">{form.attachments.map((a,i)=><div className="parliament-achievement-attachment" key={a.storage_path||i}><FileText size={16}/><span>{a.file_name}</span><button type="button" onClick={()=>openAchievementFile(a)} title="فتح المرفق"><ExternalLink size={14}/></button><button type="button" onClick={()=>removeAchievementFile(a)} title="حذف المرفق"><Trash2 size={14}/></button></div>)}</div>}</div>}
     </>:<div className="generic-fields-grid">{fields.map((f,i)=><React.Fragment key={f}>{inputFor(f,form.values?.[f],v=>onChange({...form,values:{...(form.values||{}),[f]:v}}))}</React.Fragment>)}</div>}
     <div className="official-signature-row"><div><span>اسم المرشد التربوي</span><strong>{profile?.full_name||'—'}</strong><span>اسم المدير</span><strong>{profile?.manager_name||'—'}</strong></div><div><span>التوقيع</span><div className="official-signature-script">{profile?.signature||profile?.full_name||'التوقيع'}</div></div></div>
-    <div className="meeting-entry-actions"><Button onClick={onSave}><Save size={16}/> حفظ البيانات</Button><Button variant="secondary" onClick={onShowPreview}><Eye size={16}/> عرض النموذج الرسمي</Button></div>
+    <div className="meeting-entry-actions"><Button onClick={saveWithNotice}><Save size={16}/> حفظ البيانات</Button><Button variant="secondary" onClick={onShowPreview}><Eye size={16}/> عرض النموذج الرسمي</Button></div>
    </div>
+   {goalDialog&&<div role="presentation" style={{position:'fixed',inset:0,zIndex:99999,background:'rgba(0,0,0,.55)',display:'flex',alignItems:'center',justifyContent:'center',padding:18}}>
+    <div role="dialog" aria-modal="true" style={{background:'#fffaf0',borderRadius:18,padding:22,width:'min(560px,100%)',maxHeight:'85vh',overflowY:'auto',boxShadow:'0 18px 60px rgba(0,0,0,.3)',direction:'rtl'}}>
+     {goalDialog.type==='delete'?<><h3>تأكيد حذف الهدف</h3><p>هل أنت متأكد من حذف الهدف الخاص {goalOrdinal(goalDialog.index)} ومخرجاته الثلاثة؟</p><div style={{display:'flex',gap:10,justifyContent:'center'}}><Button onClick={commitGoalDelete}>تأكيد الحذف</Button><Button variant="secondary" onClick={()=>setGoalDialog(null)}>إلغاء</Button></div></>:<><h3>تعديل الهدف الخاص {goalOrdinal(goalDialog.index)}</h3><div className="field"><span>الهدف الخاص</span><textarea rows={2} value={goalDraft.goal} onChange={e=>setGoalDraft(d=>({...d,goal:e.target.value}))}/></div>{goalDraft.outputs.map((v,j)=><div className="field" key={j}><span>المخرج {goalOrdinal(j)}</span><textarea rows={2} value={v} onChange={e=>setGoalDraft(d=>({...d,outputs:d.outputs.map((x,k)=>k===j?e.target.value:x)}))}/></div>)}<div style={{display:'flex',gap:10,justifyContent:'center'}}><Button onClick={commitGoalEdit}>حفظ التعديل</Button><Button variant="secondary" onClick={()=>setGoalDialog(null)}>إلغاء</Button></div></>}
+    </div>
+   </div>}
+   {notice&&<div role="status" className="generic-save-toast">{notice}</div>}
  </div>
 }
 
-export function GenericOfficialPreview({title,config,profile,academic,form}){
- const rows=form.rows||[]; const vals=form.values||{}; const cols=config.columns||[];
- return <div className="official-document generic-official-document">
-  <OfficialDocumentHeader/><div className="official-doc-heading"><h1>{title}</h1><p>للعام الدراسي {academic.yearName||'................'} — الفصل الدراسي {academic.semesterName||'................'}</p><p>{profile?.schools?.name||''} {profile?.directorates?.name?` — ${profile.directorates.name}`:''}</p></div>
-  {cols.length?<table className="official-doc-table"><thead><tr>{cols.map(c=><th key={c}>{c}</th>)}</tr></thead><tbody>{(rows.length?rows:[{}]).map((r,i)=><tr key={i}>{cols.map(c=><td key={c}>{r[c]||' '}</td>)}</tr>)}</tbody></table>:<div className="generic-paper-fields">{config.fields.map(f=><div className="generic-paper-field" key={f}><strong>{f}</strong><span>{vals[f]||'.................................................................'}</span></div>)}</div>}
+export function GenericOfficialPreview({title,config,profile,academic,form,students=[]}){
+ const rows=config.studentRoster?(form.rows||[]).filter(r=>r?.student_id||r?.name):(form.rows||[]); const vals=form.values||{}; const cols=config.columns||[];
+ const [achievementAttachmentUrls,setAchievementAttachmentUrls]=useState({});
+ const [achievementAttachmentStatus,setAchievementAttachmentStatus]=useState({});
+ useEffect(()=>{
+  let active=true;
+  const attachments=config.parliamentAchievement?(form.attachments||[]):[];
+  setAchievementAttachmentUrls({});
+  setAchievementAttachmentStatus(Object.fromEntries(attachments.map(a=>[a.storage_path,'loading'])));
+  (async()=>{
+   const entries=await Promise.all(attachments.map(async(a)=>{
+    try{
+     if(!a.storage_path)throw new Error('مسار المرفق غير متوفر');
+     const url=await getParliamentAchievementAttachmentUrl(a.storage_path);
+     return [a.storage_path,url,'ready'];
+    }catch(error){return [a.storage_path,'','error'];}
+   }));
+   if(!active)return;
+   setAchievementAttachmentUrls(Object.fromEntries(entries.map(([path,url])=>[path,url])));
+   setAchievementAttachmentStatus(Object.fromEntries(entries.map(([path,,status])=>[path,status])));
+  })();
+  return()=>{active=false};
+ },[config.parliamentAchievement,form.attachments]);
+ return <div className={`official-document generic-official-document ${config.parliamentPlan?'parliament-plan-document':''}`}>
+  <OfficialDocumentHeader/><div className="official-doc-heading"><h1>{config.parliamentPlan?'خطة البرلمان الطلابي':title}</h1><p>للعام الدراسي {academic.yearName||'................'} — الفصل الدراسي {academic.semesterName||'................'}</p><p>{profile?.schools?.name||''} {profile?.directorates?.name?` — ${profile.directorates.name}`:''}</p></div>
+  {config.multipleGoals?<div className="generic-paper-fields annual-goals-preview">
+   <div className="generic-paper-field"><strong>الهدف العام</strong><span>{vals['الهدف العام']||'.................................................................'}</span></div>
+   {annualGoalFields(vals).map((goal,i)=><section className="annual-goal-preview" key={goal.goalKey}><h3>{goal.title}</h3><div className="generic-paper-field"><strong>{goal.title}</strong><span>{vals[goal.goalKey]||'.................................................................'}</span></div>{goal.outputs.map((label,j)=><div className="generic-paper-field" key={label}><strong>المخرج {goalOrdinal(j)} للهدف الخاص {goalOrdinal(i)}</strong><span>{vals[label]||'.................................................................'}</span></div>)}</section>)}
+  </div>:config.fields?.length>0&&<div className={`generic-paper-fields ${config.parliamentPlan?'parliament-plan-goal':''}`}>{config.fields.map(f=><div className="generic-paper-field" key={f}><strong>{f}</strong><span>{vals[f]||'.................................................................'}</span></div>)}</div>}{cols.length>0&&<table className={`official-doc-table ${config.annualPlan?'annual-plan-table':''} ${config.parliamentTeamMeeting?'parliament-team-meetings-preview':''} ${config.parliamentAchievement?'parliament-achievements-preview':''} ${config.parliamentPlan?'parliament-plan-preview-table':''}`}>{config.studentRoster&&<colgroup><col style={{width:"26%"}}/><col style={{width:"13%"}}/><col style={{width:"8%"}}/><col style={{width:"31%"}}/><col style={{width:"17%"}}/></colgroup>}{config.parliamentPlan&&<colgroup><col style={{width:'17%'}}/><col style={{width:'23%'}}/><col style={{width:'9%'}}/><col style={{width:'20%'}}/><col style={{width:'16%'}}/><col style={{width:'15%'}}/></colgroup>}{config.parliamentTeamMeeting&&<colgroup><col style={{width:'10%'}}/><col style={{width:'12%'}}/><col style={{width:'19%'}}/><col style={{width:'23%'}}/><col style={{width:'36%'}}/></colgroup>}{config.parliamentAchievement&&<colgroup><col style={{width:'10%'}}/><col style={{width:'13%'}}/><col style={{width:'24%'}}/><col style={{width:'20%'}}/><col style={{width:'33%'}}/></colgroup>}{config.annualPlan&&<colgroup><col style={{width:"22%"}}/>{Array.from({length:9},(_,i)=><col key={i} style={{width:"5.5%"}}/>)}<col style={{width:"14.25%"}}/><col style={{width:"14.25%"}}/></colgroup>}<thead>{config.annualPlan?<><tr><th rowSpan={2}>النشاط الاستراتيجي</th><th colSpan={4}>الفصل الأول</th><th colSpan={5}>الفصل الثاني</th><th rowSpan={2}>المسؤول / جهة التنفيذ</th><th rowSpan={2}>ملاحظات</th></tr><tr>{['9','10','11','12','1','2','3','4','5'].map(m=><th key={m}>{m}</th>)}</tr></>:<tr>{cols.map(c=><th key={c}>{c}</th>)}</tr>}</thead><tbody>{(rows.length?rows:[{}]).map((r,i)=><tr key={i}>{config.studentRoster?<><td>{r.name||r['اسم الطالب']||' '}</td><td>{r.grade||r['الصف']||' '}</td><td>{r.section||r['الشعبة']||' '}</td><td>{r.role||' '}</td><td>{r.notes||' '}</td></>:cols.map(c=><td key={c}>{c==='الحضور'?(Array.isArray(r[c])?r[c].join('، '):r[c]||' '):config.parliamentAchievement&&c==='اليوم'?(r[c]||(r['التاريخ']?new Intl.DateTimeFormat('ar',{weekday:'long'}).format(new Date(`${r['التاريخ']}T12:00:00`)):' ')):r[c]||' '}</td>)}</tr>)}</tbody></table>}{config.parliamentAchievement&&(form.attachments||[]).length>0&&<section className="parliament-achievement-print-attachments"><h3>المرفقات</h3>{form.attachments.map((a,i)=>{const url=achievementAttachmentUrls[a.storage_path]||'';const name=a.file_name||`مرفق ${i+1}`;const type=(a.mime_type||'').toLowerCase();const isImage=type.startsWith('image/')||/\.(png|jpe?g|gif|webp|bmp)$/i.test(name);const isPdf=type==='application/pdf'||/\.pdf$/i.test(name);const status=achievementAttachmentStatus[a.storage_path]||'loading';return <div className="parliament-achievement-print-attachment" key={a.storage_path||i}><strong>{name}</strong>{isImage&&url?<a className="parliament-achievement-image-link" href={url} target="_blank" rel="noreferrer"><img src={url} alt={name} loading="eager" decoding="sync" onError={e=>{e.currentTarget.style.display='none';setAchievementAttachmentStatus(prev=>({...prev,[a.storage_path]:'image-error'}))}}/></a>:isImage&&status==='loading'?<span>جارٍ تحميل معاينة الصورة…</span>:isImage?<span>تعذّر تحميل الصورة. استخدم رابط فتح / تنزيل المرفق.</span>:isPdf&&url?<iframe title={name} src={url} loading="eager"/>:null}{url&&<a href={url} target="_blank" rel="noreferrer">فتح / تنزيل المرفق: {name}</a>}{!url&&status==='loading'&&<span>جارٍ تجهيز المرفق للمعاينة…</span>}{!url&&status==='error'&&<span>تعذّر إنشاء رابط معاينة لهذا المرفق. تحقق من صلاحيات مخزن الملفات.</span>}</div>})}</section>}
   <div className="official-signature-block"><div><strong>اسم وتوقيع المرشد التربوي</strong><span>{profile?.full_name||'........................'}</span></div><div><strong>اسم وتوقيع مدير المدرسة</strong><span>{profile?.manager_name||'........................'}</span></div></div>
  </div>
 }

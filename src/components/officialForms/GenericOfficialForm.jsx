@@ -42,9 +42,9 @@ export const FORM_CONFIGS={
  'parliament-team-meetings':{fields:[],columns:['اليوم','التاريخ','موضوع الاجتماع','الحضور','القرارات والتوصيات'],parliamentTeamMeeting:true},
  'parliament-achievements':{fields:[],columns:['اليوم','التاريخ','النشاط (نوعه /اسمه)','الهدف منه','الموجز'],parliamentAchievement:true},
  'health-cases':{fields:[],columns:['التاريخ','رمز الطالب','الصف والشعبة','نوع الحالة الصحية','الإجراء / الإحالة','المتابعة']},
- 'meeting-principal':{meetingForm:true,fields:[],columns:['التاريخ','الموضوع','ملخص الاجتماع','التوصيات']},
- 'meeting-teacher':{meetingForm:true,fields:[],columns:['التاريخ','اسم المعلم/ة','الموضوع','التوصيات']},
- 'meeting-parents':{meetingForm:true,fields:[],columns:['التاريخ','ولي الأمر','اسم الطالب','الموضوع','التوصيات']},
+ 'meeting-principal':{principalMeeting:true,fields:[],columns:[]},
+ 'meeting-teacher':{teacherMeeting:true,fields:[],columns:[]},
+ 'meeting-parents':{parentsMeeting:true,fields:[],columns:[]},
  'plan':{fields:['الهدف','مخرج رقم','النشاط','الشهر','الحالة/وضع الإنجاز','ملاحظات'],columns:['مخرج رقم','الأنشطة','10','11','12','الحالة/وضع الإنجاز','ملاحظات']},
  'semester-report':{fields:['مقدمة وخلفية','أهم الإنجازات','عرض تحليلي للإنجازات','التحديات والصعوبات','الفرص','أهم الأنشطة للفصل القادم','ملاحظات'],columns:[]}
 }
@@ -66,11 +66,15 @@ const annualGoalFields=(values={})=>{
  }))
 }
 
-export default function GenericOfficialForm({config,title,profile,academic,form,students=[],grades=[],sections=[],onChange,onShowPreview,onSave}){
+export default function GenericOfficialForm({config,title,profile,academic,form,students=[],grades=[],sections=[],teachers=[],onChange,onShowPreview,onSave}){
  const [goalDialog,setGoalDialog]=React.useState(null)
  const [goalDraft,setGoalDraft]=React.useState({goal:'',outputs:['','','']})
  const [notice,setNotice]=React.useState(null)
  const isMeetingForm=config?.meetingForm===true
+ const isPrincipalMeeting=config?.principalMeeting===true
+ const isTeacherMeeting=config?.teacherMeeting===true
+ const isParentsMeeting=config?.parentsMeeting===true
+ const isSpecialMeeting=isPrincipalMeeting||isTeacherMeeting||isParentsMeeting
  const isStudentRoster=config?.studentRoster===true
  const isParliamentMeeting=config?.parliamentTeamMeeting===true
  const isParliamentAchievement=config?.parliamentAchievement===true
@@ -134,6 +138,42 @@ export default function GenericOfficialForm({config,title,profile,academic,form,
     <div className="official-entry-section-title"><div><strong>البيانات التلقائية</strong><span>يتم جلبها من ملف المرشد وإعدادات النظام</span></div></div>
     <div className="official-auto-grid"><div className="official-auto-field"><span>السنة الدراسية</span><strong>{academic.yearName||'—'}</strong></div><div className="official-auto-field"><span>الفصل الدراسي</span><strong>{academic.semesterName||'—'}</strong></div><div className="official-auto-field"><span>اسم المرشد التربوي</span><strong>{profile?.full_name||'—'}</strong></div><div className="official-auto-field"><span>اسم المدير</span><strong>{profile?.manager_name||'—'}</strong></div><div className="official-auto-field wide"><span>المدرسة</span><strong>{profile?.schools?.name||'—'}</strong></div><div className="official-auto-field"><span>المديرية</span><strong>{profile?.directorates?.name||'—'}</strong></div></div>
     <div className="official-auto-note">المعلومات الإدارية لا تحتاج إلى إعادة إدخالها في كل نموذج.</div>
+    {isSpecialMeeting&&<div className="generic-fields-grid principal-meeting-fields">
+      {isTeacherMeeting&&<div className="field wide">
+       <span>اختيار المعلمين المشاركين</span>
+       {!teachers.length
+        ? <p style={{color:'#81766a'}}>لا يوجد معلمون مسجلون في بيانات المدرسة. أضف المعلمين أولًا من شاشة بيانات المدرسة.</p>
+        : <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:10,marginTop:8}}>
+          {teachers.map(t=>{
+           const selected=(form.values?.selected_teachers||[]).some(x=>x.id===t.id)
+           return <label key={t.id} style={{display:'flex',alignItems:'center',gap:9,padding:'10px 12px',border:'1px solid #e5d8c5',borderRadius:10,cursor:'pointer'}}>
+            <input type="checkbox" checked={selected} onChange={e=>{
+             const current=form.values?.selected_teachers||[]
+             const next=e.target.checked
+              ? [...current.filter(x=>x.id!==t.id),{id:t.id,full_name:t.full_name}]
+              : current.filter(x=>x.id!==t.id)
+             onChange({...form,values:{
+              ...(form.values||{}),
+              selected_teachers:next,
+              ...(form.values?.attendance_count_manual===true?{}:{'عدد الحضور':String(next.length)})
+             }})
+            }}/>
+            <span>{t.full_name}</span>
+           </label>
+          })}
+         </div>}
+      </div>}
+      {isParentsMeeting&&<div className="field wide"><span>أولياء الأمور المشاركون (اكتب الأسماء يدويًا)</span><textarea rows={3} value={form.values?.['أولياء الأمور المشاركون']||''} onChange={e=>onChange({...form,values:{...(form.values||{}),['أولياء الأمور المشاركون']:e.target.value}})} placeholder="اكتب أسماء أولياء الأمور المشاركين"/></div>}
+      <div className="field"><span>عدد الحضور</span><input type="number" min="0" value={form.values?.['عدد الحضور']??''} onChange={e=>onChange({...form,values:{...(form.values||{}),['عدد الحضور']:e.target.value,attendance_count_manual:true}})}/></div>
+      <div className="field"><span>التاريخ</span><input type="date" value={form.values?.['التاريخ']||''} onChange={e=>onChange({...form,values:{...(form.values||{}),['التاريخ']:e.target.value,['اليوم']:dayNameForDate(e.target.value)}})}/></div>
+      <div className="field"><span>اليوم</span><input value={form.values?.['اليوم']||dayNameForDate(form.values?.['التاريخ'])} readOnly/></div>
+      <div className="field wide"><span>موضوع الاجتماع</span><textarea rows={2} value={form.values?.['موضوع الاجتماع']||''} onChange={e=>onChange({...form,values:{...(form.values||{}),['موضوع الاجتماع']:e.target.value}})}/></div>
+      <div className="field wide"><span>الهدف من الاجتماع</span><textarea rows={3} value={form.values?.['الهدف من الاجتماع']||''} onChange={e=>onChange({...form,values:{...(form.values||{}),['الهدف من الاجتماع']:e.target.value}})}/></div>
+      <div className="field wide principal-meeting-points"><span>سير الاجتماع (النقاط التي تم نقاشها)</span>
+       {(form.values?.['نقاط الاجتماع']||['']).map((point,index)=><div className="principal-meeting-point" key={index}><b>{index+1}.</b><textarea rows={2} value={point} onChange={e=>{const points=[...(form.values?.['نقاط الاجتماع']||[''])];points[index]=e.target.value;onChange({...form,values:{...(form.values||{}),['نقاط الاجتماع']:points}})}}/><button type="button" className="official-delete-row" aria-label="حذف النقطة" onClick={()=>{const points=(form.values?.['نقاط الاجتماع']||['']).filter((_,i)=>i!==index);onChange({...form,values:{...(form.values||{}),['نقاط الاجتماع']:points.length?points:['']}})}}><Trash2 size={14}/></button></div>)}
+       <Button variant="secondary" onClick={()=>onChange({...form,values:{...(form.values||{}),['نقاط الاجتماع']:[...(form.values?.['نقاط الاجتماع']||['']), '']}})}><Plus size={15}/> إضافة نقطة</Button>
+      </div>
+     </div>}
     {config.multipleGoals&&<div className="annual-goals-editor">
       {inputFor('الهدف العام',form.values?.['الهدف العام'],v=>onChange({...form,values:{...(form.values||{}),['الهدف العام']:v}}))}
       {annualGoalFields(form.values).map((goal,i)=><section className="annual-goal-card" key={goal.goalKey}>
@@ -192,11 +232,32 @@ export function GenericOfficialPreview({title,config,profile,academic,form,stude
   return()=>{active=false};
  },[config.parliamentAchievement,form.attachments]);
  return <div className={`official-document generic-official-document ${config.parliamentPlan?'parliament-plan-document':''}`}>
-  <OfficialDocumentHeader/><div className="official-doc-heading"><h1>{config.parliamentPlan?'خطة البرلمان الطلابي':title}</h1><p>للعام الدراسي {academic.yearName||'................'} — الفصل الدراسي {academic.semesterName||'................'}</p><p>{profile?.schools?.name||''} {profile?.directorates?.name?` — ${profile.directorates.name}`:''}</p></div>
-  {config.multipleGoals?<div className="generic-paper-fields annual-goals-preview">
+  <OfficialDocumentHeader/>
+  <div className="official-doc-heading">
+   <h1>{config.teacherMeeting?'نموذج اجتماعات معلمي/ات المدرسة':config.principalMeeting?'نموذج اجتماعات مدير/ة المدرسة':(config.parliamentPlan?'خطة البرلمان الطلابي':title)}</h1>
+   <p>للعام الدراسي {academic.yearName||'................'} — الفصل الدراسي {academic.semesterName||'................'}</p>
+   <p>{profile?.schools?.name||'اسم المدرسة'}{profile?.directorates?.name?` — ${profile.directorates.name}`:' — اسم المديرية'}</p>
+  </div>
+  {(config.principalMeeting||config.teacherMeeting||config.parentsMeeting)?<section className="principal-meeting-preview" style={{textAlign:'right',direction:'rtl'}}>
+   <h2 style={{textAlign:'center',fontSize:'20px',margin:'0 0 16px'}}>محضر اجتماع</h2>
+   <h3 style={{textAlign:'right',fontSize:'15px',fontWeight:600,margin:'0 0 16px'}}>الفئة المستهدفة: {config.parentsMeeting?'أولياء أمور الطلبة':config.teacherMeeting?'معلموا/ات المدرسة':'مدير/ة المدرسة'}</h3>{config.parentsMeeting&&<div style={{textAlign:'right',fontSize:'14px',margin:'0 0 14px'}}><strong>أولياء الأمور المشاركون:</strong><p style={{whiteSpace:'pre-wrap',margin:'8px 0'}}>{vals['أولياء الأمور المشاركون']||'........................'}</p></div>}{config.teacherMeeting&&<div style={{textAlign:'right',fontSize:'14px',margin:'0 0 14px'}}>
+    <strong>المعلمون المشاركون:</strong>
+    {Array.isArray(vals.selected_teachers)&&vals.selected_teachers.length
+     ? <ul style={{margin:'8px 0',paddingRight:24}}>
+       {vals.selected_teachers.map((t,i)=><li key={t.id||`${t.full_name}-${i}`} style={{marginBottom:4}}>{t.full_name}</li>)}
+      </ul>
+     : ' ........................'}
+   </div>}
+   {<>
+   <div className="principal-meeting-meta" style={{display:'flex',flexWrap:'wrap',alignItems:'center',fontSize:'13px',lineHeight:1.7,textAlign:'right',justifyContent:'flex-start',columnGap:'36px',rowGap:'10px'}}><span><b>عدد الحضور:</b> {vals['عدد الحضور']||'........'}</span><span><b>اليوم:</b> {vals['اليوم']|| (vals['التاريخ']?new Intl.DateTimeFormat('ar',{weekday:'long'}).format(new Date(`${vals['التاريخ']}T12:00:00`)):'........')}　 <b>التاريخ:</b> {vals['التاريخ']?new Date(`${vals['التاريخ']}T12:00:00`).toLocaleDateString('en-GB')+' م':'........'}</span></div>
+   <div className="principal-meeting-section" style={{textAlign:'center',marginTop:'18px'}}><h3 style={{fontSize:'14px',margin:'0 0 5px',textAlign:'center'}}>موضوع الاجتماع:</h3><p style={{fontSize:'13px',lineHeight:1.6,margin:0,textAlign:'center'}}>{vals['موضوع الاجتماع']||'........................................................'}</p></div>
+   <div className="principal-meeting-section" style={{textAlign:'center',marginTop:'16px'}}><h3 style={{fontSize:'14px',margin:'0 0 5px',textAlign:'center'}}>الهدف من الاجتماع:</h3><p style={{fontSize:'13px',lineHeight:1.6,margin:0,textAlign:'center'}}>{vals['الهدف من الاجتماع']||'........................................................'}</p></div>
+   <div className="principal-meeting-section" style={{textAlign:'right',direction:'rtl',marginTop:'16px'}}><h3 style={{fontSize:'14px',margin:'0 0 5px',textAlign:'right'}}>سير الاجتماع (النقاط التي تم نقاشها):</h3><ol style={{fontSize:'13px',lineHeight:1.6,margin:'5px 0 0',paddingRight:'24px',textAlign:'right',listStylePosition:'outside'}}>{(vals['نقاط الاجتماع']||[]).filter(x=>String(x||'').trim()).map((point,i)=><li key={i}>{point}</li>)}</ol></div>
+  </>}
+  </section>:config.multipleGoals?<div className="generic-paper-fields annual-goals-preview">
    <div className="generic-paper-field"><strong>الهدف العام</strong><span>{vals['الهدف العام']||'.................................................................'}</span></div>
    {annualGoalFields(vals).map((goal,i)=><section className="annual-goal-preview" key={goal.goalKey}><h3>{goal.title}</h3><div className="generic-paper-field"><strong>{goal.title}</strong><span>{vals[goal.goalKey]||'.................................................................'}</span></div>{goal.outputs.map((label,j)=><div className="generic-paper-field" key={label}><strong>المخرج {goalOrdinal(j)} للهدف الخاص {goalOrdinal(i)}</strong><span>{vals[label]||'.................................................................'}</span></div>)}</section>)}
   </div>:config.fields?.length>0&&<div className={`generic-paper-fields ${config.parliamentPlan?'parliament-plan-goal':''}`}>{config.fields.map(f=><div className="generic-paper-field" key={f}><strong>{f}</strong><span>{vals[f]||'.................................................................'}</span></div>)}</div>}{cols.length>0&&<table className={`official-doc-table ${config.annualPlan?'annual-plan-table':''} ${config.parliamentTeamMeeting?'parliament-team-meetings-preview':''} ${config.parliamentAchievement?'parliament-achievements-preview':''} ${config.parliamentPlan?'parliament-plan-preview-table':''}`}>{config.studentRoster&&<colgroup><col style={{width:"26%"}}/><col style={{width:"13%"}}/><col style={{width:"8%"}}/><col style={{width:"31%"}}/><col style={{width:"17%"}}/></colgroup>}{config.parliamentPlan&&<colgroup><col style={{width:'17%'}}/><col style={{width:'23%'}}/><col style={{width:'9%'}}/><col style={{width:'20%'}}/><col style={{width:'16%'}}/><col style={{width:'15%'}}/></colgroup>}{config.parliamentTeamMeeting&&<colgroup><col style={{width:'10%'}}/><col style={{width:'12%'}}/><col style={{width:'19%'}}/><col style={{width:'23%'}}/><col style={{width:'36%'}}/></colgroup>}{config.parliamentAchievement&&<colgroup><col style={{width:'10%'}}/><col style={{width:'13%'}}/><col style={{width:'24%'}}/><col style={{width:'20%'}}/><col style={{width:'33%'}}/></colgroup>}{config.annualPlan&&<colgroup><col style={{width:"22%"}}/>{Array.from({length:9},(_,i)=><col key={i} style={{width:"5.5%"}}/>)}<col style={{width:"14.25%"}}/><col style={{width:"14.25%"}}/></colgroup>}<thead>{config.annualPlan?<><tr><th rowSpan={2}>النشاط الاستراتيجي</th><th colSpan={4}>الفصل الأول</th><th colSpan={5}>الفصل الثاني</th><th rowSpan={2}>المسؤول / جهة التنفيذ</th><th rowSpan={2}>ملاحظات</th></tr><tr>{['9','10','11','12','1','2','3','4','5'].map(m=><th key={m}>{m}</th>)}</tr></>:<tr>{cols.map(c=><th key={c}>{c}</th>)}</tr>}</thead><tbody>{(rows.length?rows:[{}]).map((r,i)=><tr key={i}>{config.studentRoster?<><td>{r.name||r['اسم الطالب']||' '}</td><td>{r.grade||r['الصف']||' '}</td><td>{r.section||r['الشعبة']||' '}</td><td>{r.role||' '}</td><td>{r.notes||' '}</td></>:cols.map(c=><td key={c}>{c==='الحضور'?(Array.isArray(r[c])?r[c].join('، '):r[c]||' '):config.parliamentAchievement&&c==='اليوم'?(r[c]||(r['التاريخ']?new Intl.DateTimeFormat('ar',{weekday:'long'}).format(new Date(`${r['التاريخ']}T12:00:00`)):' ')):r[c]||' '}</td>)}</tr>)}</tbody></table>}{config.parliamentAchievement&&(form.attachments||[]).length>0&&<section className="parliament-achievement-print-attachments"><h3>المرفقات</h3>{form.attachments.map((a,i)=>{const url=achievementAttachmentUrls[a.storage_path]||'';const name=a.file_name||`مرفق ${i+1}`;const type=(a.mime_type||'').toLowerCase();const isImage=type.startsWith('image/')||/\.(png|jpe?g|gif|webp|bmp)$/i.test(name);const isPdf=type==='application/pdf'||/\.pdf$/i.test(name);const status=achievementAttachmentStatus[a.storage_path]||'loading';return <div className="parliament-achievement-print-attachment" key={a.storage_path||i}><strong>{name}</strong>{isImage&&url?<a className="parliament-achievement-image-link" href={url} target="_blank" rel="noreferrer"><img src={url} alt={name} loading="eager" decoding="sync" onError={e=>{e.currentTarget.style.display='none';setAchievementAttachmentStatus(prev=>({...prev,[a.storage_path]:'image-error'}))}}/></a>:isImage&&status==='loading'?<span>جارٍ تحميل معاينة الصورة…</span>:isImage?<span>تعذّر تحميل الصورة. استخدم رابط فتح / تنزيل المرفق.</span>:isPdf&&url?<iframe title={name} src={url} loading="eager"/>:null}{url&&<a href={url} target="_blank" rel="noreferrer">فتح / تنزيل المرفق: {name}</a>}{!url&&status==='loading'&&<span>جارٍ تجهيز المرفق للمعاينة…</span>}{!url&&status==='error'&&<span>تعذّر إنشاء رابط معاينة لهذا المرفق. تحقق من صلاحيات مخزن الملفات.</span>}</div>})}</section>}
-  <div className="official-signature-block"><div><strong>اسم وتوقيع المرشد التربوي</strong><span>{profile?.full_name||'........................'}</span></div><div><strong>اسم وتوقيع مدير المدرسة</strong><span>{profile?.manager_name||'........................'}</span></div></div>
+  <div className="official-signature-block" style={(config.principalMeeting||config.teacherMeeting||config.parentsMeeting)?{direction:'rtl',textAlign:'left',justifyContent:'flex-start'}:undefined}>{(config.principalMeeting||config.teacherMeeting||config.parentsMeeting)?<div style={{textAlign:'left'}}><strong>توقيع المرشد/ة التربوي/ة</strong><span>{profile?.full_name||'........................'}</span></div>:<><div><strong>اسم وتوقيع المرشد التربوي</strong><span>{profile?.full_name||'........................'}</span></div><div><strong>اسم وتوقيع مدير المدرسة</strong><span>{profile?.manager_name||'........................'}</span></div></>}</div>
  </div>
 }

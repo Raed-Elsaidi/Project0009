@@ -4,69 +4,18 @@ import{LayoutDashboard,CalendarDays,Users,FileText,AlertTriangle,MessageSquare,B
 import{supabase}from'../services/supabase';import{currentProfile,getMyPermissions,listMessages,listNotes}from'../services/data';import SiteFooter from'./SiteFooter';
 
 const counselorItems=[
- {group:true,key:'admin-files',label:'الملف الإداري',icon:Files,children:[
-  ['/annual-plan','الخطة السنوية','annual-plan'],
-  ['/official-forms/semester-report','التقرير الفصلي','semester-report'],
-  ['/weekly-program','البرنامج اليومي / الأسبوعي','weekly-program'],
-  ['/correspondence','الصادر والوارد','correspondence']
- ]},
- {group:true,key:'students-file',label:'أسماء طلاب المدرسة',icon:Users,children:[
-  ['/students','إضافة وعرض الطلاب','students']
- ]},
- {group:true,key:'group-guidance',label:'الإرشاد الجماعي',icon:UsersRound,children:[
-  ['/group-counseling','أسماء طلاب المجموعة الإرشادية','group-counseling'],
-  ['/official-forms/group-session-details','جدول اللقاءات (الخطة)','group-counseling'],
-  ['/official-forms/group-session-summary','نموذج الإرشاد الجماعي','group-counseling']
- ]},
- {group:true,key:'group-direction',label:'التوجيه الجمعي',icon:MessageSquare,children:[
-  ['/official-forms/guidance-meetings-followup','نموذج متابعة لقاءات التوجيه الجمعي','guidance']
- ]},
- {group:true,key:'career-guidance',label:'التوجيه المهني',icon:BookOpen,children:[
-  ['/official-forms/career-guidance-followup','نموذج متابعة لقاءات التوجيه المهني','career-guidance']
- ]},
- {group:true,key:'activities',label:'الأنشطة',icon:Activity,children:[
-  ['/official-forms/visits','الزيارات','activities'],
-  ['/official-forms/newsletters','النشرات الإرشادية','activities'],
-  ['/official-forms/morning-radio','الإذاعة','activities'],
-  ['/official-forms/seminars-workshops','الندوات','activities'],
-  ['/official-forms/posters','الملصقات','activities'],
-  ['/official-forms/wall-magazine','مجلة حائط','activities']
- ]},
- {group:true,key:'parliament',label:'البرلمان',icon:Users,children:[
-  ['/official-forms/parliament-plan','الخطة','parliament'],
-  ['/official-forms/parliament-members','الأسماء','parliament'],
-  ['/official-forms/parliament-team-meetings','اجتماعات الفريق','parliament'],
-  ['/official-forms/parliament-achievements','إنجازات','parliament']
- ]},
- {group:true,key:'student-consultations',label:'استشارات طلابية',icon:ClipboardList,children:[
-  ['/absence','الغياب','absence'],
-  ['/lateness','التأخر','lateness'],
-  ['/dropout','التسرّب','dropout'],
-  ['/official-forms/health-cases','الحالات الصحية','health-cases']
- ]},
- {group:true,key:'focused-interviews',label:'رصد ومتابعة المقابلات الفردية المركزة',icon:FileText,children:[
-  ['/focused-interviews','نموذج رصد ومتابعة المقابلات الفردية المركزة','focused-interviews'],
-  ['/transfer-requests','طلبات النقل الواردة','transfer-requests']
- ]},
- {group:true,key:'interviews',label:'المقابلات',icon:UsersRound,children:[
-  ['/interviews?type=principal','مدير/ة','interviews'],
-  ['/interviews?type=teacher','معلم/ة','interviews'],
-  ['/interviews?type=parent','أولياء أمور','interviews'],
-  ['/interviews?type=institution','مؤسسات','interviews'],
-  ['/interviews?type=graduates','تدريب خريجي جامعات','interviews']
- ]},
- {group:true,key:'meetings',label:'اجتماعات',icon:CalendarDays,children:[
-  ['/official-forms/meeting-principal','مدير/ة','meetings'],
-  ['/official-forms/meeting-teacher','معلم/ة','meetings'],
-  ['/official-forms/meeting-parents','أولياء أمور','meetings']
- ]},
- ['/reports','إحصائيات',BarChart3,'dashboard'],
- ['/messages','مراسلة',MessageSquare,'messages'],
- ['/notes','دفتر الملاحظات',StickyNote,'notes'],
- ['/administration','إدارة الموظفين',UsersRound,'administration'],
- ['/school-data','بيانات المدرسة',Building2,'school-data'],
- ['/profile','الملف الشخصي',User,'profile'],
- ['/login','خروج',LogOut,'logout']
+ {group:true,key:'admin-files',label:'الملف الإداري',icon:Files,children:[['/annual-plan','الخطة السنوية'],['/official-forms/semester-report','التقرير الفصلي'],['/weekly-program','البرنامج اليومي / الأسبوعي'],['/correspondence','الصادر والوارد']]},
+ {group:true,key:'students-file',label:'أسماء طلاب المدرسة',icon:Users,children:[['/students','إضافة وعرض الطلاب']]},
+ {group:true,key:'group-guidance',label:'الإرشاد الجماعي',icon:UsersRound,children:[['/group-counseling','أسماء طلاب المجموعة الإرشادية'],['/official-forms/group-session-details','جدول اللقاءات (الخطة)'],['/official-forms/group-session-summary','نموذج الإرشاد الجماعي']]},
+ {group:true,key:'group-direction',label:'التوجيه الجمعي',icon:MessageSquare,children:[['/official-forms/guidance-meetings-followup','نموذج متابعة لقاءات التوجيه الجمعي']]},
+ {group:true,key:'career-guidance',label:'التوجيه المهني',icon:BookOpen,children:[['/official-forms/career-guidance-followup','نموذج متابعة لقاءات التوجيه المهني']]},
+ {group:true,key:'activities',label:'الأنشطة',icon:Activity,children:[['/official-forms/visits','الزيارات'],['/official-forms/newsletters','النشرات الإرشادية'],['/official-forms/morning-radio','الإذاعة'],['/official-forms/seminars-workshops','الندوات'],['/official-forms/posters','الملصقات'],['/official-forms/wall-magazine','مجلة حائط']]},
+ {group:true,key:'parliament',label:'البرلمان',icon:Users,children:[['/official-forms/parliament-plan','الخطة'],['/official-forms/parliament-members','الأسماء'],['/official-forms/parliament-team-meetings','اجتماعات الفريق'],['/official-forms/parliament-achievements','إنجازات']]},
+ {group:true,key:'student-consultations',label:'استشارات طلابية',icon:ClipboardList,children:[['/absence','الغياب'],['/lateness','التأخر'],['/dropout','التسرّب'],['/official-forms/health-cases','الحالات الصحية']]},
+ {group:true,key:'focused-interviews',label:'رصد ومتابعة المقابلات الفردية المركزة',icon:FileText,children:[['/focused-interviews','نموذج رصد ومتابعة المقابلات الفردية المركزة'],['/transfer-requests','طلبات النقل الواردة']]},
+ {group:true,key:'interviews',label:'المقابلات',icon:UsersRound,children:[['/interviews?type=principal','مدير/ة'],['/interviews?type=teacher','معلم/ة'],['/interviews?type=parent','أولياء أمور'],['/interviews?type=institution','مؤسسات'],['/interviews?type=graduates','تدريب خريجي جامعات']]},
+ {group:true,key:'meetings',label:'اجتماعات',icon:CalendarDays,children:[['/official-forms/meeting-principal','مدير/ة'],['/official-forms/meeting-teacher','معلم/ة'],['/official-forms/meeting-parents','أولياء أمور']]},
+ ['/reports','إحصائيات',BarChart3,'dashboard'],['/messages','مراسلة',MessageSquare,'messages'],['/notes','دفتر الملاحظات',StickyNote,'notes'],['/administration','إدارة الموظفين',UsersRound,'administration'],['/school-data','بيانات المدرسة',Building2,'school-data'],['/profile','الملف الشخصي',User,'profile'],['/login','خروج',LogOut,'logout']
 ];
 const ministryItems=[['/directorate-dashboard','الإحصائيات والمتابعة',BarChart3,'directorate-dashboard'],['/directorates','المديريات',Building2,'directorates'],['/schools','المدارس',Building2,'schools'],['/school-data','بيانات المدرسة',Building2,'school-data'],['/administration','إدارة الموظفين',UsersRound,'administration'],['/official-forms/meeting-followup','النماذج الرسمية',Files,'official-forms'],['/messages','مراسلات الموظفين',MessageSquare,'messages'],['/profile','البيانات الشخصية',User,'profile'],['/permissions','الصلاحيات',Shield,'permissions'],['/academic-years','السنوات الدراسية',CalendarDays,'academic-years']];
 const directorateItems=[['/directorate-dashboard','الإحصائيات والمتابعة',BarChart3,'directorate-dashboard'],['/schools','المدارس',Building2,'schools'],['/school-data','بيانات المدرسة',Building2,'school-data'],['/administration','إدارة الموظفين',UsersRound,'administration'],['/official-forms/meeting-followup','النماذج الرسمية',Files,'official-forms'],['/messages','مراسلات الموظفين',MessageSquare,'messages'],['/profile','البيانات الشخصية',User,'profile'],['/permissions','الصلاحيات',Shield,'permissions'],['/academic-years','السنوات الدراسية',CalendarDays,'academic-years']];
@@ -117,14 +66,7 @@ export default function AppLayout({children}){
  },[profile?.id]);
 
  const base=profile?.role==='PROGRAMMER'?ministryItems:profile?.role==='MINISTRY'?ministryItems:profile?.role==='DIRECTORATE'?directorateItems:profile?.role==='PRINCIPAL'?principalItems:counselorItems;
- const items=Array.isArray(permissions)?base.flatMap(item=>{
-  if(item.group){
-   const children=item.children.filter(([, , permissionKey])=>permissions.includes(permissionKey));
-   return children.length?[{...item,children}]:[];
-  }
-  const key=item[3];
-  return permissions.includes(key)||key==='profile'||key==='school-data'||key==='official-forms'||key==='logout'||(['MINISTRY','DIRECTORATE','PROGRAMMER'].includes(profile?.role)&&key==='permissions')?[item]:[];
- }):base;
+ const items=Array.isArray(permissions)?base.filter(item=>item.group||permissions.includes(item[3])||item[3]==='profile'||item[3]==='school-data'||item[3]==='official-forms'||(['MINISTRY','DIRECTORATE','PROGRAMMER'].includes(profile?.role)&&item[3]==='permissions')):base;
  const handleNav=useCallback(()=>{clickSound();setOpen(false)},[]);
  const officialForms=[
   ['meeting-followup','نموذج متابعة المقابلات',1],['meeting-summary','نموذج رصد المقابلات',1],['case-study','نموذج دراسة حالة',2],['hot-cases-monitor','نموذج رصد الحالات الساخنة',3],['hot-case-notice','نموذج إعلام عن ملف ساخن',4],['student-issues-monitor','نموذج رصد المشكلات وقضايا الطلبة داخل وخارج المدرسة',5],['student-consultations','نموذج المقابلات والاستشارات الطلابية',6],['consultations-monitor','نموذج رصد الاستشارات والمقابلات الطلابية',7],['repeated-absence','نموذج رصد حالات الغياب المتكرر',8],['absence-followup','نموذج متابعة غياب الطالب',9],['repeated-lateness','نموذج رصد التأخر الصباحي المتكرر',9],['lateness-followup','نموذج متابعة التأخر الصباحي المتكرر',10],['dropout-monitor','نموذج رصد حالات التسرب',11],['dropout-followup','نموذج متابعة التسرب',12],['hot-cases-school','نموذج رصد الحالات الساخنة الفصلي – المدرسة',13],['hot-cases-directorate','نموذج رصد الحالات الساخنة الفصلي – المديرية',14],['activities-monitor','نموذج رصد الأنشطة',15],['visits','نموذج الزيارات',15],['newsletters','نموذج النشرات الإرشادية',16],['morning-radio','نموذج الإذاعة الصباحية',17],['seminars-workshops','نموذج الندوات والمحاضرات وورش العمل',18],['wall-magazine','نموذج مجلة الحائط',19],['group-session-summary','نموذج تلخيص الجلسات الجماعية',19],['group-session-details','نموذج ملخص جلسات الإرشاد الجماعي للمجموعة',20],['group-sessions-monitor','نموذج رصد عدد جلسات الإرشاد الجماعي',21],['guidance-meetings-followup','نموذج متابعة لقاءات التوجيه الجمعي',22],['guidance-meetings-monitor','نموذج رصد لقاءات التوجيه الجمعي',22],['weekly-program-form','نموذج البرنامج اليومي/الأسبوعي لعمل المرشد/ة التربوي/ة',23],['annual-plan','نموذج الخطة السنوية المعتمدة',24],['plan','نموذج الخطة',25],['semester-report','التقرير الفصلي حول إنجازات العمل في الخطة',26,27,28]

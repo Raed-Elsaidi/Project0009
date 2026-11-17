@@ -27,7 +27,11 @@ export default function Login(){
   if(!username.trim()||!password){setError('أدخل اسم المستخدم وكلمة المرور.');return}
   setBusy(true)
   try{await loginEmployee(username,password);window.location.replace('/login-welcome')}
-  catch(err){setError(err.message||'اسم المستخدم أو كلمة المرور غير صحيحة.')}
+  catch(err){
+   const message=String(err?.message||'')
+   const connectionLost=!navigator.onLine||/failed to fetch|networkerror|network request failed|load failed|fetch failed|تعذر الاتصال بخادم تسجيل الدخول|failed to connect|timeout/i.test(message)
+   setError(connectionLost?'تحقق من وجود الاتصال بشبكة الإنترنت ثم أعد المحاولة مجددًا.':message||'اسم المستخدم أو كلمة المرور غير صحيحة.')
+  }
   finally{setBusy(false)}
  }
 

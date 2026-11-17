@@ -118,7 +118,7 @@ async function profileForToken(req) {
   const claims = verifyToken(header.slice(7));
   if (!claims?.sub || !claims.exp || claims.exp < Date.now() / 1000) return null;
   const { data, error } = await db.from('profiles')
-    .select('id,username,role,is_active')
+    .select('id,username,role,is_active,school_id,directorate_id')
     .eq('id', claims.sub)
     .maybeSingle();
   if (error || !data || data.is_active === false) return null;
@@ -279,6 +279,168 @@ const OFFICIAL_FORM_IDS = new Set([
   'group-counseling-plan'
 ]);
 
+
+async function canManageSchoolTeachers(profile, schoolId) {
+  if (!profile || !schoolId) return false;
+
+  const allowedRoles = ['PROGRAMMER', 'MINISTRY', 'DIRECTORATE', 'COUNSELOR'];
+  if (!allowedRoles.includes(profile.role)) return false;
+
+  const { data: school, error } = await db
+    .from('schools')
+    .select('id,directorate_id')
+    .eq('id', schoolId)
+    .maybeSingle();
+
+  if (error || !school) return false;
+
+  if (profile.role === 'PROGRAMMER' || profile.role === 'MINISTRY') {
+    return true;
+  }
+
+  if (profile.role === 'DIRECTORATE') {
+    return Boolean(
+      profile.directorate_id &&
+      school.directorate_id === profile.directorate_id
+    );
+  }
+
+  return profile.role === 'COUNSELOR' &&
+    profile.school_id === schoolId;
+}
+
+app.get('/api/school-teachers', async (req, res) => {
+  if (!requireReady(res)) return;
+
+  try {
+    const profile = await profileForToken(req);
+    if (!profile) return res.status(401).json({ error: 'انتهت الجلسة.' });
+
+    const schoolId = String(req.query.school_id || '').trim();
+    if (!schoolId) {
+      return res.status(400).json({ error: 'معرّف المدرسة مطلوب.' });
+    }
+
+    if (!await canManageSchoolTeachers(profile, schoolId)) {
+      return res.status(403).json({ error: 'غير مصرح بإدارة معلمي هذه المدرسة.' });
+    }
+
+    const { data, error } = await db
+      .from('school_teachers')
+      .select('id,school_id,full_name,specialization,created_at,updated_at')
+      .eq('school_id', schoolId)
+      .order('full_name', { ascending: true });
+
+    if (error) throw error;
+    return res.json({ teachers: data || [] });
+  } catch (error) {
+    console.error('School teachers read failed:', error);
+    return res.status(500).json({ error: 'تعذر تحميل قائمة المعلمين.' });
+  }
+});
+
+app.post('/api/school-teachers', async (req, res) => {
+  if (!requireReady(res)) return;
+
+  try {
+    const profile = await profileForToken(req);
+    if (!profile) return res.status(401).json({ error: 'انتهت الجلسة.' });
+
+    const action = String(req.body?.action || '');
+    const fullName = String(req.body?.full_name || '').trim();
+    const specialization = String(req.body?.specialization || '').trim();
+
+    if (!['create', 'update', 'delete'].includes(action)) {
+      return res.status(400).json({ error: 'نوع العملية غير صالح.' });
+    }
+
+    if (action === 'create') {
+      const schoolId = String(req.body?.school_id || '').trim();
+
+      if (!schoolId) {
+        return res.status(400).json({ error: 'معرّف المدرسة مطلوب.' });
+      }
+
+      if (!await canManageSchoolTeachers(profile, schoolId)) {
+        return res.status(403).json({ error: 'غير مصرح بإدارة معلمي هذه المدرسة.' });
+      }
+
+      if (!fullName || !specialization || fullName.length > 150 || specialization.length > 150) {
+        return res.status(400).json({ error: 'أدخل اسم المعلم والتخصص بشكل صحيح (150 حرفًا كحد أقصى).' });
+      }
+
+      const { data, error } = await db
+        .from('school_teachers')
+        .insert({ school_id: schoolId, full_name: fullName, specialization })
+        .select('id,school_id,full_name,specialization,created_at,updated_at')
+        .single();
+
+      if (error?.code === '23505') {
+        return res.status(409).json({ error: 'يوجد معلم بهذا الاسم في المدرسة.' });
+      }
+      if (error) throw error;
+
+      return res.status(201).json({ teacher: data });
+    }
+
+    const teacherId = String(req.body?.teacher_id || '').trim();
+    if (!teacherId) {
+      return res.status(400).json({ error: 'معرّف المعلم مطلوب.' });
+    }
+
+    const { data: existing, error: lookupError } = await db
+      .from('school_teachers')
+      .select('id,school_id')
+      .eq('id', teacherId)
+      .maybeSingle();
+
+    if (lookupError) throw lookupError;
+    if (!existing) return res.status(404).json({ error: 'المعلم غير موجود.' });
+
+    if (!await canManageSchoolTeachers(profile, existing.school_id)) {
+      return res.status(403).json({ error: 'غير مصرح بإدارة هذا المعلم.' });
+    }
+
+    if (action === 'update') {
+      if (!fullName || !specialization || fullName.length > 150 || specialization.length > 150) {
+        return res.status(400).json({ error: 'أدخل اسم المعلم والتخصص بشكل صحيح (150 حرفًا كحد أقصى).' });
+      }
+
+      const { data, error } = await db
+        .from('school_teachers')
+        .update({
+          full_name: fullName,
+          specialization,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', teacherId)
+        .eq('school_id', existing.school_id)
+        .select('id,school_id,full_name,specialization,created_at,updated_at')
+        .maybeSingle();
+
+      if (error?.code === '23505') {
+        return res.status(409).json({ error: 'يوجد معلم آخر بهذا الاسم في المدرسة.' });
+      }
+      if (error) throw error;
+      if (!data) return res.status(404).json({ error: 'لم يتم العثور على المعلم.' });
+
+      return res.json({ teacher: data });
+    }
+
+    const { error } = await db
+      .from('school_teachers')
+      .delete()
+      .eq('id', teacherId)
+      .eq('school_id', existing.school_id);
+
+    if (error) throw error;
+    return res.json({ success: true });
+  } catch (error) {
+    console.error('School teachers write failed:', error);
+    return res.status(500).json({ error: 'تعذر تنفيذ العملية على بيانات المعلم.' });
+  }
+});
+
 app.get('/api/official-forms', async (req, res) => {
   if (!requireReady(res)) return;
   try {
@@ -292,7 +454,7 @@ app.get('/api/official-forms', async (req, res) => {
     }
 
     let query = db.from('official_form_records')
-      .select('id,form_id,counselor_id,school_id,school_year_id,semester_id,form_data,updated_at')
+      .select('id,form_id,counselor_id,school_id,school_year_id,semester_id,form_data,created_at,updated_at')
       .eq('counselor_id', profile.id)
       .in('form_id', requested);
 
@@ -326,13 +488,7 @@ app.post('/api/official-forms', async (req, res) => {
 
     const schoolYearId = req.body?.school_year_id || null;
     const semesterId = req.body?.semester_id || null;
-    let find = db.from('official_form_records').select('id')
-      .eq('form_id', formId).eq('counselor_id', profile.id);
-    find = schoolYearId ? find.eq('school_year_id', schoolYearId) : find.is('school_year_id', null);
-    find = semesterId ? find.eq('semester_id', semesterId) : find.is('semester_id', null);
-    const { data: existing, error: findError } = await find.maybeSingle();
-    if (findError) throw findError;
-
+    const recordId = String(req.body?.record_id || '').trim();
     const payload = {
       form_id: formId,
       counselor_id: profile.id,
@@ -344,13 +500,16 @@ app.post('/api/official-forms', async (req, res) => {
     };
 
     let result;
-    if (existing?.id) {
+    if (recordId) {
+      // Update is allowed only for an existing record owned by the signed-in counselor.
       result = await db.from('official_form_records').update(payload)
-        .eq('id', existing.id).eq('counselor_id', profile.id)
-        .select('id,form_id,school_year_id,semester_id,form_data,updated_at').single();
+        .eq('id', recordId).eq('form_id', formId).eq('counselor_id', profile.id)
+        .select('id,form_id,school_year_id,semester_id,form_data,created_at,updated_at').maybeSingle();
+      if (!result.error && !result.data) return res.status(404).json({ error: 'لم يتم العثور على سجل الاجتماع المطلوب.' });
     } else {
+      // A new meeting always creates a separate row; it never overwrites an earlier meeting.
       result = await db.from('official_form_records').insert(payload)
-        .select('id,form_id,school_year_id,semester_id,form_data,updated_at').single();
+        .select('id,form_id,school_year_id,semester_id,form_data,created_at,updated_at').single();
     }
     if (result.error) throw result.error;
     return res.json({ record: result.data });
@@ -363,7 +522,7 @@ app.post('/api/official-forms', async (req, res) => {
 app.get('/health', (_req, res) => res.json({ ok: true, configured: configReady }));
 export default app;
 
-const port = Number(process.env.AUTH_API_PORT) || 8901;
+const port = Number(process.env.AUTH_API_PORT) || 8787;
 app.listen(port, '0.0.0.0', () => {
   console.log(`Auth API listening on port ${port}`);
 });

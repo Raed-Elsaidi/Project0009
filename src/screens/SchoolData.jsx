@@ -2,10 +2,12 @@ import React,{useEffect,useMemo,useState} from 'react'
 import {Page,Card,Button,Input,Select,Empty,ErrorNotice} from '../components/UI'
 import {currentProfile,listOrganization,listSchoolGrades,listSectionsBySchool,createSchoolGrade,updateSchoolGrade,deleteSchoolGrade,createSchoolSection,updateSchoolSection,deleteSchoolSection,updateSchool} from '../services/data'
 import {RefreshCw,Plus,Save,Edit3,Trash2,School,Layers,Users} from 'lucide-react'
+import {listSchoolTeachers,createSchoolTeacher,updateSchoolTeacher,deleteSchoolTeacher} from '../services/officialFormsApi'
 
 export default function SchoolData(){
  const [profile,setProfile]=useState(null),[org,setOrg]=useState({directorates:[],schools:[],profiles:[]}),[schoolId,setSchoolId]=useState(''),[grades,setGrades]=useState([]),[sections,setSections]=useState([]),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('')
  const [schoolForm,setSchoolForm]=useState({name:'',code:''}),[gradeForm,setGradeForm]=useState({name:'',sort_order:0}),[sectionForm,setSectionForm]=useState({name:'',grade_id:''}),[editGrade,setEditGrade]=useState(null),[editSection,setEditSection]=useState(null)
+ const [teachers,setTeachers]=useState([]),[teacherForm,setTeacherForm]=useState({fullName:'',specialization:''}),[editTeacher,setEditTeacher]=useState(null)
  const admin=profile&&['PROGRAMMER','MINISTRY','DIRECTORATE','COUNSELOR'].includes(profile.role)
  const schools=useMemo(()=>profile?.role==='MINISTRY'||profile?.role==='PROGRAMMER'?org.schools:profile?.role==='DIRECTORATE'?org.schools.filter(x=>x.directorate_id===profile.directorate_id):org.schools.filter(x=>x.id===profile?.school_id),[org,profile])
  const school=schools.find(x=>x.id===schoolId)||null
@@ -21,16 +23,39 @@ export default function SchoolData(){
    const allowed=p?.role==='MINISTRY'||p?.role==='PROGRAMMER'?o.schools:p?.role==='DIRECTORATE'?o.schools.filter(x=>x.directorate_id===p.directorate_id):o.schools.filter(x=>x.id===p?.school_id)
    const chosen=allowed.find(x=>x.id===schoolId)||allowed[0]
    setSchoolId(chosen?.id||'')
-   if(chosen){setSchoolForm({name:chosen.name||'',code:chosen.code||''});const [g,ss]=await Promise.all([listSchoolGrades(chosen.id),listSectionsBySchool(chosen.id)]);setGrades(g);setSections(ss)}
-   else {setGrades([]);setSections([])}
+   if(chosen){setSchoolForm({name:chosen.name||'',code:chosen.code||''});const [g,ss,t]=await Promise.all([listSchoolGrades(chosen.id),listSectionsBySchool(chosen.id),listSchoolTeachers(chosen.id)]);setGrades(g);setSections(ss);setTeachers(t)}
+   else {setGrades([]);setSections([]);setTeachers([])}
   }catch(e){setError(e.message||'تعذر تحميل بيانات المدرسة.')}finally{setLoading(false)}
  }
  useEffect(()=>{load()},[])
  const changeSchool=async id=>{
   setSchoolId(id);const x=org.schools.find(s=>s.id===id);setSchoolForm({name:x?.name||'',code:x?.code||''});setError('')
-  try{const [g,ss]=await Promise.all([listSchoolGrades(id),listSectionsBySchool(id)]);setGrades(g);setSections(ss)}catch(e){setError(e.message)}
+  try{const [g,ss,t]=await Promise.all([listSchoolGrades(id),listSectionsBySchool(id),listSchoolTeachers(id)]);setGrades(g);setSections(ss);setTeachers(t)}catch(e){setError(e.message)}
  }
- const refresh=async()=>{if(!schoolId)return;try{const [g,ss]=await Promise.all([listSchoolGrades(schoolId),listSectionsBySchool(schoolId)]);setGrades(g);setSections(ss)}catch(e){setError(e.message)}}
+ const refresh=async()=>{if(!schoolId)return;try{const [g,ss,t]=await Promise.all([listSchoolGrades(schoolId),listSectionsBySchool(schoolId),listSchoolTeachers(schoolId)]);setGrades(g);setSections(ss);setTeachers(t)}catch(e){setError(e.message)}}
+
+ const saveTeacher=async()=>{
+  if(!school||!teacherForm.fullName.trim()||!teacherForm.specialization.trim()){
+   setError('أدخل اسم المعلم والتخصص.');return
+  }
+  setBusy(true);setError('')
+  try{
+   if(editTeacher) await updateSchoolTeacher({teacherId:editTeacher,fullName:teacherForm.fullName,specialization:teacherForm.specialization})
+   else await createSchoolTeacher({schoolId:school.id,fullName:teacherForm.fullName,specialization:teacherForm.specialization})
+   setTeacherForm({fullName:'',specialization:''});setEditTeacher(null)
+   await refresh();setNotice('تم حفظ بيانات المعلم.')
+  }catch(e){setError(e.message||'تعذر حفظ بيانات المعلم.')}
+  finally{setBusy(false)}
+ }
+ const editT=t=>{setEditTeacher(t.id);setTeacherForm({fullName:t.full_name||'',specialization:t.specialization||''})}
+ const removeTeacher=async t=>{
+  if(!confirm(`حذف المعلم «${t.full_name}»؟ لن تتأثر المحاضر السابقة المحفوظة.`))return
+  setBusy(true);setError('')
+  try{await deleteSchoolTeacher(t.id);await refresh();setNotice('تم حذف المعلم.')}
+  catch(e){setError(e.message||'تعذر حذف المعلم.')}
+  finally{setBusy(false)}
+ }
+
  const saveSchool=async()=>{
   if(!school||!schoolForm.name.trim()){setError('اسم المدرسة مطلوب.');return}
   setBusy(true);setError('');try{await updateSchool(school.id,{name:schoolForm.name,code:schoolForm.code,directorate_id:school.directorate_id});setNotice('تم حفظ بيانات المدرسة.');await load()}catch(e){setError(e.message||'تعذر حفظ بيانات المدرسة.')}finally{setBusy(false)}
@@ -64,6 +89,26 @@ export default function SchoolData(){
     <div className="form-grid two"><Input label="اسم المديرية" value={directorate?.name||'—'} readOnly/><Input label="اسم المدرسة" value={schoolForm.name} onChange={e=>setSchoolForm({...schoolForm,name:e.target.value})} readOnly={!admin}/><Input label="رمز المدرسة" value={schoolForm.code||''} onChange={e=>setSchoolForm({...schoolForm,code:e.target.value})} readOnly={!admin}/><Input label="مدير المدرسة" value={principal?.full_name||'غير محدد في حسابات المدرسة'} readOnly/><Input label="المرشد التربوي" value={counselor?.full_name||'غير محدد في حسابات المدرسة'} readOnly/></div>
     {admin&&<Button loading={busy} onClick={saveSchool}><Save size={16}/> حفظ بيانات المدرسة</Button>}
    </Card>
+
+        <Card>
+          <div className="section-title"><div><h2><Users size={18}/> إدارة المعلمين والتخصصات</h2><span>{teachers.length} معلم/ة مسجلون في المدرسة</span></div></div>
+          {admin&&<>
+            <div className="form-grid two">
+              <Input label="اسم المعلم" value={teacherForm.fullName} onChange={e=>setTeacherForm({...teacherForm,fullName:e.target.value})} placeholder="الاسم الكامل"/>
+              <Input label="التخصص" value={teacherForm.specialization} onChange={e=>setTeacherForm({...teacherForm,specialization:e.target.value})} placeholder="مثال: لغة عربية"/>
+            </div>
+            <div className="row-actions">
+              <Button loading={busy} onClick={saveTeacher}><Plus size={16}/>{editTeacher?'حفظ تعديل المعلم':'إضافة معلم'}</Button>
+              {editTeacher&&<Button variant="secondary" onClick={()=>{setEditTeacher(null);setTeacherForm({fullName:'',specialization:''})}}>إلغاء</Button>}
+            </div>
+          </>}
+          {!teachers.length?<Empty title="لا يوجد معلمون مسجلون" text="أضف أسماء المعلمين وتخصصاتهم لتظهر في اجتماعات المعلمين."/>:
+            <div className="table-wrap"><table className="table"><thead><tr><th>اسم المعلم</th><th>التخصص</th>{admin&&<th>إجراءات</th>}</tr></thead>
+              <tbody>{teachers.map(t=><tr key={t.id}><td>{t.full_name}</td><td>{t.specialization}</td>{admin&&<td className="row-actions"><button className="icon-btn" onClick={()=>editT(t)}><Edit3 size={15}/></button><button className="icon-btn danger" onClick={()=>removeTeacher(t)}><Trash2 size={15}/></button></td>}</tr>)}</tbody>
+            </table></div>
+          }
+        </Card>
+
    <div className="form-grid two">
     <Card><div className="section-title"><div><h2><Layers size={18}/> الصفوف</h2><span>{grades.length} صف</span></div></div>
      {admin&&<><div className="form-grid two"><Input label="اسم الصف" value={gradeForm.name} onChange={e=>setGradeForm({...gradeForm,name:e.target.value})} placeholder="مثال: الصف الأول"/><Input label="ترتيب الصف" type="number" value={gradeForm.sort_order} onChange={e=>setGradeForm({...gradeForm,sort_order:e.target.value})}/></div><div className="row-actions"><Button loading={busy} onClick={saveGrade}><Plus size={16}/>{editGrade?'حفظ تعديل الصف':'إضافة صف'}</Button>{editGrade&&<Button variant="secondary" onClick={()=>{setEditGrade(null);setGradeForm({name:'',sort_order:grades.length+1})}}>إلغاء</Button>}</div></>}

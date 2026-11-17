@@ -172,7 +172,6 @@ body{background:radial-gradient(circle at 5% 0,#efe4d5 0,transparent 25%),linear
 @media(max-width:560px){.shell main{padding:14px 11px}.page h1{font-size:23px}.card{border-radius:17px;padding:16px}.login-form-wrap{padding:14px}.login-card{border-radius:22px}}
 
 
-
 /* ===== Login background + Ministry portal redesign ===== */
 .login-page-bg{position:relative;min-height:100vh;overflow:hidden;background:#5b4636 url('/assets/login-background.png') center/cover no-repeat fixed;display:block!important}
 .login-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(35,27,20,.30),rgba(255,248,239,.08) 42%,rgba(35,27,20,.24));backdrop-filter:saturate(.9)}
@@ -3584,7 +3583,6 @@ body{
   .reference-login .public-site-footer.reference-footer{height:76px!important;min-height:76px!important;max-height:76px!important;}
   .reference-login .public-site-footer.reference-footer::after{font-size:6.5px!important;}
 }
-
 /* Structured counselor sidebar groups */
 .sidebar-menu-group{margin:3px 0;color:inherit}
 .sidebar-menu-group>summary{list-style:none;display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:12px;cursor:pointer;font-weight:700;user-select:none}

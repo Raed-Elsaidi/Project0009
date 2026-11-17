@@ -182,6 +182,56 @@ export async function updateInterviewRecord(id,payload){
   const {data,error}=await db().from('interviews').update(payload).eq('id',id).select().single(); if(error) throw error; return data
 }
 
+
+export async function listSchoolTeachers(){
+  const profile=await currentProfile()
+  if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
+  const {data,error}=await db().from('school_teachers')
+    .select('id,school_id,full_name,specialization')
+    .eq('school_id',profile.school_id)
+    .order('full_name')
+  if(error) throw error
+  return data||[]
+}
+
+export async function listTeacherMeetings(){
+  const profile=await currentProfile()
+  if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
+  const {data,error}=await db().from('teacher_meetings')
+    .select('*')
+    .eq('school_id',profile.school_id)
+    .order('meeting_date',{ascending:false})
+    .order('created_at',{ascending:false})
+  if(error) throw error
+  return data||[]
+}
+
+export async function createTeacherMeeting(payload){
+  const user=await currentUser()
+  if(!user) throw new Error('انتهت جلسة الدخول.')
+  const profile=await currentProfile()
+  if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
+  const {data,error}=await db().from('teacher_meetings')
+    .insert({counselor_id:user.id,school_id:profile.school_id,...payload})
+    .select().single()
+  if(error) throw error
+  return data
+}
+
+export async function getTeacherMeeting(id){
+  const {data,error}=await db().from('teacher_meetings')
+    .select('*').eq('id',id).single()
+  if(error) throw error
+  return data
+}
+
+export async function updateTeacherMeeting(id,payload){
+  const {data,error}=await db().from('teacher_meetings')
+    .update(payload).eq('id',id).select().single()
+  if(error) throw error
+  return data
+}
+
 export async function createGuidanceRecord(payload){
   const user=await currentUser(); if(!user) throw new Error('انتهت جلسة الدخول.')
   const profile=await currentProfile(); if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
@@ -897,4 +947,26 @@ export async function decideStudentTransferRequest({ requestId, decision, gradeI
   const { data, error } = await db().rpc(rpcName, args)
   if (error) throw error
   return data
+}
+
+export async function listInterviewRecords(person='مدير المدرسة'){
+  const profile=await currentProfile()
+  if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
+
+  let query=db().from('interviews')
+    .select('*')
+    .eq('school_id',profile.school_id)
+
+  if(person==='مدير المدرسة'){
+    query=query.eq('consultation_type','مقابلة')
+  }else{
+    query=query.eq('person',person)
+  }
+
+  const {data,error}=await query
+    .order('interview_date',{ascending:false})
+    .order('created_at',{ascending:false})
+
+  if(error) throw error
+  return data||[]
 }

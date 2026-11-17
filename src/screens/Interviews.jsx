@@ -3,6 +3,11 @@ import{useNavigate,useSearchParams}from'react-router-dom'
 import{Page,Card,Input,Textarea,Button,Select,ErrorNotice}from'../components/UI'
 import{currentProfile,listActiveAcademicData,listStudents,listSectionsBySchool,createInterviewRecord,getInterviewRecord,updateInterviewRecord,createWeeklyItem,updateWeeklyItem}from'../services/data'
 import{ArrowRight,Save}from'lucide-react'
+import PrincipalInterviews from './PrincipalInterviews'
+import TeacherInterviews from './TeacherInterviews'
+import ParentInterviews from './ParentInterviews'
+import InstitutionInterviews from './InstitutionInterviews'
+import GraduateInterviews from './GraduateInterviews'
 
 const days=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس'];const dayName=date=>{const d=new Date(`${date}T00:00:00`);return days[d.getDay()]||''};const pad=n=>String(n).padStart(2,'0')
 const today=()=>{const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
@@ -10,6 +15,12 @@ const yearLabel=y=>y?.name||((y?.start_date&&y?.end_date)?`${new Date(y.start_da
 const semesterLabel=s=>{const t=`${s?.type||''} ${s?.name||''}`.toUpperCase();return t.includes('SECOND')||t.includes('2')||s?.name?.includes('الثاني')?'الثاني':'الأول'}
 
 export default function Interviews(){
+ const [principalParams]=useSearchParams();
+ if(principalParams.get('type')==='principal')return <PrincipalInterviews/>
+ if(principalParams.get('type')==='teacher')return <TeacherInterviews/>
+ if(principalParams.get('type')==='parent')return <ParentInterviews/>
+ if(principalParams.get('type')==='institution')return <InstitutionInterviews/>
+ if(principalParams.get('type')==='graduates')return <GraduateInterviews/>
  const nav=useNavigate();const[params]=useSearchParams();const[profile,setProfile]=useState(null),[academic,setAcademic]=useState({years:[],semesters:[],grades:[]}),[students,setStudents]=useState([]),[sections,setSections]=useState([]),[loading,setLoading]=useState(true),[saving,setSaving]=useState(false),[error,setError]=useState('')
  const recordId=params.get('record_id'),weeklyItemId=params.get('weekly_item_id'),weeklyProgramId=params.get('weekly_program_id'),weeklyDate=params.get('date')||today(),weeklyPeriod=params.get('period')||'الحصة الأولى'
  const selectedWorkType=params.get('work_type')||'';

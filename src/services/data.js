@@ -957,3 +957,73 @@ export async function listInterviewRecords(person='مدير المدرسة'){
   if(error) throw error
   return data||[]
 }
+
+// سجل الفعاليات المستقل
+export async function listSchoolEvents(schoolYearId='', semesterId='') {
+  const profile = await currentProfile()
+  if (!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
+  let query = db().from('school_events').select('*, school_event_attachments(*)').eq('school_id', profile.school_id).order('event_date', { ascending: false }).order('created_at', { ascending: false })
+  if (schoolYearId) query = query.eq('school_year_id', schoolYearId)
+  if (semesterId) query = query.eq('semester_id', semesterId)
+  const { data, error } = await query
+  if (error) throw error
+  return data || []
+}
+
+export async function saveSchoolEvent(payload, eventId=null) {
+  const user = await currentUser()
+  const profile = await currentProfile()
+  if (!user?.id || !profile?.school_id) throw new Error('انتهت الجلسة أو لم يتم ربط الحساب بمدرسة.')
+  const values = { ...payload, updated_at: new Date().toISOString(), counselor_id: user.id, school_id: profile.school_id, manager_name: profile.manager_name || null, counselor_name: profile.full_name || null, directorate_id: profile.directorate_id || profile.schools?.directorate_id || null }
+  const result = eventId
+    ? await db().from('school_events').update(values).eq('id', eventId).eq('counselor_id', user.id).select().single()
+    : await db().from('school_events').insert(values).select().single()
+  if (result.error) throw result.error
+  return result.data
+}
+
+export async function uploadSchoolEventAttachment(eventId, file) {
+  const profile = await currentProfile()
+  if (!profile?.id) throw new Error('انتهت جلسة الدخول.')
+  if (!file) return null
+  if (file.size > 100 * 1024 * 1024) throw new Error('حجم كل مرفق يجب ألا يتجاوز 100 MB.')
+  if (!/\.(png|jpe?g|gif|webp|bmp|mp4|webm|mov|pdf|docx?|xlsx?|pptx?|od[tp])$/i.test(file.name)) throw new Error('نوع الملف غير مدعوم. استخدم صورة أو فيديو MP4/WEBM/MOV أو PDF أو ملف Office.')
+  const ext = file.name.match(/\.([a-z0-9]+)$/i)?.[1]?.toLowerCase() || 'bin'
+  const path = `${profile.id}/${crypto.randomUUID()}.${ext}`
+  const bucket = 'ministry-correspondence'
+  const { error: uploadError } = await db().storage.from(bucket).upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false })
+  if (uploadError) throw uploadError
+  const { data, error } = await db().from('school_event_attachments').insert({ event_id: eventId, file_name: file.name, storage_path: path, mime_type: file.type || null, size_bytes: file.size }).select().single()
+  if (error) { await db().storage.from(bucket).remove([path]); throw error }
+  return data
+}
+
+export async function getSchoolEventAttachmentUrl(path) {
+  const { data, error } = await db().storage.from('ministry-correspondence').createSignedUrl(path, 600)
+  if (error) throw error
+  return data.signedUrl
+}
+
+export async function openSchoolEventAttachment(path) {
+  const url = await getSchoolEventAttachmentUrl(path)
+  window.open(url, '_blank', 'noopener,noreferrer')
+}
+
+export async function deleteSchoolEventAttachment(attachment) {
+  const { error: storageError } = await db().storage.from('ministry-correspondence').remove([attachment.storage_path])
+  if (storageError) throw storageError
+  const { error } = await db().from('school_event_attachments').delete().eq('id', attachment.id)
+  if (error) throw error
+}
+
+export async function deleteSchoolEvent(eventId) {
+  const { data: attachments, error: readError } = await db().from('school_event_attachments').select('storage_path').eq('event_id', eventId)
+  if (readError) throw readError
+  if (attachments?.length) {
+    const { error: storageError } = await db().storage.from('ministry-correspondence').remove(attachments.map(x => x.storage_path))
+    if (storageError) throw storageError
+  }
+  const { error } = await db().from('school_events').delete().eq('id', eventId)
+  if (error) throw error
+}
+

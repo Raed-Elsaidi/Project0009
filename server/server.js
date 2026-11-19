@@ -223,8 +223,14 @@ app.post('/api/change-password', async (req, res) => {
   try {
     const profile = await profileForToken(req);
     if (!profile) return res.status(401).json({ error: 'انتهت الجلسة.' });
+    const currentPassword = String(req.body?.currentPassword || '');
     const password = String(req.body?.password || '');
-    if (password.length < 10) return res.status(400).json({ error: 'يجب أن تتكون كلمة المرور من 10 أحرف على الأقل.' });
+    if (!currentPassword) return res.status(400).json({ error: 'أدخل كلمة المرور الحالية.' });
+    if (!/^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':",.<>/?]{8,10}$/.test(password) || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+      return res.status(400).json({ error: 'كلمة المرور الجديدة يجب أن تكون من 8 إلى 10 أحرف وتحتوي على حرف صغير وحرف كبير ورقم ورمز.' });
+    }
+    const verified = await verifyExamStylePassword(profile.username, currentPassword);
+    if (!verified || verified.id !== profile.id) return res.status(401).json({ error: 'كلمة المرور الحالية غير صحيحة.' });
     const { error } = await db.rpc('set_profile_password', { p_profile_id: profile.id, p_password: password });
     if (error) throw error;
     return res.json({ ok: true });

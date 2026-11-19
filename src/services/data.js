@@ -73,14 +73,12 @@ export async function listSchoolsByDirectorate(directorateId) {
 export async function updateMyProfile(payload) {
   const user = await currentUser()
   if (!user) throw new Error('انتهت جلسة الدخول.')
+  const profile = await currentProfile()
+  if (profile?.role !== 'COUNSELOR') throw new Error('تعديل البيانات الشخصية متاح للمرشد التربوي فقط.')
   const { data, error } = await db().from('profiles').update({
-    full_name: payload.full_name,
+    full_name: String(payload.full_name || '').trim(),
     phone: payload.phone || null,
-    national_id: payload.national_id || null,
-    directorate_id: payload.directorate_id || null,
-    school_id: payload.school_id || null,
-    job_title: payload.job_title || 'مرشد تربوي',
-    profile_edit_count: 1
+    national_id: payload.national_id || null
   }).eq('id', user.id).select('*, schools(id,name,code,directorate_id), directorates(id,name,code)').single()
   if (error) throw error
   return data
@@ -684,9 +682,9 @@ export async function deleteAllStudentsForSchool(){
 
 
 
-export async function changePassword(password) {
+export async function changePassword(currentPassword, password) {
   const token = (await import('./customSession')).getCustomToken()
-  const response = await fetch(`${import.meta.env.VITE_AUTH_API_URL || ''}/api/change-password`, { method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`}, body:JSON.stringify({password}) })
+  const response = await fetch(`${import.meta.env.VITE_AUTH_API_URL || ''}/api/change-password`, { method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`}, body:JSON.stringify({currentPassword,password}) })
   const result = await response.json().catch(()=>({}))
   if (!response.ok) throw new Error(result.error || 'تعذر تغيير كلمة المرور.')
   return result

@@ -261,10 +261,23 @@ export default function OfficialForms(){
     row['ملاحظات']=''
     return row
    }
-   const rows=[
+   const generatedRows=[
     ...ANNUAL_SOURCES.filter(source=>source.table!=='interviews').map(source=>makeAnnualRow(totals.get(source.label))),
     ...Array.from(interviewTotals.values()).map(makeAnnualRow)
    ]
+   // Preserve counselor-entered monthly figures when the annual plan is reopened.
+   let savedRows=[]
+   try{savedRows=JSON.parse(localStorage.getItem('official-form-annual-plan')||'null')?.rows||[]}catch{}
+   const savedByLabel=new Map(savedRows.map(row=>[String(row['النشاط الاستراتيجي']||'').replace(/\s*\(\d+\)\s*$/,''),row]))
+   const rows=generatedRows.map(row=>{
+    const saved=savedByLabel.get(String(row['النشاط الاستراتيجي']||'').replace(/\s*\(\d+\)\s*$/,''))
+    if(!saved)return row
+    const merged={...row,...saved}
+    // Keep manually entered month values (including zero) and refresh the displayed total.
+    const total=['9','10','11','12','1','2','3','4','5'].reduce((sum,month)=>sum+Math.max(0,Number(merged[month])||0),0)
+    merged['النشاط الاستراتيجي']=`${String(row['النشاط الاستراتيجي']||'').replace(/\s*\(\d+\)\s*$/,'')} (${total})`
+    return merged
+   })
    setForm(prev=>({...prev,rows}))
    if(errors.length)setError('تعذر تحميل بعض الجداول: '+errors.join(' | '))
    else setError('')

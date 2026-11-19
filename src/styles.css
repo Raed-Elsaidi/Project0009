@@ -3841,3 +3841,7 @@ body{
 .transfer-confirm-modal .btn-danger:disabled{opacity:.65}
 .transfer-result-modal{text-align:center}
 .transfer-result-modal h2{color:#12635d}
+
+
+/* Responsive profile layout: stack profile preview and form on narrow screens */
+@media(max-width:760px){.profile-layout{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}.profile-layout>.card{width:100%;min-width:0;max-width:100%;box-sizing:border-box}.profile-layout .profile-preview{width:100%;box-sizing:border-box}.profile-layout .form-grid.two{grid-template-columns:minmax(0,1fr)!important}.profile-layout input,.profile-layout select,.profile-layout textarea{max-width:100%;min-width:0;box-sizing:border-box}}

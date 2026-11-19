@@ -29,7 +29,7 @@ export default function Attachments() {
     const uploadedFiles = Array.from(e.target.files);
     let urls = [];
     for (let file of uploadedFiles) {
-      const fileName = ${Date.now()}_${file.name};
+      const fileName = `${Date.now()}_${file.name}`;
       const { data, error } = await supabase.storage.from('attachments-bucket').upload(fileName, file);
       if (!error) {
         const { data: publicUrlData } = supabase.storage.from('attachments-bucket').getPublicUrl(fileName);
@@ -113,8 +113,8 @@ export default function Attachments() {
           <label className="block text-sm font-medium text-gray-700">اليوم والتاريخ (تلقائي)</label>
           <input 
             type="text" 
-            value={${currentDay} - ${currentDate}}
-disabled 
+            value={`${currentDay} - ${currentDate}`}
+            disabled 
             className="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-sm p-2 border text-gray-500"
           />
         </div>

@@ -19,34 +19,43 @@ const getPeriodTimes=period=>periodTimes[period]||{start:'',end:''};
 const dayColorClasses=['day-sunday','day-monday','day-tuesday','day-wednesday','day-thursday'];
 const periodColorClasses=['period-1','period-2','period-3','period-4','period-5','period-6','period-7'];
 const types=[
- 'حصة توجيه جمعي','حصة توجيه مهني','مقابلة مديرة','مقابلة معلمات','مقابلة أولياء أمور',
- 'اجتماع مديرة','اجتماع معلمات','اجتماع أولياء أمور','نشرة','إذاعة مدرسية','مجلة حائط',
- 'اجتماع برلمان','تدريب برلمان','استشارة طالبات','مقابلة فردية مركزة طالبة','استراحة',
- 'دورة','ارشاد فردي','ارشاد جماعي'
+ 'حصة توجيه جمعي','حصة توجيه مهني',
+ 'مقابلة مدير/ة','مقابلة معلم/ة','مقابلة طالب','مقابلة أولياء أمور','مقابلة مؤسسات','مقابلة تدريب خريجي جامعات',
+ 'اجتماع مدير/ة','اجتماع معلم/ة','اجتماع أولياء أمور',
+ 'زيارة','نشرة إرشادية','إذاعة','ندوة','ملصق','مجلة حائط','فعاليات',
+ 'اجتماع برلمان','تدريب برلمان','استشارة طلبة','مقابلة فردية مركزة','دراسة الحالة','ملف ساخن','حالة صحية',
+ 'غياب','تأخر','تسرّب','استراحة','دورة','إرشاد فردي','إرشاد جماعي'
 ];
-const quickWorkOptions=types.map(label=>({
- label,
- activity_type:label,
- route:({
-  'حصة توجيه جمعي':'/group-counseling','حصة توجيه مهني':'/guidance',
-  'مقابلة مديرة':'/interviews','مقابلة معلمات':'/interviews','مقابلة أولياء أمور':'/interviews',
-  'اجتماع مديرة':'/notes','اجتماع معلمات':'/notes','اجتماع أولياء أمور':'/notes',
-  'نشرة':'/activities','إذاعة مدرسية':'/activities','مجلة حائط':'/activities',
-  'اجتماع برلمان':'/activities','تدريب برلمان':'/activities','استشارة طالبات':'/interviews',
-  'مقابلة فردية مركزة طالبة':'/interviews','استراحة':'/notes','دورة':'/activities',
-  'ارشاد فردي':'/guidance','ارشاد جماعي':'/group-counseling'
- }[label]||'/notes'),
- workType:label
-}));
 const routeFor={
- 'حصة توجيه جمعي':'/group-counseling','حصة توجيه مهني':'/guidance',
- 'مقابلة مديرة':'/interviews','مقابلة معلمات':'/interviews','مقابلة أولياء أمور':'/interviews',
- 'اجتماع مديرة':'/notes','اجتماع معلمات':'/notes','اجتماع أولياء أمور':'/notes',
- 'نشرة':'/activities','إذاعة مدرسية':'/activities','مجلة حائط':'/activities',
- 'اجتماع برلمان':'/activities','تدريب برلمان':'/activities','استشارة طالبات':'/interviews',
- 'مقابلة فردية مركزة طالبة':'/interviews','استراحة':'/notes','دورة':'/activities',
- 'ارشاد فردي':'/guidance','ارشاد جماعي':'/group-counseling'
+ 'حصة توجيه جمعي':'/official-forms/guidance-meetings-followup',
+ 'حصة توجيه مهني':'/official-forms/career-guidance-followup',
+ 'مقابلة مدير/ة':'/interviews?type=principal',
+ 'مقابلة معلم/ة':'/interviews?type=teacher',
+ 'مقابلة طالب':'/interviews?type=student',
+ 'مقابلة أولياء أمور':'/interviews?type=parent',
+ 'مقابلة مؤسسات':'/interviews?type=institution',
+ 'مقابلة تدريب خريجي جامعات':'/interviews?type=graduates',
+ 'اجتماع مدير/ة':'/official-forms/meeting-principal',
+ 'اجتماع معلم/ة':'/official-forms/meeting-teacher',
+ 'اجتماع أولياء أمور':'/official-forms/meeting-parents',
+ 'زيارة':'/official-forms/visits',
+ 'نشرة إرشادية':'/official-forms/newsletters',
+ 'إذاعة':'/official-forms/morning-radio',
+ 'ندوة':'/official-forms/seminars-workshops',
+ 'ملصق':'/official-forms/posters',
+ 'مجلة حائط':'/official-forms/wall-magazine',
+ 'فعاليات':'/activities',
+ 'اجتماع برلمان':'/official-forms/parliament-team-meetings',
+ 'تدريب برلمان':'/official-forms/parliament-team-meetings',
+ 'استشارة طلبة':'/official-forms/student-consultations',
+ 'مقابلة فردية مركزة':'/focused-interviews',
+ 'دراسة الحالة':'/official-forms/case-study',
+ 'ملف ساخن':'/hot-cases',
+ 'حالة صحية':'/official-forms/health-cases',
+ 'غياب':'/absence','تأخر':'/lateness','تسرّب':'/dropout',
+ 'استراحة':'','دورة':'/official-forms/seminars-workshops','إرشاد فردي':'/guidance','إرشاد جماعي':'/official-forms/guidance-meetings-followup'
 };
+const quickWorkOptions=types.map(label=>({label,activity_type:label,route:routeFor[label]||'',workType:label}));
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const displayDate=d=>{const x=new Date(`${d}T00:00:00`);return `${pad(x.getDate())}/${pad(x.getMonth()+1)}/${x.getFullYear()}`};
@@ -54,7 +63,7 @@ const addDays=(start,n)=>{const d=new Date(`${start}T00:00:00`);d.setDate(d.getD
 const weekStart=(d=new Date())=>{const x=new Date(d);x.setHours(0,0,0,0);const day=x.getDay();x.setDate(x.getDate()-(day===0?0:day));return iso(x)};
 const formatAcademicYear=y=>{if(!y)return '';const name=String(y.name||'').trim();if(/^\d{4}\/\d{4}$/.test(name))return name;const start=y.start_date?new Date(`${y.start_date}T00:00:00`).getFullYear():null;const end=y.end_date?new Date(`${y.end_date}T00:00:00`).getFullYear():null;return start&&end?`${start}/${end}`:name};
 const formatSemester=s=>{if(!s)return '';const t=String(s.type||'').toUpperCase();if(t.includes('FIRST')||t.includes('1')||String(s.name||'').includes('الأول')||String(s.name||'').includes('الاول'))return 'الأول';if(t.includes('SECOND')||t.includes('2')||String(s.name||'').includes('الثاني')||String(s.name||'').includes('الثاني'))return 'الثاني';return s.name||''};
-const studentRelatedTypes=new Set(['حصة توجيه جمعي','حصة توجيه مهني','مقابلة أولياء أمور','استشارة طالبات','مقابلة فردية مركزة طالبة','ارشاد فردي','ارشاد جماعي']);
+const studentRelatedTypes=new Set(['حصة توجيه جمعي','حصة توجيه مهني','مقابلة طالب','مقابلة أولياء أمور','استشارة طلبة','مقابلة فردية مركزة','ارشاد فردي','ارشاد جماعي']);
 const emptyForm={day_date:'',period:periods[0],start_time:periodTimes[periods[0]].start,end_time:periodTimes[periods[0]].end,activity_type:'حصة توجيه جمعي',topic:'',objectives:'',notes:'',status:'PLANNED',grade_id:'',section_id:'',section_name:''};
 const academicContextForDate=(date,years=[],semesters=[])=>{
  const target=new Date(`${date}T00:00:00`);
@@ -86,16 +95,18 @@ export default function WeeklyProgram(){
    let program=programs.find(p=>p.week_start===start&&p.school_year_id===ctx.year.id&&p.semester_id===ctx.semester.id);
    if(!program)program=await createWeeklyProgram({school_year_id:ctx.year.id,semester_id:ctx.semester.id,week_start:start,week_end:addDays(start,4),title:`برنامج أسبوع ${start}`});
    const dayName=days.find(([,idx])=>addDays(start,idx)===date)?.[0]||'';
-   const item=await createWeeklyItem({weekly_program_id:program.id,day_date:date,day_name:dayName,period,start_time:getPeriodTimes(period).start,end_time:getPeriodTimes(period).end,activity_type:option.activity_type,topic:option.activity_type,objectives:'',notes:'',status:'PLANNED',grade_id:null,section_id:null,section_name:null});
-   const qs=new URLSearchParams({from:'weekly',date,period,weekly_item_id:item.id,record_id:'',weekly_program_id:program.id,year_id:ctx.year.id,semester_id:ctx.semester.id,work_type:option.activity_type,grade_id:'',section_id:'',section_name:''});
-   nav(`${option.route||routeFor[option.activity_type]||'/activities'}?${qs.toString()}`);
+   const times=getPeriodTimes(period);
+   const item=await createWeeklyItem({weekly_program_id:program.id,day_date:date,day_name:dayName,period,start_time:times.start,end_time:times.end,activity_type:option.activity_type,topic:option.activity_type,objectives:'',notes:'',status:'PLANNED',grade_id:null,section_id:null,section_name:null});
+   if(!option.route && !routeFor[option.activity_type]){await load();return;}
+   const qs=new URLSearchParams({from:'weekly',date,day:dayName,period,start_time:times.start,end_time:times.end,weekly_item_id:item.id,record_id:'',weekly_program_id:program.id,year_id:ctx.year.id,semester_id:ctx.semester.id,work_type:option.activity_type,grade_id:'',section_id:'',section_name:''});
+   nav(`${option.route||routeFor[option.activity_type]}${(option.route||routeFor[option.activity_type]).includes('?')?'&':'?'}${qs.toString()}`);
   }catch(e){setError(e?.message||'تعذر إنشاء بند العمل وفتح شاشته.');}
   finally{setSaving(false);}
  };
  const startManualAdd=()=>{setError('');setSelected(null);setOpenCell(null);setCellContext(false);setForm({...emptyForm,day_date:start,period:periods[0],start_time:getPeriodTimes(periods[0]).start,end_time:getPeriodTimes(periods[0]).end,activity_type:types[0],grade_id:'',section_id:'',section_name:''});setTimeout(()=>document.querySelector('.weekly-editor')?.scrollIntoView({behavior:'smooth',block:'start'}),60)};
  const edit=item=>{const matchedIndex=gradeOptions.findIndex(g=>String(g.id)===String(item.grade_id));const gradeNumber=matchedIndex>=0?String(matchedIndex+1):(/^(?:[1-9]|1[0-2])$/.test(String(item.grade_id||''))?String(item.grade_id):'');setSelected(item);setCellContext(false);setForm({day_date:item.day_date||start,period:item.period||periods[0],start_time:item.start_time||'',end_time:item.end_time||'',activity_type:item.activity_type||'حصة توجيه جمعي',topic:item.topic||'',objectives:item.objectives||'',notes:item.notes||'',status:item.status||'PLANNED',grade_id:gradeNumber,section_id:'',section_name:item.section_name||''});window.scrollTo({top:0,behavior:'smooth'})};
  const remove=async id=>{if(!confirm('حذف هذا البند؟'))return;try{await deleteWeeklyItem(id);await load()}catch(e){setError(e?.message||'تعذر الحذف.')}};
- const goItem=item=>{const ctx=academicContextForDate(item.day_date||start,academic.years||[],academic.semesters||[]);const route=item.work_route||routeFor[item.activity_type]||'/activities';const qs=new URLSearchParams({from:'weekly',date:item.day_date||'',period:item.period||'الحصة الأولى',weekly_item_id:item.id||'',record_id:item.work_record_id||'',weekly_program_id:item.weekly_program_id||'',year_id:ctx.year?.id||yearId||'',semester_id:ctx.semester?.id||semesterId||'',work_type:item.activity_type||'',grade_id:item.grade_id||'',section_id:'',section_name:item.section_name||''});nav(`${route}?${qs.toString()}`)};
+ const goItem=item=>{const ctx=academicContextForDate(item.day_date||start,academic.years||[],academic.semesters||[]);const route=routeFor[item.activity_type]||item.work_route;if(!route){setError('هذا البند غير مرتبط بصفحة في القائمة الجانبية.');return;}const times={start:item.start_time||getPeriodTimes(item.period).start,end:item.end_time||getPeriodTimes(item.period).end};const day=days.find(([,idx])=>addDays(start,idx)===item.day_date)?.[0]||item.day_name||'';const qs=new URLSearchParams({from:'weekly',date:item.day_date||'',day,period:item.period||'الحصة الأولى',start_time:times.start,end_time:times.end,weekly_item_id:item.id||'',record_id:item.work_record_id||'',weekly_program_id:item.weekly_program_id||'',year_id:ctx.year?.id||yearId||'',semester_id:ctx.semester?.id||semesterId||'',work_type:item.activity_type||'',grade_id:item.grade_id||'',section_id:'',section_name:item.section_name||''});nav(`${route}${route.includes('?')?'&':'?'}${qs.toString()}`)};
  const gradeOptions=(academic.grades||[]).slice().sort((a,b)=>(a.sort_order??999)-(b.sort_order??999)).slice(0,12);
  const gradeDisplayOptions=Array.from({length:12},(_,i)=>({number:String(i+1),label:String(i+1)}));
  return <Page title="البرنامج اليومي / الأسبوعي" sub="أهم شاشة عمل للمرشد: أسبوع كامل، حصص يومية، وكل حصة تفتح شاشة العمل المرتبطة بها." actions={<Button variant="secondary" onClick={()=>window.print()}>طباعة الأسبوع</Button>}>

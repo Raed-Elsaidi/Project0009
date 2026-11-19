@@ -14,6 +14,7 @@ export default function SchoolData(){
  const directorate=org.directorates.find(x=>x.id===school?.directorate_id)
  const staff=org.profiles.filter(x=>x.school_id===schoolId)
  const principal=staff.find(x=>x.role==='PRINCIPAL'||String(x.job_title||'').includes('مدير'))
+ const managerName=profile?.manager_name||principal?.full_name||'غير محدد في الملف الشخصي'
  const counselor=staff.find(x=>x.role==='COUNSELOR'||String(x.job_title||'').includes('مرشد'))
  const load=async()=>{
   setLoading(true);setError('')
@@ -86,7 +87,7 @@ export default function SchoolData(){
   {admin&&<Card><Select label="اختيار المدرسة" value={schoolId} onChange={e=>changeSchool(e.target.value)}><option value="">اختر المدرسة</option>{schools.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</Select></Card>}
   {!school?<Card><Empty title="لا توجد مدرسة مرتبطة" text="يجب ربط حسابك بمدرسة أو اختيار مدرسة من القائمة."/></Card>:<>
    <Card><div className="section-title"><div><h2><School size={18}/> البيانات الأساسية والإدارية</h2><span>بيانات المدرسة والمديرية والموظفين المرتبطين بها.</span></div></div>
-    <div className="form-grid two"><Input label="اسم المديرية" value={directorate?.name||'—'} readOnly/><Input label="اسم المدرسة" value={schoolForm.name} onChange={e=>setSchoolForm({...schoolForm,name:e.target.value})} readOnly={!admin}/><Input label="رمز المدرسة" value={schoolForm.code||''} onChange={e=>setSchoolForm({...schoolForm,code:e.target.value})} readOnly={!admin}/><Input label="مدير المدرسة" value={principal?.full_name||'غير محدد في حسابات المدرسة'} readOnly/><Input label="المرشد التربوي" value={counselor?.full_name||'غير محدد في حسابات المدرسة'} readOnly/></div>
+    <div className="form-grid two"><Input label="اسم المديرية" value={directorate?.name||'—'} readOnly/><Input label="اسم المدرسة" value={schoolForm.name} onChange={e=>setSchoolForm({...schoolForm,name:e.target.value})} readOnly={!admin}/><Input label="رمز المدرسة" value={schoolForm.code||''} onChange={e=>setSchoolForm({...schoolForm,code:e.target.value})} readOnly={!admin}/><Input label="مدير المدرسة" value={managerName} readOnly/><Input label="المرشد التربوي" value={counselor?.full_name||'غير محدد في حسابات المدرسة'} readOnly/></div>
     {admin&&<Button loading={busy} onClick={saveSchool}><Save size={16}/> حفظ بيانات المدرسة</Button>}
    </Card>
 

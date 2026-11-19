@@ -13,7 +13,7 @@ export default function Profile(){
  const save=async e=>{e.preventDefault();if(!editable)return;setSaving(true);setError('');setMsg('');try{const p=await updateMyProfile(form);setD(p);setMsg('تم حفظ بياناتك الشخصية. يمكنك تعديلها مرة واحدة فقط.')}catch(e){setError(e.message)}finally{setSaving(false)}}
  const readonly=(label,value)=><div className="profile-readonly"><div><b>{label}</b><span>{value||'—'}</span></div></div>
  return <Page title="البيانات الشخصية" sub="بيانات الحساب والبيانات الوظيفية">
-  <div className="grid" style={{gridTemplateColumns:'minmax(0,1.2fr) minmax(260px,.8fr)'}}>
+  <div className="grid profile-layout" style={{gridTemplateColumns:'minmax(0,1.2fr) minmax(260px,.8fr)'}}>
    <Card>
     <h2>بيانات {role}</h2>
     {error&&<ErrorNotice>{error}</ErrorNotice>}{msg&&<div className="notice">{msg}</div>}

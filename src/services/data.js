@@ -523,19 +523,6 @@ export async function loginEmployee(username, password, remember = true) {
   if (!response.ok || !result.token) throw new Error(result.error || 'اسم المستخدم أو كلمة المرور غير صحيحة.')
   setCustomToken(result.token, remember)
 
-const { data: authUid, error: authUidError } =
-  await db().rpc('test_auth_uid')
-
-if (authUidError) {
-  throw new Error('فشل اختبار هوية Supabase: ' + authUidError.message)
-}
-
-if (authUid !== result.profile?.id) {
-  throw new Error(
-    `هوية Supabase غير مطابقة. النتيجة: ${authUid || 'NULL'}`
-  )
-}
-
 window.dispatchEvent(new Event('counselor-session-change'))
 }
 

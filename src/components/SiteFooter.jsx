@@ -34,6 +34,7 @@ export default function SiteFooter({ publicPage = false }) {
       <a className="footer-whatsapp" href="https://wa.me/970599242087" target="_blank" rel="noreferrer" title="WhatsApp"><MessageCircle size={16}/><span>00970 599 242 087</span></a>
     </div>
     <div className="site-footer-copy"><Code2 size={14}/> تطوير وبرمجة: Eng. Raed Elsaidi</div>
+    <div className="site-footer-supervision" style={{ width: "100%", textAlign: "center", display: "block", gridColumn: "1 / -1", alignSelf: "stretch" }}>إشراف إرشاد تربوي: Arwa Kamal Basheer</div>
   </footer>
 }
 

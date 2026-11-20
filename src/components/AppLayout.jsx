@@ -5,7 +5,10 @@ import{supabase}from'../services/supabase';import{currentProfile,getMyPermission
 
 const counselorItems=[
  {group:true,key:'admin-files',label:'الملف الإداري',icon:Files,children:[['/annual-plan','الخطة السنوية'],['/official-forms/semester-report','التقرير الفصلي'],['/weekly-program','البرنامج اليومي / الأسبوعي'],['/correspondence','الصادر والوارد']]},
- {group:true,key:'students-file',label:'أسماء طلاب المدرسة',icon:Users,children:[['/students','إضافة وعرض الطلاب']]},
+ {group:true,key:'school-management',label:'الإدارة المدرسية',icon:Building2,children:[
+ ['/school-data','أسماء المعلمين والصفوف'],
+ ['/students','أسماء طلاب المدرسة']
+]},
  {group:true,key:'group-guidance',label:'الإرشاد الجماعي',icon:UsersRound,children:[['/group-counseling','أسماء طلاب المجموعة الإرشادية'],['/official-forms/group-session-details','جدول اللقاءات (الخطة)'],['/official-forms/group-session-summary','نموذج الإرشاد الجماعي']]},
  {group:true,key:'group-direction',label:'التوجيه الجمعي',icon:MessageSquare,children:[['/official-forms/guidance-meetings-followup','نموذج متابعة لقاءات التوجيه الجمعي']]},
  {group:true,key:'career-guidance',label:'التوجيه المهني',icon:BookOpen,children:[['/official-forms/career-guidance-followup','نموذج متابعة لقاءات التوجيه المهني']]},
@@ -15,7 +18,7 @@ const counselorItems=[
  {group:true,key:'focused-interviews',label:'رصد ومتابعة المقابلات الفردية المركزة',icon:FileText,children:[['/focused-interviews','نموذج رصد ومتابعة المقابلات الفردية المركزة'],['/transfer-requests','طلبات النقل الواردة']]},
  {group:true,key:'interviews',label:'المقابلات',icon:UsersRound,children:[['/interviews?type=principal','مدير/ة'],['/interviews?type=teacher','معلم/ة'],['/interviews?type=student','طلاب'],['/interviews?type=parent','أولياء أمور'],['/interviews?type=institution','مؤسسات'],['/interviews?type=graduates','تدريب خريجي جامعات']]},
  {group:true,key:'meetings',label:'اجتماعات',icon:CalendarDays,children:[['/official-forms/meeting-principal','مدير/ة'],['/official-forms/meeting-teacher','معلم/ة'],['/official-forms/meeting-parents','أولياء أمور']]},
- ['/reports','إحصائيات',BarChart3,'dashboard'],['/messages','مراسلة',MessageSquare,'messages'],['/notes','دفتر الملاحظات',StickyNote,'notes'],['/administration','إدارة الموظفين',UsersRound,'administration'],['/school-data','بيانات المدرسة',Building2,'school-data'],['/profile','الملف الشخصي',User,'profile'],['/login','خروج',LogOut,'logout']
+ ['/reports','إحصائيات',BarChart3,'dashboard'],['/messages','مراسلة',MessageSquare,'messages'],['/notes','دفتر الملاحظات',StickyNote,'notes'],['/administration','إدارة الموظفين',UsersRound,'administration'],['/profile','الملف الشخصي',User,'profile'],['/login','خروج',LogOut,'logout']
 ];
 const ministryItems=[['/directorate-dashboard','الإحصائيات والمتابعة',BarChart3,'directorate-dashboard'],['/directorates','المديريات',Building2,'directorates'],['/schools','المدارس',Building2,'schools'],['/school-data','بيانات المدرسة',Building2,'school-data'],['/administration','إدارة الموظفين',UsersRound,'administration'],['/official-forms/meeting-followup','النماذج الرسمية',Files,'official-forms'],['/messages','مراسلات الموظفين',MessageSquare,'messages'],['/profile','البيانات الشخصية',User,'profile'],['/permissions','الصلاحيات',Shield,'permissions'],['/academic-years','السنوات الدراسية',CalendarDays,'academic-years']];
 const directorateItems=[['/directorate-dashboard','الإحصائيات والمتابعة',BarChart3,'directorate-dashboard'],['/schools','المدارس',Building2,'schools'],['/school-data','بيانات المدرسة',Building2,'school-data'],['/administration','إدارة الموظفين',UsersRound,'administration'],['/official-forms/meeting-followup','النماذج الرسمية',Files,'official-forms'],['/messages','مراسلات الموظفين',MessageSquare,'messages'],['/profile','البيانات الشخصية',User,'profile'],['/permissions','الصلاحيات',Shield,'permissions'],['/academic-years','السنوات الدراسية',CalendarDays,'academic-years']];

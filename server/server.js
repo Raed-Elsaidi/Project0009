@@ -282,7 +282,8 @@ const OFFICIAL_FORM_IDS = new Set([
   'meeting-parents',
   'group-session-details',
   'group-session-summary',
-  'group-counseling-plan'
+  'group-counseling-plan',
+  'hot-case-record'
 ]);
 
 

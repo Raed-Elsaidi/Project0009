@@ -4070,3 +4070,45 @@ body{
 .semester-report-signatures>div{display:grid;gap:8px;text-align:center;font-size:10px}
 @media(max-width:700px){.semester-report-semester-action{width:100%}.semester-report-semester-action>*{flex:1}.semester-report-official-paper{padding:16px 12px 20px}.semester-report-official-heading h1{font-size:15px}.semester-report-official-table th,.semester-report-official-table td{font-size:7px;padding:4px 2px}.semester-report-signatures{gap:10px}}
 @media print{body:has(.semester-report-preview-overlay) *{visibility:hidden!important}.semester-report-preview-overlay,.semester-report-preview-overlay *{visibility:visible!important}.semester-report-preview-overlay{position:absolute;inset:0;background:#fff;padding:0;overflow:visible}.semester-report-preview-toolbar{display:none!important}.semester-report-official-paper{width:100%;border:0;padding:12mm;box-shadow:none}.semester-report-official-table{break-inside:auto}.semester-report-official-table tr{break-inside:avoid;break-after:auto}}
+
+/* Hot-cases official form shortcuts */
+.hot-cases-forms-card .section-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.hot-cases-forms-card .section-heading h3{margin:0 0 6px}
+.hot-cases-forms-card .section-heading p{margin:0;color:var(--muted,#7b817c)}
+.hot-cases-form-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.hot-cases-form-item{display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;gap:14px;padding:14px;border:1px solid var(--border,#e5ddcc);border-radius:16px;background:rgba(255,255,255,.58)}
+.hot-cases-form-info{display:flex;align-items:center;gap:11px;min-width:0}
+.hot-cases-form-icon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:12px;background:#f3e5bd;color:#075f5d}
+.hot-cases-form-info strong{display:block;line-height:1.5}
+.hot-cases-form-info small{display:block;margin-top:3px;color:var(--muted,#7b817c);line-height:1.5}
+.hot-cases-form-item .btn{flex:0 0 auto;width:100%;white-space:nowrap}
+.hot-cases-top-actions{display:flex;justify-content:flex-start;margin:0 0 16px}
+.hot-cases-top-actions .btn{min-width:190px}
+@media(max-width:700px){.hot-cases-form-buttons{grid-template-columns:1fr}.hot-cases-top-actions .btn{width:100%}}
+
+
+/* Unified hot-case entry: one saved record feeds all official hot-case forms. */
+.hot-case-entry-card{margin-bottom:18px}
+.hot-case-entry-toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:14px 0 18px}
+.hot-case-record-picker{flex:1;min-width:220px}
+.hot-case-record-picker select,.hot-case-entry-grid input,.hot-case-entry-grid textarea{width:100%;min-height:44px;border:1px solid var(--border,#d9d0c1);border-radius:12px;background:#fffdf8;padding:10px 12px;color:var(--text,#24413e);font:inherit}
+.hot-case-entry-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.hot-case-entry-grid .field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.hot-case-entry-grid .field>span{font-weight:700;color:var(--text,#24413e)}
+.hot-case-entry-grid .hot-case-wide{grid-column:1/-1}
+.hot-case-entry-grid textarea{resize:vertical;min-height:72px}
+.hot-case-entry-actions{display:flex;justify-content:flex-start;margin-top:16px}
+.hot-case-notice{margin-top:12px;padding:11px 14px;border-radius:12px;background:#e8f2ed;color:#245d50}
+@media(max-width:700px){.hot-case-entry-toolbar{align-items:stretch;flex-direction:column}.hot-case-entry-toolbar>.btn{width:100%}.hot-case-entry-grid{grid-template-columns:1fr}}
+
+/* Hot cases: student lookup and saved records */
+.hot-case-student-search{position:relative}
+.hot-case-student-results{position:absolute;z-index:30;top:100%;right:0;left:0;max-height:260px;overflow:auto;background:#fffdf8;border:1px solid var(--border,#d9d0c1);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.13)}
+.hot-case-student-results button{display:flex;width:100%;flex-direction:column;align-items:flex-start;gap:4px;padding:12px 14px;border:0;border-bottom:1px solid #eee5d6;background:transparent;color:var(--text,#24413e);font:inherit;text-align:right;cursor:pointer}
+.hot-case-student-results button:last-child{border-bottom:0}
+.hot-case-student-results button:active,.hot-case-student-results button:hover{background:#f3e4bd}
+.hot-case-student-results small{color:#777}
+.hot-case-records-list{margin-top:24px;padding-top:18px;border-top:1px solid var(--border,#d9d0c1)}
+.hot-case-records-list .table-wrap{overflow-x:auto}
+.hot-case-records-list tr.is-selected td{background:#f7edcf}
+@media(max-width:700px){.hot-case-records-list .table{min-width:650px}}

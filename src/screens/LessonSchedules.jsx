@@ -229,7 +229,7 @@ export default function LessonSchedules(){
         {rows.map(row=>
          <tr key={row.id}>
           <td>{row.period_order}</td>
-          <td>{row.period_name}</td>
+          <td>{String(row.period_name||'').replace(/^الحصة\s*/, '')}</td>
           <td>{String(row.start_time||'').slice(0,5)}</td>
           <td>{calculateEndTime(row.start_time,duration)}</td>
           <td>
@@ -237,9 +237,7 @@ export default function LessonSchedules(){
             <Button size="sm" variant="secondary" onClick={()=>edit(row)}>
              <Edit3 size={15}/> تعديل
             </Button>
-            <Button size="sm" variant="danger" onClick={()=>remove(row)} disabled={busy}>
-             <Trash2 size={15}/> حذف
-            </Button>
+
            </div>
           </td>
          </tr>

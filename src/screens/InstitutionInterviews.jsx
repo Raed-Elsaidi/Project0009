@@ -20,6 +20,7 @@ export default function InstitutionInterviews(){
  const weeklyItemId=params.get('weekly_item_id')
  const weeklyProgramId=params.get('weekly_program_id')
  const weeklyDate=params.get('date')||today()
+ const weeklyStartTime=params.get('start_time')||''
  const weeklyPeriod=params.get('period')||'الحصة الأولى'
 
  const[profile,setProfile]=useState(null)
@@ -81,6 +82,7 @@ export default function InstitutionInterviews(){
       const draft=JSON.parse(localStorage.getItem('institution-interview-draft')||'null')
       if(draft?.form)next={...next,...draft.form}
      }catch{}
+     if(weeklyStartTime)next.interview_time=weeklyStartTime
      next.school_year_id=activeYear?.id||''
      next.semester_id=activeSemester?.id||''
     }
@@ -108,7 +110,7 @@ export default function InstitutionInterviews(){
 
  const newInterview=()=>{
   setForm({
-   student_id:'',contact_person:'',institution_name:'',interview_date:today(),interview_time:'',
+   student_id:'',contact_person:'',institution_name:'',interview_date:weeklyDate,interview_time:weeklyStartTime,
    topic:'',notes:'',result:'',
    school_year_id:form.school_year_id||'',semester_id:form.semester_id||''
   })

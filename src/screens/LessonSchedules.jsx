@@ -215,7 +215,7 @@ export default function LessonSchedules(){
     <div className="loading">جارٍ تحميل الحصص...</div>
     :rows.length?
      <div className="table-wrap">
-      <table>
+      <table className="lesson-schedule-table">
        <thead>
         <tr>
          <th>الترتيب</th>

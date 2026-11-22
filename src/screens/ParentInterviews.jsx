@@ -21,6 +21,7 @@ export default function ParentInterviews(){
  const weeklyItemId=params.get('weekly_item_id')
  const weeklyProgramId=params.get('weekly_program_id')
  const weeklyDate=params.get('date')||today()
+ const weeklyStartTime=params.get('start_time')||''
  const weeklyPeriod=params.get('period')||'الحصة الأولى'
 
  const[profile,setProfile]=useState(null)
@@ -82,6 +83,7 @@ export default function ParentInterviews(){
       const draft=JSON.parse(localStorage.getItem('parent-interview-draft')||'null')
       if(draft?.form)next={...next,...draft.form}
      }catch{}
+     if(weeklyStartTime)next.interview_time=weeklyStartTime
      next.school_year_id=activeYear?.id||''
      next.semester_id=activeSemester?.id||''
     }
@@ -109,7 +111,7 @@ export default function ParentInterviews(){
 
  const newInterview=()=>{
   setForm({
-   student_id:'',parent_name:'',interview_date:today(),interview_time:'',
+   student_id:'',parent_name:'',interview_date:weeklyDate,interview_time:weeklyStartTime,
    topic:'',notes:'',result:'',
    school_year_id:form.school_year_id||'',semester_id:form.semester_id||''
   })

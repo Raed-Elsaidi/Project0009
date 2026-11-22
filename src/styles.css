@@ -4112,3 +4112,30 @@ body{
 .hot-case-records-list .table-wrap{overflow-x:auto}
 .hot-case-records-list tr.is-selected td{background:#f7edcf}
 @media(max-width:700px){.hot-case-records-list .table{min-width:650px}}
+
+/* Compact typography for lesson schedules */
+.lesson-schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.lesson-schedule-table th,
+.lesson-schedule-table td {
+  padding: 8px 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  text-align: right;
+}
+.lesson-schedule-table th {
+  font-size: 11px;
+  font-weight: 800;
+}
+@media (max-width: 600px) {
+  .lesson-schedule-table th {
+    font-size: 10px;
+    padding: 7px 5px;
+  }
+  .lesson-schedule-table td {
+    font-size: 11px;
+    padding: 7px 5px;
+  }
+}

@@ -20,6 +20,7 @@ export default function InstitutionInterviews(){
  const weeklyItemId=params.get('weekly_item_id')
  const weeklyProgramId=params.get('weekly_program_id')
  const weeklyDate=params.get('date')||today()
+ const weeklyStartTime=params.get('start_time')||''
  const weeklyPeriod=params.get('period')||'الحصة الأولى'
 
  const[profile,setProfile]=useState(null)
@@ -78,9 +79,10 @@ export default function InstitutionInterviews(){
      setHistorical(true)
     }else{
      try{
-      const draft=JSON.parse(localStorage.getItem('institution-interview-draft')||'null')
+      const draft=JSON.parse(localStorage.getItem('graduate-interview-draft')||'null')
       if(draft?.form)next={...next,...draft.form}
      }catch{}
+     if(weeklyStartTime)next.interview_time=weeklyStartTime
      next.school_year_id=activeYear?.id||''
      next.semester_id=activeSemester?.id||''
     }
@@ -97,7 +99,7 @@ export default function InstitutionInterviews(){
 
  useEffect(()=>{
   if(!historical){
-   try{localStorage.setItem('institution-interview-draft',JSON.stringify({form}))}catch{}
+   try{localStorage.setItem('graduate-interview-draft',JSON.stringify({form}))}catch{}
   }
  },[form,historical])
 
@@ -108,7 +110,7 @@ export default function InstitutionInterviews(){
 
  const newInterview=()=>{
   setForm({
-   student_id:'',graduate_name:'',university_name:'',interview_date:today(),interview_time:'',
+   student_id:'',graduate_name:'',university_name:'',interview_date:weeklyDate,interview_time:weeklyStartTime,
    topic:'',notes:'',result:'',
    school_year_id:form.school_year_id||'',semester_id:form.semester_id||''
   })
@@ -182,7 +184,7 @@ export default function InstitutionInterviews(){
    }else{
     setHistorical(false)
     await refresh()
-    localStorage.removeItem('institution-interview-draft')
+    localStorage.removeItem('graduate-interview-draft')
     setNotice(activeId?'تم تحديث المقابلة.':'تم حفظ المقابلة وإضافتها إلى السجل.')
    }
   }catch(e){

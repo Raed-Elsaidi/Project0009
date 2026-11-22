@@ -20,6 +20,7 @@ export default function PrincipalInterviews(){
  const weeklyItemId=params.get('weekly_item_id')
  const weeklyProgramId=params.get('weekly_program_id')
  const weeklyDate=params.get('date')||today()
+const weeklyStartTime=params.get('start_time')||''
  const weeklyPeriod=params.get('period')||'الحصة الأولى'
  const[profile,setProfile]=useState(null),[principalName,setPrincipalName]=useState('')
  const[academic,setAcademic]=useState({years:[],semesters:[]})
@@ -74,6 +75,7 @@ export default function PrincipalInterviews(){
       if(draft?.form)next={...next,...draft.form}
      }catch{}
      // السنة والفصل النشطان من إعدادات النظام لهما الأولوية على المسودة القديمة
+     if(weeklyStartTime)next.interview_time=weeklyStartTime
      next.school_year_id=activeYear?.id||''
      next.semester_id=activeSemester?.id||''
     }
@@ -96,7 +98,7 @@ export default function PrincipalInterviews(){
  const sorted=useMemo(()=>[...records].sort((a,b)=>String(b.interview_date||'').localeCompare(String(a.interview_date||''))),[records])
 
  const newInterview=()=>{
-  setForm({person:'',interview_date:today(),interview_time:'',topic:'',notes:'',result:'',school_year_id:form.school_year_id||'',semester_id:form.semester_id||''})
+  setForm({person:'',interview_date:weeklyDate,interview_time:weeklyStartTime,topic:'',notes:'',result:'',school_year_id:form.school_year_id||'',semester_id:form.semester_id||''})
   setActiveId(null);setHistorical(false);setPreview(false);setHistoryOpen(false);setError('')
  }
 

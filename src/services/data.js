@@ -95,6 +95,26 @@ export async function listStudents(schoolId=null) {
   return data || []
 }
 
+
+export async function listSchoolLessonSchedules(schoolId){
+  if(!schoolId) return []
+  const {data,error}=await db().from('school_lesson_schedules').select('*').eq('school_id',schoolId).order('period_order')
+  if(error) throw error
+  return data||[]
+}
+export async function saveSchoolLessonSchedule({id,school_id,period_name,period_order,start_time}){
+  const payload={school_id,period_name:String(period_name||'').trim(),period_order:Number(period_order),start_time}
+  if(!payload.school_id||!payload.period_name||!payload.start_time) throw new Error('أكمل اسم الحصة ووقت بدايتها.')
+  const query=id?db().from('school_lesson_schedules').update(payload).eq('id',id):db().from('school_lesson_schedules').upsert(payload,{onConflict:'school_id,period_name'})
+  const {data,error}=await query.select('*').single()
+  if(error) throw error
+  return data
+}
+export async function deleteSchoolLessonSchedule(id){
+  const {error}=await db().from('school_lesson_schedules').delete().eq('id',id)
+  if(error) throw error
+}
+
 export async function listWeeklyPrograms() {
   const { data, error } = await db().from('weekly_programs')
     .select('*, schools(id,name), school_years(id,name), semesters(id,name,type), weekly_program_items(*)')
@@ -115,14 +135,26 @@ export async function createWeeklyProgram(payload) {
   return data
 }
 
+
+// Normalize optional TIME fields before writing weekly items.
+const normalizeWeeklyItemTimes = payload => ({
+  ...payload,
+  ...(Object.prototype.hasOwnProperty.call(payload || {}, 'start_time')
+    ? { start_time: payload.start_time || null }
+    : {}),
+  ...(Object.prototype.hasOwnProperty.call(payload || {}, 'end_time')
+    ? { end_time: payload.end_time || null }
+    : {})
+})
+
 export async function createWeeklyItem(payload) {
-  const { data, error } = await db().from('weekly_program_items').insert(payload).select().single()
+  const { data, error } = await db().from('weekly_program_items').insert(normalizeWeeklyItemTimes(payload)).select().single()
   if (error) throw error
   return data
 }
 
 export async function updateWeeklyItem(id, payload) {
-  const { data, error } = await db().from('weekly_program_items').update(payload).eq('id', id).select().single()
+  const { data, error } = await db().from('weekly_program_items').update(normalizeWeeklyItemTimes(payload)).eq('id', id).select().single()
   if (error) throw error
   return data
 }
@@ -647,40 +679,162 @@ export async function updateStudent(id,payload){
   if(error) throw error
   return data
 }
-export async function deleteStudent(id){
+
+export async function deleteStudent(id) {
   const {error}=await db().from('students').delete().eq('id',id)
+  if(error?.code==='23503') {
+    throw new Error('لا يمكن حذف هذا الطالب؛ لأنه مرتبط بمقابلة مركّزة أو بسجلات أخرى. احتفظ ببياناته.')
+  }
   if(error) throw error
 }
 
-export async function importStudentsFromExcel(rows){
-  const user=await currentUser(); if(!user) throw new Error('انتهت جلسة الدخول.')
-  const profile=await currentProfile(); if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة.')
-  if(!Array.isArray(rows)||!rows.length) throw new Error('لا توجد بيانات للاستيراد.')
-  const ids=rows.map(r=>String(r.national_id||''))
-  if(ids.some(id=>!/^[0-9]{9}$/.test(id))) throw new Error('يوجد رقم هوية غير صحيح؛ يجب أن يتكون من 9 أرقام.')
-  if(new Set(ids).size!==ids.length) throw new Error('يوجد رقم هوية مكرر داخل ملف Excel.')
-  const {data:existing,error:checkError}=await db().from('students').select('national_id').eq('school_id',profile.school_id).in('national_id',ids)
-  if(checkError) throw checkError
-  if(existing?.length) throw new Error(`لم يتم النسخ؛ رقم الهوية ${existing[0].national_id} مسجل مسبقًا في المدرسة.`)
-  const payload=rows.map(r=>({school_id:profile.school_id,student_code:r.student_code,school_year_id:r.school_year_id,national_id:String(r.national_id),full_name:r.full_name,grade_id:r.grade_id,section_id:r.section_id,phone:r.phone||null,notes:r.notes||null}))
-  const {data:inserted,error}=await db().from('students').insert(payload).select('id')
-  if(error) throw error
-  const assignments=inserted.map(s=>({student_id:s.id,counselor_id:user.id,is_primary:true,ended_at:null}))
-  const {error:assignError}=await db().from('student_counselors').upsert(assignments,{onConflict:'student_id,counselor_id'})
-  if(assignError) throw assignError
-  return inserted
+function normalizeStudentName(value) {
+  return String(value??'').trim().toLowerCase()
+    .replace(/[أإآ]/g,'ا')
+    .replace(/ى/g,'ي')
+    .replace(/[\sـ]+/g,' ')
 }
 
-export async function deleteAllStudentsForSchool(){
+export async function importStudentsFromExcel(rows) {
+  const user=await currentUser()
+  if(!user) throw new Error('انتهت جلسة الدخول.')
+
   const profile=await currentProfile()
   if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة.')
-  if(String(profile.role||'').toUpperCase()!=='COUNSELOR') throw new Error('هذه العملية متاحة للمرشد التربوي فقط.')
-  const {data,error}=await db().from('students').delete().eq('school_id',profile.school_id).select('id')
-  if(error) throw error
-  return data?.length||0
+  if(!Array.isArray(rows)||!rows.length) throw new Error('لا توجد بيانات للاستيراد.')
+
+  const names=rows.map(r=>normalizeStudentName(r.full_name))
+  if(names.some(n=>!n)) throw new Error('يوجد اسم طالب فارغ.')
+  if(new Set(names).size!==names.length)
+    throw new Error('يوجد اسم مكرر داخل ملف Excel. أوقفنا الاستيراد.')
+
+  const {data:existing,error:checkError}=await db()
+    .from('students')
+    .select('id,full_name')
+    .eq('school_id',profile.school_id)
+
+  if(checkError) throw checkError
+
+  const byName=new Map()
+  for(const s of existing||[]) {
+    const key=normalizeStudentName(s.full_name)
+    if(!byName.has(key)) byName.set(key,[])
+    byName.get(key).push(s)
+  }
+
+  // فحص جميع الأسماء قبل بدء التعديل
+  for(const row of rows) {
+    const matches=byName.get(normalizeStudentName(row.full_name))||[]
+    if(matches.length>1) {
+      throw new Error(`الاسم «${row.full_name}» موجود أكثر من مرة في المدرسة. لم يتم تحديثه.`)
+    }
+    if(!row.school_year_id||!row.grade_id||!row.section_id) {
+      throw new Error(`بيانات السنة أو الصف أو الشعبة ناقصة للطالب ${row.full_name}.`)
+    }
+  }
+
+  let inserted=0
+  let updated=0
+
+  for(const row of rows) {
+    const key=normalizeStudentName(row.full_name)
+    const matches=byName.get(key)||[]
+
+    const payload={
+      full_name:String(row.full_name).trim(),
+      school_year_id:row.school_year_id,
+      grade_id:row.grade_id,
+      section_id:row.section_id,
+      phone:row.phone||null,
+      notes:row.notes||null
+    }
+
+    let studentId
+
+    if(matches.length===1) {
+      studentId=matches[0].id
+      const {error}=await db().from('students')
+        .update(payload)
+        .eq('id',studentId)
+        .eq('school_id',profile.school_id)
+      if(error) throw error
+      updated++
+    } else {
+      const {data:created,error}=await db().from('students')
+        .insert({school_id:profile.school_id,...payload})
+        .select('id')
+        .single()
+      if(error) throw error
+
+      studentId=created.id
+      byName.set(key,[{id:studentId,full_name:payload.full_name}])
+      inserted++
+    }
+
+    const {error:assignError}=await db().from('student_counselors')
+      .upsert({
+        student_id:studentId,
+        counselor_id:user.id,
+        is_primary:true,
+        ended_at:null
+      },{onConflict:'student_id,counselor_id'})
+
+    if(assignError) throw assignError
+  }
+
+  return {inserted,updated,total:rows.length}
 }
 
+export async function deleteAllStudentsForSchool() {
+  const profile=await currentProfile()
+  if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة.')
 
+  if(String(profile.role||'').toUpperCase()!=='COUNSELOR')
+    throw new Error('هذه العملية متاحة للمرشد التربوي فقط.')
+
+  const {data:students,error}=await db().from('students')
+    .select('id')
+    .eq('school_id',profile.school_id)
+
+  if(error) throw error
+  if(!students?.length) return {deleted:0,protected:0}
+
+  // نجلب سجلات المقابلات المركزة دون افتراض وجود school_id في جدولها
+  const {data:files,error:fileError}=await db()
+    .from('focused_interview_student_files')
+    .select('student_id')
+
+  if(fileError) throw fileError
+
+  const protectedIds=new Set(
+    (files||[]).map(f=>String(f.student_id))
+  )
+
+  let deleted=0
+  let protectedCount=0
+
+  for(const student of students) {
+    if(protectedIds.has(String(student.id))) {
+      protectedCount++
+      continue
+    }
+
+    const {error:deleteError}=await db().from('students')
+      .delete()
+      .eq('id',student.id)
+      .eq('school_id',profile.school_id)
+
+    if(deleteError?.code==='23503') {
+      protectedCount++
+      continue
+    }
+
+    if(deleteError) throw deleteError
+    deleted++
+  }
+
+  return {deleted,protected:protectedCount}
+}
 
 export async function changePassword(currentPassword, password) {
   const token = (await import('./customSession')).getCustomToken()

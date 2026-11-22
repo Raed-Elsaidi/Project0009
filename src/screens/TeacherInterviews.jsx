@@ -1,3 +1,4 @@
+import LessonTimeSelect from '../components/LessonTimeSelect'
 import{listSchoolTeachers}from'../services/officialFormsApi'
 import React,{useEffect,useMemo,useState}from'react'
 import{Page,Card,Input,Textarea,Button,ErrorNotice,Select}from'../components/UI'
@@ -240,6 +241,7 @@ export default function TeacherInterviews(){
      </Select>
      <Input label="التاريخ" type="date" value={form.interview_date||''} disabled={historical} onChange={e=>setForm({...form,interview_date:e.target.value})}/>
      <Input label="ساعة اللقاء" type="time" value={form.interview_time||''} disabled={historical} onChange={e=>setForm({...form,interview_time:e.target.value})}/>
+      <LessonTimeSelect label="الحصة / ساعة اللقاء" value={form.interview_time||''} disabled={historical} onChange={value=>setForm({...form,interview_time:value})}/>
      <Input label="اليوم" value={dayName(form.interview_date)} disabled/>
      <Input label="موضوع المقابلة" value={form.topic||''} disabled={historical} onChange={e=>setForm({...form,topic:e.target.value})}/>
     </div>

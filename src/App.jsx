@@ -30,6 +30,7 @@ import Messages from './screens/Messages'
 import Directorates from './screens/Directorates'
 import Schools from './screens/Schools'
 import SchoolData from './screens/SchoolData'
+import LessonSchedules from './screens/LessonSchedules'
 import OfficialForms from './screens/OfficialForms'
 import Correspondence from './screens/Correspondence'
 import TransferRequests from './screens/TransferRequests'
@@ -51,6 +52,7 @@ export default function App() {
       <Route path="/directorates" element={page(Directorates)} />
       <Route path="/schools" element={page(Schools)} />
       <Route path="/school-data" element={page(SchoolData)} />
+      <Route path="/lesson-schedules" element={page(LessonSchedules)} />
       <Route path="/official-forms/:formId/official" element={page(OfficialForms)} />
       <Route path="/official-forms/:formId" element={page(OfficialForms)} />
       <Route path="/counselor-work-followup" element={page(CounselorWorkFollowup)} />

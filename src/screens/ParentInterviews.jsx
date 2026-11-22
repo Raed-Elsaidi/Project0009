@@ -1,3 +1,4 @@
+import LessonTimeSelect from '../components/LessonTimeSelect'
 import React,{useEffect,useMemo,useState}from'react'
 import{Page,Card,Input,Textarea,Button,ErrorNotice,Select}from'../components/UI'
 import{currentProfile,listActiveAcademicData,listStudents,createInterviewRecord,getInterviewRecord,updateInterviewRecord,listInterviewRecords,createWeeklyItem,updateWeeklyItem}from'../services/data'
@@ -231,6 +232,7 @@ export default function ParentInterviews(){
      <Input label="اسم ولي الأمر" value={form.parent_name||''} disabled={historical} onChange={e=>setForm({...form,parent_name:e.target.value})}/>
      <Input label="التاريخ" type="date" value={form.interview_date||''} disabled={historical} onChange={e=>setForm({...form,interview_date:e.target.value})}/>
      <Input label="ساعة المقابلة" type="time" value={form.interview_time||''} disabled={historical} onChange={e=>setForm({...form,interview_time:e.target.value})}/>
+      <LessonTimeSelect label="الحصة / ساعة اللقاء" value={form.interview_time||''} disabled={historical} onChange={value=>setForm({...form,interview_time:value})}/>
      <Input label="اليوم" value={dayName(form.interview_date)} disabled/>
      <Input label="موضوع المقابلة" value={form.topic||''} disabled={historical} onChange={e=>setForm({...form,topic:e.target.value})}/>
     </div>

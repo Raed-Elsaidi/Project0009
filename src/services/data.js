@@ -22,7 +22,7 @@ export async function ensureMyProfile() { return currentProfile() }
 export async function currentProfile() {
   const user = await currentUser()
   if (!user?.id) return null
-  const { data, error } = await db().from('profiles').select('*, schools(id,name,code,directorate_id), directorates(id,name,code)').eq('id', user.id).maybeSingle()
+  const { data, error } = await db().from('profiles').select('*, schools(id,name,code,directorate_id,lesson_duration_minutes), directorates(id,name,code)').eq('id', user.id).maybeSingle()
   if (error) throw error
   if (!data || data.is_active === false) return null
   return data
@@ -95,6 +95,14 @@ export async function listStudents(schoolId=null) {
   return data || []
 }
 
+
+export async function saveMySchoolLessonDuration(duration){
+  const {data,error}=await db().rpc('save_my_school_lesson_duration',{
+    p_duration:Number(duration)
+  })
+  if(error) throw error
+  return data
+}
 
 export async function listSchoolLessonSchedules(schoolId){
   if(!schoolId) return []

@@ -8,6 +8,7 @@ const counselorItems=[
  {group:true,key:'admin-files',label:'الملف الإداري',icon:Files,children:[['/annual-plan','الخطة السنوية'],['/official-forms/semester-report','التقرير الفصلي'],['/weekly-program','البرنامج اليومي / الأسبوعي'],['/correspondence','الصادر والوارد']]},
  {group:true,key:'school-management',label:'الإدارة المدرسية',icon:Building2,children:[
  ['/school-data','أسماء المعلمين والصفوف'],
+ ['/lesson-schedules','توقيت الحصص'],
  ['/students','أسماء طلاب المدرسة']
 ]},
  {group:true,key:'group-guidance',label:'الإرشاد الجماعي',icon:UsersRound,children:[['/group-counseling','أسماء طلاب المجموعة الإرشادية'],['/official-forms/group-session-details','جدول اللقاءات (الخطة)'],['/official-forms/group-session-summary','نموذج الإرشاد الجماعي']]},

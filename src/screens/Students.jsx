@@ -6,41 +6,41 @@ import * as XLSX from 'xlsx'
 
 const empty={full_name:'',phone:'',grade_id:'',section_id:'',school_year_id:'',notes:''}
 const yearLabel=y=>y?.name||((y?.start_date&&y?.end_date)?`${new Date(y.start_date).getFullYear()}/${new Date(y.end_date).getFullYear()}`:'')
-const norm=v=>String(v??'').trim().toLowerCase().replace(/[\s_ـ]/g,'')
-const normGrade=v=>{
-  const value=norm(v).replace(/^ال/,'')
-  const numbers={
-    '1':'اول','01':'اول','2':'ثاني','02':'ثاني',
-    '3':'ثالث','4':'رابع','5':'خامس','6':'سادس',
-    '7':'سابع','8':'ثامن','9':'تاسع','10':'عاشر',
-    '11':'حاديعشر','12':'ثانيعشر'
-  }
-  return numbers[value] || value
+const norm=v=>String(v??'').trim().toLowerCase()
+  .replace(/[أإآ]/g,'ا').replace(/ى/g,'ي')
+  .replace(/[\s_ـ]/g,'')
+const toWesternDigits=v=>String(v??'').replace(/[٠-٩]/g,d=>String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
+const gradeKey=v=>{
+  const value=toWesternDigits(norm(v)).replace(/^الصف/,'').replace(/^ال/,'')
+  const numbers={'1':'اول','01':'اول','2':'ثاني','02':'ثاني','3':'ثالث','03':'ثالث','4':'رابع','04':'رابع','5':'خامس','05':'خامس','6':'سادس','06':'سادس','7':'سابع','07':'سابع','8':'ثامن','08':'ثامن','9':'تاسع','09':'تاسع','10':'عاشر','11':'حاديعشر','12':'ثانيعشر'}
+  return numbers[value]||value
+}
+const sectionKey=v=>{
+  const value=toWesternDigits(norm(v)).replace(/^الشعبة/,'').replace(/^شعبة/,'').replace(/^ال/,'')
+  const number=value.match(/\d+/)
+  if(number) return String(Number(number[0]))
+  const words={'الاولى':'1','اولى':'1','الاول':'1','اول':'1','الثانية':'2','ثانية':'2','الثاني':'2','ثاني':'2','الثالثة':'3','ثالثة':'3','الثالث':'3','ثالث':'3','الرابعة':'4','رابعة':'4','الرابع':'4','رابع':'4','الخامسة':'5','خامسة':'5','الخامس':'5','خامس':'5','السادسة':'6','سادسة':'6','السادس':'6','سادس':'6'}
+  return words[value]||value
 }
 
 export default function Students(){
  const[d,setD]=useState([]),[q,setQ]=useState(''),[academic,setAcademic]=useState({years:[],grades:[]}),[sections,setSections]=useState([]),[profile,setProfile]=useState(null),[loading,setLoading]=useState(true),[saving,setSaving]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[showForm,setShowForm]=useState(false),[editing,setEditing]=useState(null),[form,setForm]=useState(empty),[excelRows,setExcelRows]=useState([]),[excelErrors,setExcelErrors]=useState([]),[excelName,setExcelName]=useState(''),[importing,setImporting]=useState(false),[deletingAll,setDeletingAll]=useState(false)
  const load=async()=>{setLoading(true);setError('');try{const p=await currentProfile();const[a,st]=await Promise.all([listActiveAcademicData(p?.school_id||null),listStudents(p?.school_id||null)]);setProfile(p);setAcademic(a);setD(st);if(p?.school_id){const ss=await listSectionsBySchool(p.school_id);setSections(ss)}}catch(e){setError(e.message||'تعذر تحميل الطلاب.')}finally{setLoading(false)}}
  useEffect(()=>{load()},[])
- const x=useMemo(()=>d.filter(s=>`${s.full_name||''}`.toLowerCase().includes(q.toLowerCase())),[d,q])
+const x=useMemo(()=>d.filter(s=>String(s.full_name||'').toLowerCase().includes(q.trim().toLowerCase())),[d,q])
  const reset=()=>{const year=academic.years?.find(y=>y.is_active)||academic.years?.[0];setEditing(null);setForm({...empty,school_year_id:year?.id||''});setError('')}
  const openAdd=()=>{reset();setShowForm(true)}
  const openEdit=s=>{setEditing(s.id);setForm({...empty,...s});setShowForm(true);setError('')}
  const save=async()=>{setError('');setNotice('');if(!form.full_name.trim()||!form.grade_id||!form.section_id||!form.school_year_id)return setError('أدخل اسم الطالب والسنة الدراسية والصف والشعبة.');if(form.phone&&!/^[0-9]{1,10}$/.test(form.phone))return setError('رقم الهاتف يجب أن يتكون من أرقام فقط وبحد أقصى 10 خانات.');if(!profile?.school_id)return setError('لم يتم ربط حسابك بمدرسة.');setSaving(true);try{const payload={...form,school_id:profile.school_id};if(editing)await updateStudent(editing,payload);else await createStudent(payload);await load();setShowForm(false);reset();setNotice(editing?'تم تحديث بيانات الطالب.':'تمت إضافة الطالب بنجاح.')}catch(e){setError(e.message||'تعذر حفظ بيانات الطالب.')}finally{setSaving(false)}}
- const remove=async s=>{if(!window.confirm(`هل تريد حذف الطالب «${s.full_name}»؟ لا يمكن التراجع عن الحذف.`))return;try{await deleteStudent(s.id);await load();setNotice('تم حذف الطالب.')}catch(e){
-  const msg = e.code==='23503' || String(e.message||'').includes('focused_interview_student_files')
+const remove=async s=>{if(!window.confirm(`هل تريد حذف الطالب «${s.full_name}»؟ لا يمكن التراجع عن الحذف.`))return;try{await deleteStudent(s.id);await load();setNotice('تم حذف الطالب.')}catch(e){
+  const msg=e.code==='23503'||String(e.message||'').includes('focused_interview_student_files')
     ? 'لا يمكن حذف الطلاب الذين لديهم مقابلة مركزة.'
     : e.message||'تعذر حذف الطالب.'
   setError(msg)
 }}
- const parseExcel=async file=>{setExcelName(file.name);setExcelErrors([]);setExcelRows([]);try{const wb=XLSX.read(await file.arrayBuffer(),{type:'array',raw:false});const ws=wb.Sheets[wb.SheetNames[0]];if(!ws)throw new Error();const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});const aliases={year:['السنة الدراسية','السنة','school_year','year'],full_name:['اسم الطالب','الاسم','full_name','student_name'],grade:['الصف','grade'],section:['الشعبة','section'],phone:['رقم الهاتف','الهاتف','الجوال','phone'],notes:['ملاحظات','notes']};const find=(obj,key)=>{const h=Object.keys(obj).find(k=>aliases[key].map(norm).includes(norm(k)));return h?String(obj[h]??'').trim():''};const rows=raw.map((r,i)=>({row:i+2,year:find(r,'year'),full_name:find(r,'full_name'),grade:find(r,'grade'),section:find(r,'section'),phone:find(r,'phone'),notes:find(r,'notes')}));const errs=[];if(!rows.length)errs.push('ملف Excel لا يحتوي على سجلات.');rows.forEach(r=>{if(!r.full_name)errs.push(`صف ${r.row}: اسم الطالب مفقود.`);if(r.phone&&!/^[0-9]{1,10}$/.test(r.phone))errs.push(`صف ${r.row}: رقم الهاتف يجب ألا يتجاوز 10 أرقام.`);if(!r.year)errs.push(`صف ${r.row}: السنة الدراسية مفقودة.`);if(!r.grade||!r.section)errs.push(`صف ${r.row}: الصف أو الشعبة مفقود.`)});setExcelRows(rows);setExcelErrors(errs)}catch(e){setExcelErrors(['تعذر قراءة الملف. تأكد أنه ملف Excel صالح وأن الصف الأول يحتوي أسماء الأعمدة.'])}}
- const importExcel=async()=>{setImporting(true);setError('');setNotice('');try{const yearByName=new Map(academic.years.map(y=>[norm(yearLabel(y)),y]));const gradeByName=new Map(academic.grades.map(g=>[normGrade(g.name),g]));const payload=[];for(const r of excelRows){const y=academic.years.find(item=>item.is_active)||academic.years[0];const g=gradeByName.get(normGrade(r.grade))||academic.grades.find((item,index)=>String(index+1)===r.grade);const sec=sections.find(s=>norm(s.name)===norm(r.section)&&(!g||String(s.grade_id)===String(g.id)));if(!y||!g||!sec)throw new Error(`تحقق من وجود سنة دراسية حالية والصف والشعبة في صف Excel رقم ${r.row}.`);payload.push({...r,school_year_id:y.id,grade_id:g.id,section_id:sec.id})}const result=await importStudentsFromExcel(payload);await load();setExcelRows([]);setExcelName('');setExcelErrors([]);setNotice(`تم الاستيراد: إضافة ${result.inserted} طالب وتحديث ${result.updated} طالب.`)}catch(e){setError(e.message||'تعذر استيراد الطلاب.')}finally{setImporting(false)}}
- const deleteAll=async()=>{if(!profile?.school_id)return setError('حسابك غير مرتبط بمدرسة.');const phrase=window.prompt(`تحذير: سيتم حذف جميع سجلات الطلاب الظاهرة في مدرسة «${profile.school_name||'مدرستك'}» وعددها ${d.length}. اكتب العبارة التالية حرفيًا للتأكيد:\n\nحذف جميع الطلاب`);if(phrase!=='حذف جميع الطلاب')return;const final=window.confirm('هذا الإجراء نهائي ولا يمكن التراجع عنه. هل أنت متأكد من حذف جميع طلاب المدرسة؟');if(!final)return;setDeletingAll(true);setError('');setNotice('');try{const result=await deleteAllStudentsForSchool();await load();setNotice(`تم حذف ${result.deleted} طالب، والاحتفاظ بـ ${result.protected} طالب مرتبطين بمقابلات أو سجلات أخرى.`)}catch(e){
-  const msg = e.code==='23503' || String(e.message||'').includes('focused_interview_student_files')
-    ? 'لا يمكن حذف الطلاب الذين لديهم مقابلة مركزة.'
-    : e.message||'تعذر حذف طلاب المدرسة.'
-  setError(msg)
-}finally{setDeletingAll(false)}}
+ const parseExcel=async file=>{setExcelName(file.name);setExcelErrors([]);setExcelRows([]);try{const wb=XLSX.read(await file.arrayBuffer(),{type:'array',raw:false});const ws=wb.Sheets[wb.SheetNames[0]];if(!ws)throw new Error();const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});const aliases={full_name:['اسم الطالب','الاسم','full_name','student_name'],grade:['الصف','grade'],section:['الشعبة','section'],phone:['رقم الهاتف','الهاتف','الجوال','phone'],notes:['ملاحظات','notes']};const find=(obj,key)=>{const h=Object.keys(obj).find(k=>aliases[key].map(norm).includes(norm(k)));return h?String(obj[h]??'').trim():''};const rows=raw.map((r,i)=>({row:i+2,full_name:find(r,'full_name'),grade:find(r,'grade'),section:find(r,'section'),phone:find(r,'phone'),notes:find(r,'notes')}));const errs=[];if(!rows.length)errs.push('ملف Excel لا يحتوي على سجلات.');rows.forEach(r=>{if(!r.full_name)errs.push(`صف ${r.row}: اسم الطالب مفقود.`);if(r.phone&&!/^[0-9]{1,10}$/.test(toWesternDigits(r.phone)))errs.push(`صف ${r.row}: رقم الهاتف يجب ألا يتجاوز 10 أرقام.`);if(!r.grade||!r.section)errs.push(`صف ${r.row}: الصف أو الشعبة مفقود.`)});setExcelRows(rows);setExcelErrors(errs)}catch(e){setExcelErrors(['تعذر قراءة الملف. تأكد أنه ملف Excel صالح وأن الصف الأول يحتوي أسماء الأعمدة.'])}}
+ const importExcel=async()=>{setImporting(true);setError('');setNotice('');try{const activeYear=academic.years.find(y=>y.is_active);if(!activeYear)throw new Error('لا توجد سنة دراسية حالية مفعّلة. يرجى تفعيل السنة الدراسية أولاً.');const gradeByName=new Map(academic.grades.map(g=>[gradeKey(g.name),g]));const payload=[];for(const r of excelRows){const numericGrade=toWesternDigits(r.grade).trim();const g=gradeByName.get(gradeKey(r.grade))||academic.grades.find((item,index)=>String(index+1)===numericGrade);const sec=sections.find(item=>sectionKey(item.name)===sectionKey(r.section)&&(!g||String(item.grade_id)===String(g.id)));if(!g||!sec)throw new Error(`تعذر مطابقة الصف «${r.grade}» أو الشعبة «${r.section}» في صف Excel رقم ${r.row}. راجع الصفوف والشعب المسجلة للمدرسة.`);payload.push({...r,school_year_id:activeYear.id,grade_id:g.id,section_id:sec.id})}const result=await importStudentsFromExcel(payload);await load();setExcelRows([]);setExcelName('');setExcelErrors([]);setNotice(`تم الاستيراد: إضافة ${result.inserted} طالب وتحديث ${result.updated} طالب.`)}catch(e){setError(e.message||'تعذر استيراد الطلاب.')}finally{setImporting(false)}}
+ const deleteAll=async()=>{if(!profile?.school_id)return setError('حسابك غير مرتبط بمدرسة.');const phrase=window.prompt(`تحذير: سيتم حذف جميع سجلات الطلاب الظاهرة في مدرسة «${profile.school_name||'مدرستك'}» وعددها ${d.length}. اكتب العبارة التالية حرفيًا للتأكيد:\n\nحذف جميع الطلاب`);if(phrase!=='حذف جميع الطلاب')return;const final=window.confirm('هذا الإجراء نهائي ولا يمكن التراجع عنه. هل أنت متأكد من حذف جميع طلاب المدرسة؟');if(!final)return;setDeletingAll(true);setError('');setNotice('');try{const result=await deleteAllStudentsForSchool();await load();setNotice(`تم حذف ${result.deleted} طالب، والاحتفاظ بـ ${result.protected} طالب مرتبطين بمقابلات أو سجلات أخرى.`)}catch(e){const msg=e.code==='23503'||String(e.message||'').includes('focused_interview_student_files')?'لا يمكن حذف الطلاب الذين لديهم مقابلة مركزة.':e.message||'تعذر حذف طلاب المدرسة.';setError(msg)}finally{setDeletingAll(false)}}
  return <Page title="الطلاب" sub="إضافة بيانات الطلاب وربطهم بالصف والشعبة لاستخدامهم داخل ملفات الإرشاد." actions={<div className="page-actions"><Button variant="secondary" onClick={load}><RefreshCw size={16}/> تحديث</Button><Button onClick={openAdd}><Plus size={16}/> إضافة بيانات طالب</Button></div>}>
   {error&&<ErrorNotice>{error}</ErrorNotice>}{notice&&<div className="success-notice">{notice}</div>}
   {showForm&&<Card><div className="section-title"><div><h2>{editing?'تعديل بيانات الطالب':'إضافة بيانات طالب'}</h2><span>البيانات الأساسية المطلوبة فقط.</span></div><Button variant="secondary" onClick={()=>{setShowForm(false);reset()}}><X size={16}/> إغلاق</Button></div>
@@ -51,6 +51,7 @@ export default function Students(){
    <Button loading={saving} onClick={save}><Save size={16}/> {editing?'حفظ التعديل':'حفظ بيانات الطالب'}</Button>
   </Card>}
   <Card><div className="section-title"><div><h2><FileSpreadsheet size={18}/> نسخ الطلاب من ملف Excel</h2><span>الأعمدة: اسم الطالب، الصف، الشعبة، رقم الهاتف (اختياري)، ملاحظات. السنة الدراسية الحالية تُضاف تلقائيًا.</span></div></div>
+
    <div className="form-grid two"><Input label="اختيار ملف Excel" type="file" accept=".xlsx,.xls,.csv" onChange={e=>{const file=e.target.files?.[0];if(file)parseExcel(file)}}/><div className="field"><span>تنفيذ الاستيراد</span><Button disabled={!excelRows.length||excelErrors.length>0||importing} loading={importing} onClick={importExcel}><Copy size={16}/> نسخ الطلاب ({excelRows.length})</Button></div></div>
    {excelName&&<p className="muted">الملف: {excelName} — عدد السجلات: {excelRows.length}</p>}{excelErrors.length>0&&<div className="error-notice"><strong>لم يتم النسخ. توجد أخطاء:</strong>{excelErrors.slice(0,15).map((e,i)=><div key={i}>{e}</div>)}</div>}{excelRows.length>0&&excelErrors.length===0&&<p className="muted">تمت قراءة الملف والتحقق من الحقول. اضغط «نسخ الطلاب» للحفظ.</p>}
   </Card>

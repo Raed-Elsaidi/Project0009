@@ -462,8 +462,20 @@ app.get('/api/official-forms', async (req, res) => {
 
     let query = db.from('official_form_records')
       .select('id,form_id,counselor_id,school_id,school_year_id,semester_id,form_data,created_at,updated_at')
-      .eq('counselor_id', profile.id)
       .in('form_id', requested);
+
+    const requestedSchoolId = String(req.query.school_id || '').trim();
+    if (requestedSchoolId) {
+      const { data: school, error: schoolError } = await db.from('schools')
+        .select('id,directorate_id').eq('id', requestedSchoolId).maybeSingle();
+      if (schoolError) throw schoolError;
+      if (!school || (profile.directorate_id && String(school.directorate_id) !== String(profile.directorate_id)) || (!profile.directorate_id && String(profile.school_id) !== requestedSchoolId)) {
+        return res.status(403).json({ error: 'لا تملك صلاحية عرض سجلات هذه المدرسة.' });
+      }
+      query = query.eq('school_id', requestedSchoolId);
+    } else {
+      query = query.eq('counselor_id', profile.id);
+    }
 
     if (req.query.school_year_id) query = query.eq('school_year_id', String(req.query.school_year_id));
     if (req.query.semester_id) query = query.eq('semester_id', String(req.query.semester_id));

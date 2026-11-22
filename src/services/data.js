@@ -666,16 +666,16 @@ export async function listSectionsBySchool(schoolId){
 export async function createStudent(payload){
   const user=await currentUser(); if(!user) throw new Error('انتهت جلسة الدخول.')
   const profile=await currentProfile(); if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
-  const {school_id,...studentPayload}=payload
-  const {data:student,error}=await db().from('students').insert({school_id:school_id||profile.school_id,...studentPayload}).select('*, grades(id,name), sections(id,name), school_years(id,name)').single()
+  const {school_id,student_code,national_id,...studentPayload}=payload
+  const {data:student,error}=await db().from('students').insert({school_id:school_id||profile.school_id,...studentPayload,phone:studentPayload.phone||null}).select('*, grades(id,name), sections(id,name), school_years(id,name)').single()
   if(error) throw error
   const {error:assignError}=await db().from('student_counselors').upsert({student_id:student.id,counselor_id:user.id,is_primary:true,ended_at:null},{onConflict:'student_id,counselor_id'})
   if(assignError) throw assignError
   return student
 }
 export async function updateStudent(id,payload){
-  const {school_id,...studentPayload}=payload
-  const {data,error}=await db().from('students').update(studentPayload).eq('id',id).select('*, grades(id,name), sections(id,name), school_years(id,name)').single()
+  const {school_id,student_code,national_id,...studentPayload}=payload
+  const {data,error}=await db().from('students').update({...studentPayload,phone:studentPayload.phone||null}).eq('id',id).select('*, grades(id,name), sections(id,name), school_years(id,name)').single()
   if(error) throw error
   return data
 }

@@ -634,16 +634,16 @@ export async function listSectionsBySchool(schoolId){
 export async function createStudent(payload){
   const user=await currentUser(); if(!user) throw new Error('انتهت جلسة الدخول.')
   const profile=await currentProfile(); if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')
-  const {school_id,...studentPayload}=payload
-  const {data:student,error}=await db().from('students').insert({school_id:school_id||profile.school_id,...studentPayload}).select('*, grades(id,name), sections(id,name), school_years(id,name)').single()
+  const {school_id,student_code,national_id,...studentPayload}=payload
+  const {data:student,error}=await db().from('students').insert({school_id:school_id||profile.school_id,...studentPayload,phone:studentPayload.phone||null}).select('*, grades(id,name), sections(id,name), school_years(id,name)').single()
   if(error) throw error
   const {error:assignError}=await db().from('student_counselors').upsert({student_id:student.id,counselor_id:user.id,is_primary:true,ended_at:null},{onConflict:'student_id,counselor_id'})
   if(assignError) throw assignError
   return student
 }
 export async function updateStudent(id,payload){
-  const {school_id,...studentPayload}=payload
-  const {data,error}=await db().from('students').update(studentPayload).eq('id',id).select('*, grades(id,name), sections(id,name), school_years(id,name)').single()
+  const {school_id,student_code,national_id,...studentPayload}=payload
+  const {data,error}=await db().from('students').update({...studentPayload,phone:studentPayload.phone||null}).eq('id',id).select('*, grades(id,name), sections(id,name), school_years(id,name)').single()
   if(error) throw error
   return data
 }
@@ -656,13 +656,10 @@ export async function importStudentsFromExcel(rows){
   const user=await currentUser(); if(!user) throw new Error('انتهت جلسة الدخول.')
   const profile=await currentProfile(); if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة.')
   if(!Array.isArray(rows)||!rows.length) throw new Error('لا توجد بيانات للاستيراد.')
-  const ids=rows.map(r=>String(r.national_id||''))
-  if(ids.some(id=>!/^[0-9]{9}$/.test(id))) throw new Error('يوجد رقم هوية غير صحيح؛ يجب أن يتكون من 9 أرقام.')
-  if(new Set(ids).size!==ids.length) throw new Error('يوجد رقم هوية مكرر داخل ملف Excel.')
-  const {data:existing,error:checkError}=await db().from('students').select('national_id').eq('school_id',profile.school_id).in('national_id',ids)
-  if(checkError) throw checkError
-  if(existing?.length) throw new Error(`لم يتم النسخ؛ رقم الهوية ${existing[0].national_id} مسجل مسبقًا في المدرسة.`)
-  const payload=rows.map(r=>({school_id:profile.school_id,student_code:r.student_code,school_year_id:r.school_year_id,national_id:String(r.national_id),full_name:r.full_name,grade_id:r.grade_id,section_id:r.section_id,phone:r.phone||null,notes:r.notes||null}))
+  const {data:activeYear,error:yearError}=await db().from('school_years').select('id').eq('is_active',true).maybeSingle()
+  if(yearError) throw yearError
+  if(!activeYear) throw new Error('لا توجد سنة دراسية حالية مفعّلة. يرجى تفعيل السنة الدراسية أولاً.')
+  const payload=rows.map(r=>({school_id:profile.school_id,school_year_id:activeYear.id,full_name:r.full_name,grade_id:r.grade_id,section_id:r.section_id,phone:r.phone||null,notes:r.notes||null}))
   const {data:inserted,error}=await db().from('students').insert(payload).select('id')
   if(error) throw error
   const assignments=inserted.map(s=>({student_id:s.id,counselor_id:user.id,is_primary:true,ended_at:null}))

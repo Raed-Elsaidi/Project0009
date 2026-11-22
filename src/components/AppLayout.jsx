@@ -4,6 +4,7 @@ import{LayoutDashboard,CalendarDays,Users,FileText,AlertTriangle,MessageSquare,B
 import{supabase}from'../services/supabase';import{currentProfile,getMyPermissions,listMessages,listNotes}from'../services/data';import SiteFooter from'./SiteFooter';
 
 const counselorItems=[
+ ['/counselor-work-followup','متابعة عمل المرشد التربوي',ClipboardList,'counselor-work-followup'],
  {group:true,key:'admin-files',label:'الملف الإداري',icon:Files,children:[['/annual-plan','الخطة السنوية'],['/official-forms/semester-report','التقرير الفصلي'],['/weekly-program','البرنامج اليومي / الأسبوعي'],['/correspondence','الصادر والوارد']]},
  {group:true,key:'school-management',label:'الإدارة المدرسية',icon:Building2,children:[
  ['/school-data','أسماء المعلمين والصفوف'],

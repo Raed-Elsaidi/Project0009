@@ -33,6 +33,7 @@ import SchoolData from './screens/SchoolData'
 import OfficialForms from './screens/OfficialForms'
 import Correspondence from './screens/Correspondence'
 import TransferRequests from './screens/TransferRequests'
+import CounselorWorkFollowup from './screens/CounselorWorkFollowup'
 
 const page = (Component) => <AppLayout><Component /></AppLayout>
 
@@ -50,7 +51,9 @@ export default function App() {
       <Route path="/directorates" element={page(Directorates)} />
       <Route path="/schools" element={page(Schools)} />
       <Route path="/school-data" element={page(SchoolData)} />
+      <Route path="/official-forms/:formId/official" element={page(OfficialForms)} />
       <Route path="/official-forms/:formId" element={page(OfficialForms)} />
+      <Route path="/counselor-work-followup" element={page(CounselorWorkFollowup)} />
       <Route path="/dashboard" element={page(Dashboard)} />
       <Route path="/weekly-program" element={page(WeeklyProgram)} />
       <Route path="/students" element={page(Students)} />

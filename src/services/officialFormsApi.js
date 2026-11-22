@@ -25,10 +25,11 @@ async function request(path, options = {}) {
   return result
 }
 
-export async function listOfficialFormRecords(formIds, schoolYearId = '', semesterId = '') {
+export async function listOfficialFormRecords(formIds, schoolYearId = '', semesterId = '', schoolId = '') {
   const params = new URLSearchParams({ form_ids: formIds.join(',') })
   if (schoolYearId) params.set('school_year_id', schoolYearId)
   if (semesterId) params.set('semester_id', semesterId)
+  if (schoolId) params.set('school_id', schoolId)
   const result = await request(`/api/official-forms?${params.toString()}`)
   return result.records || []
 }

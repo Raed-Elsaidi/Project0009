@@ -1,8 +1,8 @@
 import React,{useEffect,useMemo,useState}from'react'
-import{useParams,useLocation}from'react-router-dom'
+import{useParams,useLocation,useNavigate}from'react-router-dom'
 import{Page,Card,Button,ErrorNotice}from'../components/UI'
 import{Maximize2,Printer,Save,X,Plus,History,Eye}from'lucide-react'
-import{currentProfile,listActiveAcademicData,requireSemesterReportClient}from'../services/data'
+import{currentProfile,listActiveAcademicData,requireSemesterReportClient,listSchoolsByDirectorate}from'../services/data'
 import{listOfficialFormRecords,saveOfficialFormRecord,listSchoolTeachers}from'../services/officialFormsApi'
 import MeetingFollowupEntry,{createMeetingRow}from'../components/officialForms/MeetingFollowupEntry'
 import MeetingFollowupPreview from'../components/officialForms/MeetingFollowupPreview'
@@ -59,8 +59,8 @@ const annualDate=(row,keys)=>{
 }
 
 export default function OfficialForms(){
- const{formId='meeting-followup'}=useParams();const location=useLocation();const selected=useMemo(()=>forms.find(f=>f[0]===formId)||forms[0],[formId]);const[id,title]=selected
- const[showPreview,setShowPreview]=useState(false),[notice,setNotice]=useState(''),[profile,setProfile]=useState(null),[academic,setAcademic]=useState({years:[],semesters:[],grades:[]}),[schoolSections,setSchoolSections]=useState([]),[loading,setLoading]=useState(true),[error,setError]=useState('')
+ const{formId='meeting-followup'}=useParams();const location=useLocation();const navigate=useNavigate();const previewOnly=location.pathname.endsWith('/official')||new URLSearchParams(location.search).get('preview')==='1';const selected=useMemo(()=>forms.find(f=>f[0]===formId)||forms[0],[formId]);const[id,title]=selected
+ const[showPreview,setShowPreview]=useState(previewOnly),[notice,setNotice]=useState(''),[profile,setProfile]=useState(null),[academic,setAcademic]=useState({years:[],semesters:[],grades:[]}),[schoolSections,setSchoolSections]=useState([]),[loading,setLoading]=useState(true),[error,setError]=useState('')
  const[activeMeetingRecordId,setActiveMeetingRecordId]=useState(null),[meetingRecords,setMeetingRecords]=useState([]),[showMeetingHistory,setShowMeetingHistory]=useState(false),[viewingHistorical,setViewingHistorical]=useState(false)
  const[teachers,setTeachers]=useState([])
  const initial=useMemo(()=>({school_year_id:'',semester_id:'',rows:[createMeetingRow(today,dayName(today))],values:{}}),[]);const[form,setForm]=useState(initial)
@@ -124,7 +124,11 @@ export default function OfficialForms(){
   }catch{setForm(prev=>({...prev,rows:[blankGuidanceRow()],values:{}}))}
  },[id,isGuidanceFollowup])
  useEffect(()=>{if(!notice)return;const timer=window.setTimeout(()=>setNotice(''),2000);return()=>window.clearTimeout(timer)},[notice])
- useEffect(()=>{let alive=true;(async()=>{try{const[p,a]=await Promise.all([currentProfile(),listActiveAcademicData()]);if(!alive)return;setProfile(p);setAcademic(a||{years:[],semesters:[],grades:[]});const y=(a?.years||[]).find(x=>x.is_active)||(a?.years||[])[0];const sem=(a?.semesters||[]).find(s=>s.school_year_id===y?.id&&new Date()>=new Date(s.start_date||'1900-01-01')&&new Date()<=new Date(s.end_date||'2999-12-31'))||(a?.semesters||[]).find(s=>s.school_year_id===y?.id);setForm(v=>({...v,school_year_id:y?.id||'',semester_id:sem?.id||''}))}catch(e){if(alive)setError(e.message||'تعذر تحميل بيانات النظام.')}finally{if(alive)setLoading(false)}})();return()=>{alive=false}},[])
+ useEffect(()=>{
+  if(!profile?.school_id||!form.school_year_id||isGuidanceFollowup||['meeting-principal','meeting-teacher','meeting-parents','group-counseling-plan','group-session-details','semester-report'].includes(id))return
+  try{const key=`official-form-${id}-${profile.school_id}-${form.school_year_id}`;const raw=localStorage.getItem(key);if(raw){const saved=JSON.parse(raw);if(saved&&typeof saved==='object')setForm(prev=>({...prev,...saved,school_year_id:form.school_year_id}))}}catch(e){console.warn('تعذر تحميل بيانات النموذج المحفوظة للمدرسة والسنة المحددتين',e)}
+ },[id,profile?.school_id,form.school_year_id,isGuidanceFollowup])
+ useEffect(()=>{let alive=true;(async()=>{try{const[p,a]=await Promise.all([currentProfile(),listActiveAcademicData()]);if(!alive)return;let effectiveProfile=p;const params=new URLSearchParams(location.search);const selectedSchoolId=params.get('school_id');const selectedYearId=params.get('school_year_id');const selectedCounselorName=params.get('counselor_name');if(selectedSchoolId&&p?.directorate_id){const schoolRows=await listSchoolsByDirectorate(p.directorate_id);const selectedSchool=schoolRows.find(x=>String(x.id)===String(selectedSchoolId));if(selectedSchool)effectiveProfile={...p,school_id:selectedSchool.id,schools:selectedSchool,full_name:selectedCounselorName||p.full_name}}if(!alive)return;setProfile(effectiveProfile);setAcademic(a||{years:[],semesters:[],grades:[]});const y=(a?.years||[]).find(x=>String(x.id)===String(selectedYearId))||(a?.years||[]).find(x=>x.is_active)||(a?.years||[])[0];const sem=(a?.semesters||[]).find(s=>s.school_year_id===y?.id&&new Date()>=new Date(s.start_date||'1900-01-01')&&new Date()<=new Date(s.end_date||'2999-12-31'))||(a?.semesters||[]).find(s=>s.school_year_id===y?.id);setForm(v=>({...v,school_year_id:y?.id||'',semester_id:sem?.id||''}))}catch(e){if(alive)setError(e.message||'تعذر تحميل بيانات النظام.')}finally{if(alive)setLoading(false)}})();return()=>{alive=false}},[location.search])
 
  // Both guidance follow-up forms use the same school-specific grade/section lists.
  useEffect(()=>{
@@ -158,7 +162,7 @@ export default function OfficialForms(){
   let alive=true
   ;(async()=>{
    try{
-    const records=await listOfficialFormRecords([id],form.school_year_id||'',form.semester_id||'')
+    const records=await listOfficialFormRecords([id],form.school_year_id||'',form.semester_id||'',profile?.school_id||'')
     if(!alive)return
     const sorted=[...records].sort((a,b)=>{
      const da=String(a.form_data?.values?.['التاريخ']||a.created_at||'')
@@ -182,7 +186,7 @@ export default function OfficialForms(){
      if(!alive)return
      setForm(migrated);setActiveMeetingRecordId(saved?.id||null)
      localStorage.removeItem(`official-form-${id}`)
-     const refreshed=await listOfficialFormRecords([id],form.school_year_id||'',form.semester_id||'')
+     const refreshed=await listOfficialFormRecords([id],form.school_year_id||'',form.semester_id||'',profile?.school_id||'')
      if(alive)setMeetingRecords(refreshed)
      setNotice('تم نقل المسودة السابقة إلى سجل الاجتماعات.')
      return
@@ -269,7 +273,7 @@ export default function OfficialForms(){
     {formId:'meeting-parents',label:'اجتماعات أولياء الأمور'}
    ]
    try{
-    let records=await listOfficialFormRecords(meetingFormSources.map(x=>x.formId),yearId||'')
+    let records=await listOfficialFormRecords(meetingFormSources.map(x=>x.formId),yearId||'', '', profile?.school_id||'')
     for(const source of meetingFormSources){
      let record=records.find(r=>r.form_id===source.formId)
      if(!record){
@@ -283,7 +287,7 @@ export default function OfficialForms(){
       }
      }
     }
-    records=await listOfficialFormRecords(meetingFormSources.map(x=>x.formId),yearId||'')
+    records=await listOfficialFormRecords(meetingFormSources.map(x=>x.formId),yearId||'', '', profile?.school_id||'')
     meetingFormSources.forEach(source=>{
      const saved=records.find(r=>r.form_id===source.formId)?.form_data
      ;(saved?.rows||[]).forEach(row=>{
@@ -338,7 +342,7 @@ export default function OfficialForms(){
  const save=async()=>{
   if(viewingHistorical){setError('هذا اجتماع سابق للعرض فقط. اضغط «اجتماع جديد» لإدخال اجتماع آخر.');return}
   if(!['meeting-principal','meeting-teacher','meeting-parents'].includes(id)){
-   try{localStorage.setItem(`official-form-${id}`,JSON.stringify(form));setNotice('تم حفظ بيانات النموذج بنجاح.')}
+   try{localStorage.setItem(`official-form-${id}-${profile?.school_id||'no-school'}-${form.school_year_id||'no-year'}`,JSON.stringify(form));setNotice('تم حفظ بيانات النموذج بنجاح.')}
    catch(e){setNotice('تعذر حفظ البيانات، حاول مرة أخرى.')}
    return
   }
@@ -347,7 +351,7 @@ export default function OfficialForms(){
    if(saved?.id)setActiveMeetingRecordId(saved.id)
    localStorage.removeItem(`official-form-${id}-draft`)
    localStorage.removeItem(`official-form-${id}`)
-   const records=await listOfficialFormRecords([id],form.school_year_id||'',form.semester_id||'')
+   const records=await listOfficialFormRecords([id],form.school_year_id||'',form.semester_id||'',profile?.school_id||'')
    setMeetingRecords(records)
    setNotice(activeMeetingRecordId?'تم تحديث الاجتماع الحالي.':'تم حفظ الاجتماع وإضافته إلى السجل.')
   }catch(e){setError(e.message||'تعذر حفظ البيانات في قاعدة البيانات.')}
@@ -373,8 +377,9 @@ export default function OfficialForms(){
  const meetingRecordTopic=record=>record?.form_data?.values?.['موضوع الاجتماع']||record?.form_data?.rows?.[0]?.['الموضوع']||'اجتماع أولياء الأمور'
  const sortedMeetingRecords=[...meetingRecords].sort((a,b)=>String(meetingRecordDate(b)).localeCompare(String(meetingRecordDate(a))))
  const print=()=>window.print()
- if(loading)return <Page title="النماذج الرسمية" sub="جارٍ تحميل البيانات تلقائيًا..."><Card><div className="loading">جارٍ تحميل بيانات المرشد والسنة الدراسية...</div></Card></Page>
  const isMeeting=id==='meeting-followup', config=FORM_CONFIGS[id]||{fields:['البيانات','الملاحظات'],columns:[]}
+ if(loading)return previewOnly?<div className="meeting-preview-overlay"><div className="meeting-preview-modal" style={{height:'auto',padding:28,textAlign:'center'}}>جارٍ تجهيز النموذج الرسمي...</div></div>:<Page title="النماذج الرسمية" sub="جارٍ تحميل البيانات تلقائيًا..."><Card><div className="loading">جارٍ تحميل بيانات المرشد والسنة الدراسية...</div></Card></Page>
+ if(previewOnly)return <section className="page counselor-direct-preview-page"><div className="meeting-preview-overlay counselor-direct-preview" role="dialog" aria-modal="true"><div className="meeting-preview-modal"><div className="meeting-preview-toolbar"><div><strong>{title}</strong><span>النموذج الرسمي — معاينة مباشرة</span></div><div className="meeting-preview-actions"><Button variant="secondary" onClick={()=>document.querySelector('.counselor-direct-preview .official-document')?.requestFullscreen?.()}><Maximize2 size={15}/> عرض كامل</Button><Button variant="secondary" onClick={print}><Printer size={15}/> طباعة / PDF</Button><Button onClick={()=>navigate('/counselor-work-followup',{replace:true})}><X size={15}/> رجوع</Button></div></div><div className="meeting-paper-wrap">{isGuidanceFollowup?<GuidanceMeetingsFollowupPreview title={title} profile={profile} grades={academic.grades||[]} sections={schoolSections} form={form} academicYear={yearName}/>:isMeeting?<MeetingFollowupPreview profile={profile} form={form} academic={academicView}/>:<GenericOfficialPreview title={title} config={config} profile={profile} academic={academicView} form={form}/>}</div></div></div></section>
  return <Page title={title} sub="أدخل البيانات مرة واحدة، واعرض النموذج الرسمي عند الحاجة.">
   {notice&&<div className="meeting-preview-overlay official-save-notice" role="alertdialog" aria-modal="true"><div style={{width:'min(420px,92vw)',background:'#fffdf8',border:'1px solid #e3d5bf',borderRadius:24,padding:'30px 24px',boxShadow:'0 20px 60px rgba(0,0,0,.22)',textAlign:'center'}}><div style={{fontSize:42,marginBottom:12}}>✓</div><h3 style={{margin:'0 0 12px',color:'#075b57'}}>تم الحفظ</h3><p style={{margin:'0 0 24px',color:'#655f55'}}>{notice}</p><Button onClick={()=>setNotice('')}>حسنًا</Button></div></div>}
   {error&&<ErrorNotice>{error}</ErrorNotice>}

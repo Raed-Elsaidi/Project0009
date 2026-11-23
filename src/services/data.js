@@ -30,7 +30,12 @@ export async function currentProfile() {
 
 
 export async function listCounselorRegistry(){
-  const {data,error}=await db().from('counselor_registry').select('*, directorates(id,name), schools(id,name)').order('full_name')
+  const {data,error}=await db()
+    .from('profiles')
+    .select('id,full_name,role,is_active,directorate_id,school_id,job_title,phone,schools(id,name),directorates(id,name)')
+    .eq('role','COUNSELOR')
+    .eq('is_active',true)
+    .order('full_name')
   if(error) throw error
   return data||[]
 }
@@ -78,7 +83,8 @@ export async function updateMyProfile(payload) {
   const { data, error } = await db().from('profiles').update({
     full_name: String(payload.full_name || '').trim(),
     phone: payload.phone || null,
-    national_id: payload.national_id || null
+    national_id: payload.national_id || null,
+    manager_name: String(payload.manager_name || '').trim() || null
   }).eq('id', user.id).select('*, schools(id,name,code,directorate_id), directorates(id,name,code)').single()
   if (error) throw error
   return data

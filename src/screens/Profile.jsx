@@ -5,8 +5,8 @@ import{currentProfile,listDirectorates,listSchoolsByDirectorate,updateMyProfile,
 const roleLabels={MINISTRY:'مسؤول الإرشاد',DIRECTORATE:'رئيس القسم',PRINCIPAL:'المشرف التربوي',COUNSELOR:'المرشد التربوي'}
 
 export default function Profile(){
- const[d,setD]=useState(null),[dirs,setDirs]=useState([]),[schools,setSchools]=useState([]),[form,setForm]=useState({full_name:'',national_id:'',phone:'',directorate_id:'',school_id:'',job_title:''}),[saving,setSaving]=useState(false),[msg,setMsg]=useState(''),[error,setError]=useState(''),[password,setPassword]=useState({current:'',next:'',confirm:''}),[passwordBusy,setPasswordBusy]=useState(false),[passwordMsg,setPasswordMsg]=useState(''),[passwordError,setPasswordError]=useState('')
- const load=async()=>{try{const p=await currentProfile();setD(p);setForm({full_name:p?.full_name||'',national_id:p?.national_id||'',phone:p?.phone||'',directorate_id:p?.directorate_id||'',school_id:p?.school_id||'',job_title:p?.job_title||roleLabels[p?.role]||''});if(p?.role==='COUNSELOR'){const ds=await listDirectorates();setDirs(ds);if(p?.directorate_id)setSchools(await listSchoolsByDirectorate(p.directorate_id))}}catch(e){setError(e.message)}}
+ const[d,setD]=useState(null),[dirs,setDirs]=useState([]),[schools,setSchools]=useState([]),[form,setForm]=useState({full_name:'',national_id:'',phone:'',directorate_id:'',school_id:'',job_title:'',manager_name:''}),[saving,setSaving]=useState(false),[msg,setMsg]=useState(''),[error,setError]=useState(''),[password,setPassword]=useState({current:'',next:'',confirm:''}),[passwordBusy,setPasswordBusy]=useState(false),[passwordMsg,setPasswordMsg]=useState(''),[passwordError,setPasswordError]=useState('')
+ const load=async()=>{try{const p=await currentProfile();setD(p);setForm({full_name:p?.full_name||'',national_id:p?.national_id||'',phone:p?.phone||'',directorate_id:p?.directorate_id||'',school_id:p?.school_id||'',job_title:p?.job_title||roleLabels[p?.role]||'',manager_name:p?.manager_name||''});if(p?.role==='COUNSELOR'){const ds=await listDirectorates();setDirs(ds);if(p?.directorate_id)setSchools(await listSchoolsByDirectorate(p.directorate_id))}}catch(e){setError(e.message)}}
  useEffect(()=>{load()},[])
  const editable=d?.role==='COUNSELOR'
  const role=roleLabels[d?.role]||'الموظف'
@@ -30,9 +30,9 @@ export default function Profile(){
       <div className="form-grid two"><Input label="اسم المرشد" value={form.full_name} onChange={e=>setForm({...form,full_name:e.target.value})}/><Input label="رقم الهوية" value={form.national_id} onChange={e=>setForm({...form,national_id:e.target.value.replace(/\D/g,'').slice(0,9)})} inputMode="numeric" maxLength={9}/></div>
       <Input label="رقم الهاتف" value={form.phone} onChange={e=>setForm({...form,phone:e.target.value.replace(/\D/g,'').slice(0,10)})} inputMode="numeric" maxLength={10}/>
       <div className="form-grid two"><Select label="المديرية" value={form.directorate_id} disabled><option value="">اختر المديرية</option>{dirs.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</Select><Select label="المدرسة" value={form.school_id} disabled><option value="">اختر المدرسة</option>{schools.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</Select></div>
-      <Input label="المسمى الوظيفي" value={form.job_title} disabled/><Input label="اسم المدير" value={d?.manager_name||''} disabled/>
+      <Input label="المسمى الوظيفي" value={form.job_title} disabled/><Input label="اسم المدير" value={form.manager_name} onChange={e=>setForm({...form,manager_name:e.target.value})}/>
       <Button loading={saving}>حفظ تعديل البيانات</Button>
-      <div className="password-policy">يمكنك تعديل بياناتك الشخصية في أي وقت، دون حد أقصى لعدد مرات التعديل. تغيير المدرسة أو المديرية من صلاحيات الإدارة.</div>
+      <div className="password-policy">يمكنك تعديل بياناتك الشخصية واسم المدير، أما تغيير المدرسة أو المديرية من صلاحيات الإدارة.</div>
     </form>}
    </Card>
    <Card><div className="profile-preview"><div className="avatar" style={{width:60,height:60,fontSize:24}}>{(d?.full_name||'م').slice(0,1)}</div><h3>{role}</h3><strong>{d?.full_name||'اسم الموظف'}</strong><span>{d?.directorates?.name||'لم تحدد المديرية'}</span>{d?.schools?.name&&<span>{d.schools.name}</span>}<span>{d?.username?'اسم المستخدم: '+d.username:''}</span></div></Card>

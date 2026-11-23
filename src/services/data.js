@@ -630,6 +630,7 @@ export const PERMISSION_CATALOG=[
  {key:'administration',label:'إدارة الموظفين / المرشدين',section:'الموظفون'},
  {key:'weekly-program',label:'البرنامج اليومي/الأسبوعي',section:'الإرشاد التربوي'},
  {key:'dashboard',label:'ملخص أعمالي',section:'الإرشاد التربوي'},
+ {key:'counselor-work-followup',label:'متابعة عمل المرشد التربوي',section:'المتابعة'} ,
  {key:'students',label:'الطلاب',section:'الإرشاد التربوي'},
  {key:'cases',label:'دراسة الحالات',section:'الإرشاد التربوي'},
  {key:'hot-cases',label:'الحالات الساخنة',section:'الإرشاد التربوي'},
@@ -645,7 +646,55 @@ export const PERMISSION_CATALOG=[
  {key:'notes',label:'دفتر الملاحظات',section:'الأدوات'},
  {key:'notifications',label:'الإشعارات',section:'التواصل'},
  {key:'messages',label:'المراسلات',section:'التواصل'},
- {key:'profile',label:'البيانات الشخصية',section:'الحساب'},
+ {key:'profile',label:'البيانات الشخصية',section:'الحساب'},,
+ {key:'school-data',label:'بيانات المدرسة',section:'الإدارة المدرسية'},
+ {key:'lesson-schedules',label:'توقيت الحصص',section:'الإدارة المدرسية'},
+ {key:'correspondence',label:'الصادر والوارد',section:'الملف الإداري'},
+ {key:'weekly-program-form',label:'نموذج البرنامج اليومي والأسبوعي',section:'الملف الإداري'},
+ {key:'semester-report',label:'التقرير الفصلي',section:'الخطط والتقارير'},
+ {key:'plan',label:'الخطة',section:'الخطط والتقارير'},
+ {key:'meeting-summary',label:'نموذج رصد المقابلات',section:'المقابلات'},
+ {key:'student-issues-monitor',label:'رصد مشكلات وقضايا الطلبة',section:'شؤون الطلبة'},
+ {key:'hot-cases-monitor',label:'رصد الحالات الساخنة',section:'شؤون الطلبة'},
+ {key:'hot-case-notice',label:'إعلام عن ملف ساخن',section:'شؤون الطلبة'},
+ {key:'repeated-absence',label:'رصد الغياب المتكرر',section:'المتابعة الطلابية'},
+ {key:'absence-followup',label:'متابعة الغياب',section:'المتابعة الطلابية'},
+ {key:'repeated-lateness',label:'رصد التأخر المتكرر',section:'المتابعة الطلابية'},
+ {key:'lateness-followup',label:'متابعة التأخر',section:'المتابعة الطلابية'},
+ {key:'dropout-monitor',label:'رصد التسرب',section:'المتابعة الطلابية'},
+ {key:'dropout-followup',label:'متابعة التسرب',section:'المتابعة الطلابية'},
+ {key:'hot-cases-school',label:'الحالات الساخنة - المدرسة',section:'شؤون الطلبة'},
+ {key:'hot-cases-directorate',label:'الحالات الساخنة - المديرية',section:'شؤون الطلبة'},
+ {key:'health-cases',label:'الحالات الصحية',section:'شؤون الطلبة'},
+ {key:'student-consultations',label:'المقابلات والاستشارات الطلابية',section:'المقابلات والاستشارات'},
+ {key:'consultations-monitor',label:'رصد الاستشارات والمقابلات',section:'المقابلات والاستشارات'},
+ {key:'focused-interviews',label:'المقابلات الفردية المركزة',section:'المقابلات والاستشارات'},
+ {key:'transfer-requests',label:'طلبات النقل الواردة',section:'المتابعة الطلابية'},
+ {key:'activities-monitor',label:'رصد الأنشطة',section:'الأنشطة'},
+ {key:'visits',label:'الزيارات',section:'الأنشطة'},
+ {key:'newsletters',label:'النشرات الإرشادية',section:'الأنشطة'},
+ {key:'morning-radio',label:'الإذاعة الصباحية',section:'الأنشطة'},
+ {key:'seminars-workshops',label:'الندوات والمحاضرات وورش العمل',section:'الأنشطة'},
+ {key:'wall-magazine',label:'مجلة الحائط',section:'الأنشطة'},
+ {key:'posters',label:'الملصقات الإرشادية',section:'الأنشطة'},
+ {key:'group-session-summary',label:'تلخيص الجلسات الجماعية',section:'الإرشاد الجمعي'},
+ {key:'group-session-details',label:'تفاصيل جلسات الإرشاد الجمعي',section:'الإرشاد الجمعي'},
+ {key:'group-counseling-plan',label:'خطة الإرشاد الجمعي',section:'الإرشاد الجمعي'},
+ {key:'group-sessions-monitor',label:'رصد جلسات الإرشاد الجمعي',section:'الإرشاد الجمعي'},
+ {key:'guidance-meetings-followup',label:'متابعة لقاءات التوجيه الجمعي',section:'التوجيه الجمعي'},
+ {key:'guidance-meetings-monitor',label:'رصد لقاءات التوجيه الجمعي',section:'التوجيه الجمعي'},
+ {key:'career-guidance-followup',label:'متابعة التوجيه المهني',section:'التوجيه المهني'},
+ {key:'career-guidance-monitor',label:'رصد التوجيه المهني',section:'التوجيه المهني'},
+ {key:'parliament-plan',label:'خطة البرلمان',section:'البرلمان'},
+ {key:'parliament-members',label:'أعضاء البرلمان',section:'البرلمان'},
+ {key:'parliament-team-meetings',label:'اجتماعات فريق البرلمان',section:'البرلمان'},
+ {key:'parliament-achievements',label:'إنجازات البرلمان',section:'البرلمان'},
+ {key:'meeting-principal',label:'اجتماعات مدير المدرسة',section:'الاجتماعات'},
+ {key:'meeting-teacher',label:'اجتماعات المعلمين',section:'الاجتماعات'},
+ {key:'meeting-parents',label:'اجتماعات أولياء الأمور',section:'الاجتماعات'}
+,
+{key:'meeting-followup',label:'متابعة المقابلات',section:'المقابلات'},
+{key:'academic-years',label:'السنوات الدراسية',section:'الإدارة العامة'},
 ]
 export async function getPermissionCatalog(){return PERMISSION_CATALOG}
 export async function listPermissionEmployees(profile){
@@ -658,9 +707,38 @@ export async function getEmployeePermissions(profileId){
  if(error) throw error; return (data||[]).map(x=>x.screen_key)
 }
 export async function getMyPermissions(){
- const user=await currentUser(); if(!user)return null
- const {data,error}=await db().from('employee_permissions').select('screen_key').eq('profile_id',user.id)
- if(error) return null
+ const user=await currentUser()
+ if(!user?.id)return null
+
+ const profile=await currentProfile()
+ if(!profile)return null
+
+ if(profile.role && profile.role!=='SUPER_ADMIN'){
+   const {data:setting,error:settingError}=await db()
+     .from('role_permission_settings')
+     .select('is_configured')
+     .eq('role',profile.role)
+     .maybeSingle()
+
+   if(settingError) throw settingError
+
+   if(setting?.is_configured===true){
+     const {data,error}=await db()
+       .from('role_permissions')
+       .select('screen_key')
+       .eq('role',profile.role)
+
+     if(error) throw error
+     return (data||[]).map(x=>x.screen_key)
+   }
+ }
+
+ const {data,error}=await db()
+   .from('employee_permissions')
+   .select('screen_key')
+   .eq('profile_id',user.id)
+
+ if(error) throw error
  if(!data||data.length===0)return null
  return data.map(x=>x.screen_key)
 }
@@ -670,6 +748,62 @@ export async function saveEmployeePermissions(profileId,keys){
  const rows=keys.map(screen_key=>({profile_id:profileId,screen_key}))
  const {error}=await db().from('employee_permissions').insert(rows); if(error) throw error
  return true
+}
+
+export async function getRolePermissions(role){
+  if(!role || role === 'SUPER_ADMIN') throw new Error('الوظيفة غير صالحة.')
+  const {data:setting,error:settingError}=await db()
+    .from('role_permission_settings')
+    .select('is_configured')
+    .eq('role',role)
+    .maybeSingle()
+  if(settingError) throw settingError
+  if(!setting) throw new Error('إعدادات هذه الوظيفة غير موجودة.')
+
+  const {data,error}=await db()
+    .from('role_permissions')
+    .select('screen_key')
+    .eq('role',role)
+  if(error) throw error
+
+  return {
+    isConfigured: setting.is_configured === true,
+    keys: (data||[]).map(x=>x.screen_key)
+  }
+}
+
+export async function saveRolePermissions(role,keys){
+  if(!role || role === 'SUPER_ADMIN') throw new Error('لا يمكن تعديل هذه الوظيفة.')
+  const user=await currentUser()
+  if(!user?.id) throw new Error('تعذر تحديد المستخدم الحالي.')
+
+  const cleanKeys=[...new Set((keys||[]).filter(k=>typeof k==='string' && k.trim()))]
+
+  const {error:deleteError}=await db()
+    .from('role_permissions')
+    .delete()
+    .eq('role',role)
+  if(deleteError) throw deleteError
+
+  if(cleanKeys.length){
+    const rows=cleanKeys.map(screen_key=>({role,screen_key}))
+    const {error:insertError}=await db()
+      .from('role_permissions')
+      .insert(rows)
+    if(insertError) throw insertError
+  }
+
+  const {error:settingError}=await db()
+    .from('role_permission_settings')
+    .upsert({
+      role,
+      is_configured:true,
+      updated_at:new Date().toISOString(),
+      updated_by:user.id
+    },{onConflict:'role'})
+  if(settingError) throw settingError
+
+  return true
 }
 
 export async function listSectionsBySchool(schoolId){

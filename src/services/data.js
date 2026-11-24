@@ -78,19 +78,38 @@ export async function listSchoolsByDirectorate(directorateId) {
 export async function updateMyProfile(payload) {
   const user = await currentUser()
   if (!user) throw new Error('انتهت جلسة الدخول.')
+
   const profile = await currentProfile()
-  if (profile?.role !== 'COUNSELOR') throw new Error('تعديل البيانات الشخصية متاح للمرشد التربوي فقط.')
-  const { data, error } = await db().from('profiles').update({
+  const role = profile?.role
+
+  const personalRoles = ['COUNSELOR', 'MINISTRY', 'DIRECTORATE', 'PRINCIPAL', 'SCHOOL_PRINCIPAL']
+  if (!personalRoles.includes(role)) {
+    throw new Error('تعديل البيانات الشخصية غير متاح لهذه الوظيفة.')
+  }
+
+  const updates = {
     full_name: String(payload.full_name || '').trim(),
-    phone: payload.phone || null,
     national_id: payload.national_id || null,
+    phone: payload.phone || null,
     manager_name: String(payload.manager_name || '').trim() || null
-  }).eq('id', user.id).select('*, schools(id,name,code,directorate_id), directorates(id,name,code)').single()
+  }
+
+  if (!updates.full_name) throw new Error('الاسم مطلوب.')
+  if (updates.national_id && !/^\d{9}$/.test(updates.national_id)) {
+    throw new Error('رقم الهوية يجب أن يتكون من 9 أرقام.')
+  }
+  if (updates.phone && !/^\d{1,10}$/.test(updates.phone)) {
+    throw new Error('رقم الهاتف يجب ألا يتجاوز 10 أرقام.')
+  }
+
+  const { data, error } = await db().from('profiles').update(updates)
+    .eq('id', user.id)
+    .select('*, schools(id,name,code,directorate_id), directorates(id,name,code)')
+    .single()
+
   if (error) throw error
   return data
 }
-
-
 
 export async function listStudents(schoolId=null) {
   let query = db().from('students')
@@ -432,19 +451,111 @@ export async function dashboardStats(schoolYearId='', semesterId='') {
 
 export async function directorateStats() {
   const profile = await currentProfile()
-  if (!profile || !['MINISTRY','DIRECTORATE','PRINCIPAL','PROGRAMMER'].includes(profile.role)) throw new Error('هذه الإحصائيات مخصصة للوظائف الإشرافية.')
+  const allowedRoles = ['MINISTRY','DIRECTORATE','PRINCIPAL','SCHOOL_PRINCIPAL','COUNSELOR','PROGRAMMER']
+  if (!profile || !allowedRoles.includes(profile.role)) {
+    throw new Error('ليس لديك صلاحية عرض هذه الإحصائيات.')
+  }
+
   const sb = db()
-  const [schools, counselors, students, cases, hotCases, activities] = await Promise.all([
-    sb.from('schools').select('id', { count: 'exact', head: true }),
-    sb.from('profiles').select('id', { count: 'exact', head: true }).eq('role','COUNSELOR').eq('is_active',true),
-    sb.from('students').select('id', { count: 'exact', head: true }),
-    sb.from('case_studies').select('id', { count: 'exact', head: true }),
-    sb.from('hot_cases').select('id', { count: 'exact', head: true }).neq('status','CLOSED'),
-    sb.from('activities').select('id', { count: 'exact', head: true })
-  ])
-  const err=[schools,counselors,students,cases,hotCases,activities].find(x=>x.error)
-  if(err) throw err.error
-  return {summary:{schools:schools.count||0,counselors:counselors.count||0,students:students.count||0,cases:cases.count||0,hotCases:hotCases.count||0,activities:activities.count||0},counselors:[]}
+  let counselorQuery = sb.from('profiles')
+    .select('id,full_name,job_title,school_id,schools(name)')
+    .eq('role','COUNSELOR')
+    .eq('is_active',true)
+
+  if (profile.role === 'DIRECTORATE') {
+    if (!profile.directorate_id) throw new Error('لم يتم ربط حسابك بمديرية.')
+    counselorQuery = counselorQuery.eq('directorate_id',profile.directorate_id)
+  } else if (profile.role === 'PRINCIPAL') {
+    counselorQuery = counselorQuery.eq('supervisor_id',profile.id)
+  } else if (profile.role === 'SCHOOL_PRINCIPAL') {
+    if (!profile.school_id) throw new Error('لم يتم ربط حسابك بمدرسة.')
+    counselorQuery = counselorQuery.eq('school_id',profile.school_id)
+  } else if (profile.role === 'COUNSELOR') {
+    counselorQuery = counselorQuery.eq('id',profile.id)
+  }
+
+  const {data:counselors,error:counselorsError} = await counselorQuery.order('full_name')
+  if (counselorsError) throw counselorsError
+
+  const counselorRows = counselors || []
+  const counselorIds = counselorRows.map(c => c.id)
+  let schoolIds = [...new Set(counselorRows.map(c => c.school_id).filter(Boolean))]
+
+  if (profile.role === 'SCHOOL_PRINCIPAL' && profile.school_id) {
+    schoolIds = [profile.school_id]
+  }
+
+  if (['MINISTRY','PROGRAMMER'].includes(profile.role)) {
+    const {data:schools,error} = await sb.from('schools').select('id')
+    if (error) throw error
+    schoolIds = (schools || []).map(s => s.id)
+  }
+
+  const count = async (query) => {
+    const {count,error} = await query
+    if (error) throw error
+    return count || 0
+  }
+
+  const [schoolsCount,studentsCount,casesCount,hotCasesCount,activitiesCount] =
+    await Promise.all([
+      schoolIds.length
+        ? count(sb.from('schools').select('id',{count:'exact',head:true}).in('id',schoolIds))
+        : Promise.resolve(0),
+
+      profile.role === 'COUNSELOR'
+        ? count(sb.from('student_counselors')
+            .select('student_id',{count:'exact',head:true})
+            .eq('counselor_id',profile.id)
+            .is('ended_at',null))
+        : schoolIds.length
+          ? count(sb.from('students').select('id',{count:'exact',head:true}).in('school_id',schoolIds))
+          : Promise.resolve(0),
+
+      counselorIds.length
+        ? count(sb.from('case_studies').select('id',{count:'exact',head:true}).in('counselor_id',counselorIds))
+        : Promise.resolve(0),
+
+      counselorIds.length
+        ? count(sb.from('hot_cases').select('id',{count:'exact',head:true}).in('counselor_id',counselorIds).neq('status','CLOSED'))
+        : Promise.resolve(0),
+
+      counselorIds.length
+        ? count(sb.from('activities').select('id',{count:'exact',head:true}).in('counselor_id',counselorIds))
+        : Promise.resolve(0)
+    ])
+
+  const rows = await Promise.all(counselorRows.map(async counselor => {
+    const [students,cases,hotCases,activities] = await Promise.all([
+      count(sb.from('student_counselors')
+        .select('student_id',{count:'exact',head:true})
+        .eq('counselor_id',counselor.id)
+        .is('ended_at',null)),
+      count(sb.from('case_studies').select('id',{count:'exact',head:true}).eq('counselor_id',counselor.id)),
+      count(sb.from('hot_cases').select('id',{count:'exact',head:true}).eq('counselor_id',counselor.id).neq('status','CLOSED')),
+      count(sb.from('activities').select('id',{count:'exact',head:true}).eq('counselor_id',counselor.id))
+    ])
+
+    return {
+      id:counselor.id,
+      full_name:counselor.full_name,
+      job_title:counselor.job_title,
+      school_name:counselor.schools?.name || '',
+      students,cases,hot_cases:hotCases,activities
+    }
+  }))
+
+  return {
+    summary:{
+      schools:schoolsCount,
+      counselors:counselorRows.length,
+      students:studentsCount,
+      cases:casesCount,
+      hotCases:hotCasesCount,
+      activities:activitiesCount
+    },
+    counselors:rows
+  }
 }
 
 export async function listMessageRecipients(){
@@ -588,7 +699,17 @@ export async function createEmployeeAccount(payload){
   return {...data,user_id:data.id}
 }
 export async function listEmployeeProfiles(){
-  const {data,error}=await db().from('profiles').select('*, directorates(id,name,code), schools(id,name,code,directorate_id)').neq('role','PROGRAMMER').order('full_name')
+  const profile = await currentProfile()
+  let query = db().from('profiles')
+    .select('*, directorates(id,name,code), schools(id,name,code,directorate_id)')
+    .neq('role','PROGRAMMER')
+
+  if (profile?.role === 'DIRECTORATE') {
+    if (!profile.directorate_id) return []
+    query = query.eq('directorate_id', profile.directorate_id)
+  }
+
+  const {data,error} = await query.order('full_name')
   if(error) throw error
   return data||[]
 }

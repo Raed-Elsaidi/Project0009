@@ -29,6 +29,21 @@ export async function currentProfile() {
 }
 
 
+export async function listMyCounseledStudents() {
+  const user = await currentUser()
+  const profile = await currentProfile()
+  if (!user?.id || profile?.role !== 'COUNSELOR') return []
+
+  const {data,error} = await db().from('students')
+    .select('*, grades(id,name), sections(id,name), school_years(id,name), student_counselors!inner(counselor_id,is_primary,ended_at)')
+    .eq('student_counselors.counselor_id',user.id)
+    .is('student_counselors.ended_at',null)
+    .order('full_name')
+
+  if (error) throw error
+  return data || []
+}
+
 export async function listCounselorRegistry(){
   const {data,error}=await db()
     .from('profiles')

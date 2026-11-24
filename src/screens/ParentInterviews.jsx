@@ -1,7 +1,7 @@
 import LessonTimeSelect from '../components/LessonTimeSelect'
 import React,{useEffect,useMemo,useState}from'react'
 import{Page,Card,Input,Textarea,Button,ErrorNotice,Select}from'../components/UI'
-import{currentProfile,listActiveAcademicData,listStudents,createInterviewRecord,getInterviewRecord,updateInterviewRecord,listInterviewRecords,createWeeklyItem,updateWeeklyItem}from'../services/data'
+import{currentProfile,listActiveAcademicData,listMyCounseledStudents,createInterviewRecord,getInterviewRecord,updateInterviewRecord,listInterviewRecords,createWeeklyItem,updateWeeklyItem}from'../services/data'
 import OfficialDocumentHeader from'../components/officialForms/OfficialDocumentHeader'
 import{Plus,History,Eye,Printer,Save,X}from'lucide-react'
 import{useNavigate,useSearchParams}from'react-router-dom'
@@ -27,6 +27,7 @@ export default function ParentInterviews(){
  const[profile,setProfile]=useState(null)
  const[academic,setAcademic]=useState({years:[],semesters:[],grades:[]})
  const[students,setStudents]=useState([])
+ const[studentSearch,setStudentSearch]=useState('')
  const[records,setRecords]=useState([])
  const[form,setForm]=useState({
   student_id:'',parent_name:'',interview_date:weeklyDate,interview_time:'',
@@ -52,7 +53,7 @@ export default function ParentInterviews(){
   ;(async()=>{
    try{
     const[p,a,st]=await Promise.all([
-     currentProfile(),listActiveAcademicData(),listStudents()
+     currentProfile(),listActiveAcademicData(),listMyCounseledStudents()
     ])
     if(!alive)return
     setProfile(p)
@@ -87,7 +88,10 @@ export default function ParentInterviews(){
      next.school_year_id=activeYear?.id||''
      next.semester_id=activeSemester?.id||''
     }
-    if(alive)setForm(next)
+    if(alive){
+     setForm(next)
+     setStudentSearch(st.find(x=>String(x.id)===String(next.student_id))?.full_name||'')
+    }
     await refresh()
    }catch(e){
     if(alive)setError(e.message||'تعذر تحميل مقابلات أولياء الأمور.')
@@ -107,9 +111,15 @@ export default function ParentInterviews(){
  const yearName=yearLabel(academic.years?.find(x=>String(x.id)===String(form.school_year_id)))||'................'
  const semesterName=semesterLabel(academic.semesters?.find(x=>String(x.id)===String(form.semester_id)))||'................'
  const selectedStudent=students.find(s=>String(s.id)===String(form.student_id))
+ const filteredStudents=useMemo(()=>{
+  const q=studentSearch.trim().toLocaleLowerCase()
+  if(!q)return []
+  return students.filter(s=>String(s.full_name||'').toLocaleLowerCase().includes(q)).slice(0,15)
+ },[students,studentSearch])
  const sorted=useMemo(()=>[...records].sort((a,b)=>String(b.interview_date||'').localeCompare(String(a.interview_date||''))),[records])
 
  const newInterview=()=>{
+  setStudentSearch('')
   setForm({
    student_id:'',parent_name:'',interview_date:weeklyDate,interview_time:weeklyStartTime,
    topic:'',notes:'',result:'',
@@ -227,10 +237,13 @@ export default function ParentInterviews(){
     <div className="form-grid two">
      <Input label="السنة الدراسية" value={yearName} disabled/>
      <Input label="الفصل الدراسي" value={semesterName} disabled/>
-     <Select label="الطالب" value={form.student_id||''} disabled={historical} onChange={e=>setForm({...form,student_id:e.target.value})}>
-      <option value="">اختر الطالب</option>
-      {students.map(s=><option key={s.id} value={s.id}>{s.full_name}</option>)}
-     </Select>
+     <div style={{position:'relative'}}>
+      <Input label="ابحث عن الطالب" placeholder="اكتب جزءًا من اسم الطالب..." value={studentSearch} disabled={historical} onChange={e=>{const value=e.target.value;setStudentSearch(value);setForm(prev=>({...prev,student_id:''}))}}/>
+      {!historical&&studentSearch.trim()&&!selectedStudent&&<div style={{position:'absolute',zIndex:20,top:'100%',right:0,left:0,maxHeight:220,overflowY:'auto',background:'#fff',border:'1px solid #ddd',borderRadius:10,boxShadow:'0 5px 16px rgba(0,0,0,.10)'}}>
+       {filteredStudents.length?filteredStudents.map(s=><button type="button" key={s.id} onClick={()=>{const parts=String(s.full_name||'').trim().split(/\s+/).filter(Boolean);const parentName=parts.length>=3?`${parts[1]} ${parts[parts.length-1]}`:(parts[1]||parts[0]||'');setForm(prev=>({...prev,student_id:s.id,parent_name:parentName}));setStudentSearch(s.full_name||'')}} style={{display:'block',width:'100%',padding:'11px 14px',textAlign:'right',border:0,borderBottom:'1px solid #eee',background:'#fff',cursor:'pointer',color:'#222'}}>{s.full_name}</button>):<div style={{padding:12,color:'#777'}}>لا توجد نتائج مطابقة</div>}
+      </div>}
+      {selectedStudent&&<div style={{fontSize:13,color:'#16804a',marginTop:6}}>الطالب المحدد: {selectedStudent.full_name}</div>}
+     </div>
      <Input label="اسم ولي الأمر" value={form.parent_name||''} disabled={historical} onChange={e=>setForm({...form,parent_name:e.target.value})}/>
      <Input label="التاريخ" type="date" value={form.interview_date||''} disabled={historical} onChange={e=>setForm({...form,interview_date:e.target.value})}/>
      <Input label="ساعة المقابلة" type="time" value={form.interview_time||''} disabled={historical} onChange={e=>setForm({...form,interview_time:e.target.value})}/>

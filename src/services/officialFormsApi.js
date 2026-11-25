@@ -49,6 +49,13 @@ export async function saveOfficialFormRecord({ formId, profile, form, recordId =
   return result.record
 }
 
+export async function deleteOfficialFormRecord(recordId) {
+  return request('/api/official-forms', {
+    method: 'DELETE',
+    body: JSON.stringify({ record_id: recordId })
+  });
+}
+
 // إدارة معلمي المدرسة
 export async function listSchoolTeachers(schoolId) {
   const params = new URLSearchParams({ school_id: schoolId });

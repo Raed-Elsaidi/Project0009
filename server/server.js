@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
   res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Bootstrap-Secret');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
   if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
 });
@@ -283,7 +283,11 @@ const OFFICIAL_FORM_IDS = new Set([
   'group-session-details',
   'group-session-summary',
   'group-counseling-plan',
-  'hot-case-record'
+  'hot-case-record',
+  'case-study',
+  'consultations-monitor',
+  'health-cases',
+  'dropout-followup'
 ]);
 
 
@@ -535,6 +539,29 @@ app.post('/api/official-forms', async (req, res) => {
   } catch (error) {
     console.error('Official forms save failed:', error);
     return res.status(500).json({ error: 'تعذر حفظ بيانات النموذج في قاعدة البيانات.' });
+  }
+});
+
+app.delete('/api/official-forms', async (req, res) => {
+  if (!requireReady(res)) return;
+  try {
+    const profile = await profileForToken(req);
+    if (!profile) return res.status(401).json({ error: 'انتهت الجلسة.' });
+    const recordId = String(req.body?.record_id || '').trim();
+    if (!recordId) return res.status(400).json({ error: 'معرّف السجل مطلوب.' });
+    const { data, error } = await db.from('official_form_records')
+      .delete()
+      .eq('id', recordId)
+      .eq('form_id', 'health-cases')
+      .eq('counselor_id', profile.id)
+      .select('id')
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) return res.status(404).json({ error: 'السجل غير موجود أو لا تملك صلاحية حذفه.' });
+    return res.json({ success: true });
+  } catch (error) {
+    console.error('Official health record delete failed:', error);
+    return res.status(500).json({ error: 'تعذر حذف سجل الحالة الصحية.' });
   }
 });
 

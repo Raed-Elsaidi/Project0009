@@ -276,11 +276,11 @@ export default function InstitutionInterviews(){
      </div>
      <div className="meeting-paper-wrap">
       <div className="official-document">
-       <OfficialDocumentHeader/>
+       <OfficialDocumentHeader profile={profile}/>
        <div className="official-doc-heading">
         <h1>نموذج مقابلة خريج جامعة</h1>
         <p>للعام الدراسي {yearName} — الفصل الدراسي {semesterName}</p>
-        <p>{profile?.schools?.name||'اسم المدرسة'} — {profile?.directorates?.name||'اسم المديرية'}</p>
+        ,
        </div>
        <table className="official-doc-table meeting-main-table">
         <thead><tr><th>الرقم</th><th>اليوم</th><th>التاريخ</th><th>ساعة المقابلة</th><th>اسم الخريج</th><th>موضوع المقابلة</th><th>محتوى اللقاء والإجراءات</th></tr></thead>

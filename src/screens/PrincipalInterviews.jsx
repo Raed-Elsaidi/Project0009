@@ -182,8 +182,8 @@ const weeklyStartTime=params.get('start_time')||''
      <Button variant="secondary" onClick={()=>setPreview(false)}><X size={15}/> إغلاق</Button>
     </div></div>
     <div className="meeting-paper-wrap"><div className="official-document">
-     <OfficialDocumentHeader/>
-     <div className="official-doc-heading"><h1>نموذج مقابلات مدير/ة المدرسة</h1><p>للعام الدراسي {yearName} — الفصل الدراسي {semesterName}</p><p>{profile?.schools?.name||'اسم المدرسة'} — {profile?.directorates?.name||'اسم المديرية'}</p></div>
+     <OfficialDocumentHeader profile={profile}/>
+     <div className="official-doc-heading"><h1>نموذج مقابلات مدير/ة المدرسة</h1><p>للعام الدراسي {yearName} — الفصل الدراسي {semesterName}</p>,</div>
      <table className="official-doc-table meeting-main-table"><thead><tr><th>الرقم</th><th>اليوم</th><th>التاريخ</th><th>ساعة اللقاء</th><th>الشخص الذي تمت مقابلته</th><th>موضوع المقابلة</th><th>محتوى اللقاء والإجراءات</th></tr></thead>
       <tbody><tr><td>{activeId?Math.max(1,sorted.findIndex(r=>r.id===activeId)+1):records.length+1}</td><td>{dayName(form.interview_date)}</td><td>{dateLabel(form.interview_date)}</td><td>{form.interview_time||'—'}</td><td>{form.person||principalName||'—'}</td><td>{form.topic||'—'}</td><td className="actions-cell"><strong>محتوى اللقاء:</strong><div style={{whiteSpace:'pre-wrap'}}>{form.notes||'—'}</div><strong>الإجراءات:</strong><div style={{whiteSpace:'pre-wrap'}}>{form.result||'—'}</div></td></tr></tbody>
      </table>

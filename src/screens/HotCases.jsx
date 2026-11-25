@@ -12,11 +12,11 @@ const HOT_CASE_FORMS=[
  {id:'hot-cases-directorate',title:'نموذج رصد الحالات الساخنة الفصلي – المديرية',description:'عرض بيانات الحالة في النموذج الفصلي للمديرية.',icon:Building2}
 ]
 const EMPTY_VALUES={
- 'الرقم':'','student_id':'','اسم الطالب':'','رمز الطالب':'','الصف':'','الشعبة':'','تاريخ':'',
+ 'student_id':'','اسم الطالب':'','رمز الطالب':'','الصف':'','الشعبة':'','تاريخ':'',
  'المشكلة':'','تصنيف الحالة':'','جهة تحويل الحالة':'','الإجراءات/المتابعة':'','ملاحظات':''
 }
 const fieldList=[
- ['الرقم','text'],['رمز الطالب','text'],['تاريخ','date'],
+ ['رمز الطالب','text'],['تاريخ','date'],
  ['المشكلة','textarea'],['تصنيف الحالة','text'],['جهة تحويل الحالة','text'],['الإجراءات/المتابعة','textarea'],['ملاحظات','textarea']
 ]
 const dateToday=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
@@ -79,7 +79,11 @@ export default function HotCases(){
    const form={school_year_id:selectedYear?.id||'',semester_id:selectedSemester?.id||'',values:{...values}}
    const saved=await saveOfficialFormRecord({formId:'hot-case-record',profile,form,recordId:selectedId||null})
    await load(saved?.id||'')
-   setNotice(selectedId?'تم تحديث ملف الحالة بنجاح.':'تم حفظ ملف الحالة بنجاح.')
+   setSelectedId('')
+   setValues({...EMPTY_VALUES,'تاريخ':dateToday()})
+   setStudentSearch('')
+   setStudentMatches([])
+   setNotice(selectedId?'تم تحديث ملف الحالة بنجاح، وتم تفريغ الخانات.':'تم حفظ ملف الحالة بنجاح، وتم تفريغ الخانات.')
   }catch(e){setError(e.message||'تعذر حفظ ملف الحالة.')}
   finally{setSaving(false)}
  }
@@ -101,7 +105,7 @@ export default function HotCases(){
     {fieldList.map(([label,type])=><label className={`field ${type==='textarea'?'hot-case-wide':''}`} key={label}><span>{label}</span>{type==='textarea'?<textarea rows={2} value={values[label]||''} onChange={e=>set(label,e.target.value)}/>:<input type={type} value={values[label]||''} onChange={e=>set(label,e.target.value)}/>}</label>)}
    </div>
    <div className="hot-case-entry-actions"><Button type="button" loading={saving} onClick={save}><Save size={16}/>{selectedId?'حفظ التعديلات':'حفظ الملف'}</Button></div>
-   <div className="hot-case-records-list"><div className="section-heading"><div><h3>سجل الطلاب المسجلين</h3><p>اختر ملفاً من السجل لتعديله أو لعرض بياناته في النماذج الرسمية.</p></div></div>{loading?<div className="loading">جارٍ تحميل السجل...</div>:records.length===0?<p className="empty">لا توجد ملفات ساخنة مسجلة حتى الآن.</p>:<div className="table-wrap"><table className="table"><thead><tr><th>اسم الطالب</th><th>رمز الطالب</th><th>الصف</th><th>الشعبة</th><th>التاريخ</th><th>اختيار</th></tr></thead><tbody>{records.map(r=>{const v=recordValues(r);return <tr key={r.id} className={String(r.id)===String(selectedId)?'is-selected':''}><td>{v['اسم الطالب']||'—'}</td><td>{v['رمز الطالب']||'—'}</td><td>{v['الصف']||'—'}</td><td>{v['الشعبة']||'—'}</td><td>{v['تاريخ']||'—'}</td><td><Button type="button" variant={String(r.id)===String(selectedId)?'primary':'secondary'} onClick={()=>selectRecord(String(r.id))}>اختيار</Button></td></tr>})}</tbody></table></div>}</div>
+   <div className="hot-case-records-list"><div className="section-heading"><div><h3>سجل الطلاب المسجلين</h3><p>اختر ملفاً من السجل لتعديله أو لعرض بياناته في النماذج الرسمية.</p></div></div>{loading?<div className="loading">جارٍ تحميل السجل...</div>:records.length===0?<p className="empty">لا توجد ملفات ساخنة مسجلة حتى الآن.</p>:<div className="table-wrap"><table className="table hot-cases-registered-table"><thead><tr><th>اسم الطالب</th><th>رمز الطالب</th><th>الصف</th><th>الشعبة</th><th>التاريخ</th><th>اختيار</th></tr></thead><tbody>{records.map(r=>{const v=recordValues(r);return <tr key={r.id} className={String(r.id)===String(selectedId)?'is-selected':''}><td>{v['اسم الطالب']||'—'}</td><td>{v['رمز الطالب']||'—'}</td><td>{v['الصف']||'—'}</td><td>{v['الشعبة']||'—'}</td><td>{v['تاريخ']||'—'}</td><td><Button type="button" variant={String(r.id)===String(selectedId)?'primary':'secondary'} onClick={()=>selectRecord(String(r.id))}>اختيار</Button></td></tr>})}</tbody></table></div>}</div>
    {notice&&<div className="hot-case-notice" role="status">{notice}</div>}
    {error&&<ErrorNotice>{error}</ErrorNotice>}
   </Card>

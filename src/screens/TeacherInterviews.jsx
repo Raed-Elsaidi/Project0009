@@ -288,11 +288,11 @@ export default function TeacherInterviews(){
       </div>
      </div>
      <div className="meeting-paper-wrap"><div className="official-document">
-      <OfficialDocumentHeader/>
+      <OfficialDocumentHeader profile={profile}/>
       <div className="official-doc-heading">
        <h1>نموذج مقابلات معلمي/ات المدرسة</h1>
        <p>للعام الدراسي {yearName} — الفصل الدراسي {semesterName}</p>
-       <p>{profile?.schools?.name||'اسم المدرسة'} — {profile?.directorates?.name||'اسم المديرية'}</p>
+       ,
       </div>
       <table className="official-doc-table meeting-main-table">
        <thead><tr><th>الرقم</th><th>اليوم</th><th>التاريخ</th><th>ساعة اللقاء</th><th>المعلم/ة</th><th>موضوع المقابلة</th><th>محتوى اللقاء والإجراءات والتوصيات</th></tr></thead>

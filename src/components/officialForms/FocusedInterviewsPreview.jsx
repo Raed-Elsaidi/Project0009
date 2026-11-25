@@ -4,8 +4,8 @@ const dateLabel=value=>{if(!value)return '';const d=new Date(`${value}T00:00:00`
 export default function FocusedInterviewsPreview({profile,file,academicYear=''}){
  const reviews=[...(file?.focused_interview_reviews||[])].sort((a,b)=>String(a.review_date).localeCompare(String(b.review_date)))
  return <div className="official-document focused-interviews-official">
-  <OfficialDocumentHeader/>
-  <div className="guidance-meetings-school-meta"><div>{profile?.directorates?.name||profile?.directorate_name||'مديرية التربية والتعليم'}</div><div>{profile?.schools?.name||profile?.school_name||'مدرسة ................................'}</div><div className="guidance-meetings-academic-year">العام الدراسي: {academicYear||'—'}</div></div>
+  <OfficialDocumentHeader profile={profile}/>
+  <div className="guidance-meetings-school-meta"><div className="guidance-meetings-academic-year">العام الدراسي: {academicYear||'—'}</div></div>
   <h1 className="guidance-meetings-title">نموذج رصد ومتابعة المقابلات الفردية المركزة</h1>
   <p className="guidance-meetings-counselor">اسم المرشد/ة التربوي/ة: <strong>{profile?.full_name||'................................'}</strong></p>
   <div style={{display:'flex',gap:18,flexWrap:'wrap',margin:'12px 0',fontSize:12}}><span>رقم المتابعة: <strong>{file?.serial_number||'—'}</strong></span><span>اسم الطالب: <strong>{file?.student_name||'—'}</strong></span><span>الصف: <strong>{file?.grade_name||'—'}</strong></span><span>الشعبة: <strong>{file?.section_name||'—'}</strong></span></div>

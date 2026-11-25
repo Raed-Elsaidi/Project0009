@@ -14,8 +14,8 @@ const dateLabel=value=>{
 export default function GuidanceMeetingsFollowupPreview({profile,grades=[],sections=[],form,academicYear='',title='نموذج متابعة لقاءات التوجيه الجمعي'}){
  const rows=(form.rows||[]).filter(r=>r.date||r.period||r.grade||r.section||r.topic||r.objectives||r.activities||r.notes)
  return <div className="official-document guidance-meetings-official">
-  <OfficialDocumentHeader/>
-  <div className="guidance-meetings-school-meta"><div>{profile?.directorates?.name||profile?.directorate_name||'مديرية التربية والتعليم'}</div><div>{profile?.schools?.name||profile?.school_name||'مدرسة ................................'}</div><div className="guidance-meetings-academic-year">العام الدراسي: {academicYear||'—'}</div></div>
+  <OfficialDocumentHeader profile={profile}/>
+  <div className="guidance-meetings-school-meta"><div className="guidance-meetings-academic-year">العام الدراسي: {academicYear||'—'}</div></div>
   <h1 className="guidance-meetings-title">{title}</h1>
   <p className="guidance-meetings-counselor">اسم المرشد/ة التربوي/ة : <strong>{profile?.full_name||'................................'}</strong></p>
   <table className="official-doc-table guidance-meetings-table" style={{width:'100%',tableLayout:'fixed'}}>

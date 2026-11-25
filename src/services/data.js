@@ -247,6 +247,50 @@ export async function listActiveAcademicData(schoolId=null) {
 
 
 
+export async function listConsultations(){
+  const user = await currentUser();
+  const profile = await currentProfile();
+  if (!user?.id || !profile?.school_id) throw new Error('انتهت جلسة الدخول أو لم يتم ربط الحساب بمدرسة.');
+  const {data,error} = await db().from('consultations')
+    .select('*')
+    .eq('counselor_id',user.id)
+    .eq('school_id',profile.school_id)
+    .order('consultation_date',{ascending:false});
+  if(error) throw error;
+  return data || [];
+}
+
+export async function createConsultationRecord(payload){
+  const user = await currentUser();
+  const profile = await currentProfile();
+  if (!user?.id || !profile?.school_id) throw new Error('انتهت جلسة الدخول أو لم يتم ربط الحساب بمدرسة.');
+  const {data,error} = await db().from('consultations')
+    .insert({...payload,counselor_id:user.id,school_id:profile.school_id})
+    .select().single();
+  if(error) throw error;
+  return data;
+}
+
+export async function updateConsultationRecord(id,payload){
+  const user = await currentUser();
+  const profile = await currentProfile();
+  if (!user?.id || !profile?.school_id) throw new Error('انتهت جلسة الدخول أو لم يتم ربط الحساب بمدرسة.');
+  const {data,error} = await db().from('consultations')
+    .update(payload).eq('id',id).eq('counselor_id',user.id).eq('school_id',profile.school_id)
+    .select().single();
+  if(error) throw error;
+  return data;
+}
+
+export async function deleteConsultationRecord(id){
+  const user = await currentUser();
+  const profile = await currentProfile();
+  if (!user?.id || !profile?.school_id) throw new Error('انتهت جلسة الدخول أو لم يتم ربط الحساب بمدرسة.');
+  const {error} = await db().from('consultations')
+    .delete().eq('id',id).eq('counselor_id',user.id).eq('school_id',profile.school_id);
+  if(error) throw error;
+}
+
 export async function createInterviewRecord(payload){
   const user=await currentUser(); if(!user) throw new Error('انتهت جلسة الدخول.')
   const profile=await currentProfile(); if(!profile?.school_id) throw new Error('لم يتم ربط حسابك بمدرسة بعد.')

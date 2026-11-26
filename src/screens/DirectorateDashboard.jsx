@@ -7,10 +7,11 @@ export default function DirectorateDashboard(){
  const[profile,setProfile]=useState(null),[data,setData]=useState({summary:{schools:0,counselors:0,students:0,cases:0,hotCases:0,activities:0},counselors:[]}),[error,setError]=useState(''),[loading,setLoading]=useState(true),[search,setSearch]=useState('')
  const load=async()=>{setLoading(true);setError('');try{const[p,d]=await Promise.all([currentProfile(),directorateStats()]);setProfile(p);setData(d)}catch(e){setError(e.message||'تعذر تحميل إحصائيات الدائرة.')}finally{setLoading(false)}}
  useEffect(()=>{load()},[])
- const roleLabel=profile?.role==='MINISTRY'?'مسؤول الإرشاد':profile?.role==='DIRECTORATE'?'رئيس القسم':'المشرف التربوي';
- const scopeLabel=profile?.role==='MINISTRY'?'جميع المرشدين التربويين ضمن نطاق الوزارة':profile?.role==='DIRECTORATE'?'جميع المرشدين التربويين ضمن المديرية':'المرشدون التربويون المسؤول عن متابعتهم';
+ const roleLabel=profile?.role==='MINISTRY'?'مسؤول الإرشاد':profile?.role==='DIRECTORATE'?'رئيس القسم':profile?.role==='SCHOOL_PRINCIPAL'?'مدير المدرسة':'المشرف/ة التربوي/ة';
+ const scopeLabel=profile?.role==='MINISTRY'?'جميع المرشدين التربويين ضمن نطاق الوزارة':profile?.role==='DIRECTORATE'?'جميع المرشدين التربويين ضمن المديرية':profile?.role==='SCHOOL_PRINCIPAL'?'إحصائيات ومتابعة المدرسة':'المرشدون التربويون المسؤول عن متابعتهم';
  const rows=data.counselors.filter(x=>`${x.full_name} ${x.school_name||''}`.toLowerCase().includes(search.toLowerCase()))
- return <Page title={`لوحة ${roleLabel}${profile?.directorates?.name?` • ${profile.directorates.name}`:''}`} sub={scopeLabel} actions={<Button variant="secondary" onClick={load}><RefreshCw size={16}/> تحديث</Button>}>
+ const dashboardTitle=profile?.role==='SCHOOL_PRINCIPAL'?`لوحة مدير المدرسة${profile?.schools?.name?` • ${profile.schools.name}`:''}${profile?.directorates?.name?` • ${profile.directorates.name}`:''}`:`لوحة ${roleLabel}${profile?.directorates?.name?` • ${profile.directorates.name}`:''}`;
+ return <Page title={dashboardTitle} sub={scopeLabel} actions={<Button variant="secondary" onClick={load}><RefreshCw size={16}/> تحديث</Button>}>
   {error&&<ErrorNotice>{error}</ErrorNotice>}
   <div className="directorate-welcome"><div><span>مرحبًا بك</span><h2>لوحة الإحصائيات الإدارية</h2><p>يمكنك متابعة المؤشرات حسب اسم كل مرشد ومدرسته.</p></div><div className="directorate-seal"><Building2 size={30}/></div></div>
   <div className="grid stats-grid directorate-stats">

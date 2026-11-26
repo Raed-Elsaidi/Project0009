@@ -93,7 +93,7 @@ body{background:linear-gradient(135deg,#f6faf8 0%,#eef6f3 48%,#f9fbfa 100%)}
 /* ===== Organization / employee management upgrade ===== */
 .org-layout,.admin-grid{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.35fr);gap:18px}.admin-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}.admin-summary .card{display:flex;align-items:center;justify-content:space-between;padding:18px 20px}.admin-summary span{color:var(--muted);font-size:13px}.admin-summary strong{font-size:28px}.role-pills{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}.role-pills button,.note-filters button{border:1px solid var(--border);background:var(--surface);padding:9px 13px;border-radius:12px;cursor:pointer;color:var(--text);font:inherit}.role-pills button.active,.note-filters button.active{background:var(--primary-soft);border-color:var(--primary);color:var(--primary);font-weight:700}.code-pill{display:inline-flex;align-items:center;padding:5px 9px;border-radius:9px;background:var(--primary-soft);font-weight:800;letter-spacing:.08em}.assign-box{margin:16px 0;padding:14px;border:1px solid var(--border);border-radius:16px;background:var(--surface-2)}.check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:300px;overflow:auto}.check-card{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--border);padding:10px;border-radius:12px;background:var(--surface);cursor:pointer}.check-card small{display:block;color:var(--muted);margin-top:3px}.icon-btn{border:0;background:var(--surface-2);width:34px;height:34px;border-radius:9px;display:inline-grid;place-items:center;cursor:pointer}.icon-btn.danger{color:#b42318}.forgot-link{display:block;margin-top:14px;color:var(--primary);text-decoration:none;font-weight:700}.login-forgot{text-align:center}.back-login{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:16px;color:var(--muted);text-decoration:none}.auth-card{max-width:520px;margin:20px auto}.auth-icon{width:48px;height:48px;border-radius:15px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;margin-bottom:14px}
 @media(max-width:900px){.org-layout,.admin-grid{grid-template-columns:1fr}.admin-summary{grid-template-columns:1fr 1fr}.check-grid{grid-template-columns:1fr}}
-@media(max-width:560px){.admin-summary{grid-template-columns:1fr}.table-wrap{overflow-x:auto}.org-layout,.admin-grid{gap:12px}.admin-summary .card{padding:14px}.role-pills{overflow:auto;flex-wrap:nowrap}.role-pills button{white-space:nowrap}}
+@media(max-width:560px){.admin-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.table-wrap{overflow-x:auto}.org-layout,.admin-grid{gap:12px}.admin-summary .card{padding:14px}.role-pills{overflow:auto;flex-wrap:nowrap}.role-pills button{white-space:nowrap}}
 .new-password-chip{display:inline-flex;align-items:center;padding:8px 10px;border-radius:10px;background:#fff7ed;border:1px solid #fed7aa;font-family:monospace;font-weight:800;direction:ltr}
 
 .login-forgot-button{border:0;background:transparent;cursor:pointer;font:inherit;display:flex;align-items:center;justify-content:center;gap:7px;width:100%;}
@@ -4230,3 +4230,135 @@ body{
 .hot-case-records-list table.hot-cases-registered-table tbody tr > td {
   border-bottom: 1px solid #d9d9d9 !important;
 }
+
+.admin-summary.admin-summary-stats{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+@media(max-width:560px){.admin-summary.admin-summary-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.admin-summary.admin-summary-stats .card{padding:10px 7px;gap:5px}.admin-summary.admin-summary-stats span{font-size:11px}.admin-summary.admin-summary-stats strong{font-size:22px}}
+
+.admin-employee-add-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:stretch;margin-bottom:16px}
+.admin-employee-add-row .card{display:flex;align-items:center;justify-content:space-between;padding:18px 20px}
+.admin-employee-add-row span{color:var(--muted);font-size:14px}
+.admin-employee-add-row strong{font-size:28px}
+.admin-employee-add-row>button{min-width:145px;justify-content:center}
+@media(max-width:560px){.admin-employee-add-row{grid-template-columns:minmax(0,1fr) auto;gap:8px}.admin-employee-add-row .card{padding:12px 10px;gap:6px}.admin-employee-add-row span{font-size:12px}.admin-employee-add-row strong{font-size:23px}.admin-employee-add-row>button{min-width:0;padding:10px;font-size:12px}}
+
+/* Credentials modal - responsive layout */
+.credentials-card{
+  width:min(520px,calc(100% - 28px));
+  max-width:520px;
+  padding:26px;
+  border-radius:24px;
+  direction:rtl;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+
+.credentials-card .modal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:22px;
+}
+
+.credentials-card .modal-head h2{
+  font-size:clamp(20px,5vw,27px);
+  line-height:1.6;
+  margin:8px 0;
+}
+
+.credentials-card .modal-head p{
+  line-height:1.8;
+  margin:0;
+  color:var(--muted);
+}
+
+.credentials-details{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  width:100%;
+}
+
+.credential-item{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-width:0;
+  padding:13px 15px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--surface-2);
+}
+
+.credential-item>span{
+  color:var(--muted);
+  font-size:13px;
+  font-weight:700;
+}
+
+.credential-item>strong{
+  font-size:17px;
+  line-height:1.7;
+  overflow-wrap:anywhere;
+}
+
+.credential-value{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  min-width:0;
+}
+
+.credential-value strong{
+  flex:1;
+  min-width:0;
+  direction:ltr;
+  text-align:left;
+  font-size:17px;
+  line-height:1.6;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  color:var(--primary);
+}
+
+.credential-value button{
+  flex:0 0 42px;
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:var(--surface);
+  color:var(--primary);
+  cursor:pointer;
+}
+
+.credentials-reminder{
+  margin:18px 0;
+  padding:14px;
+  border-radius:13px;
+  background:var(--primary-soft);
+  line-height:1.9;
+  font-size:14px;
+}
+
+.credentials-card .delete-confirm-actions{
+  display:flex;
+  justify-content:flex-start;
+  margin-top:18px;
+}
+
+@media(max-width:560px){
+  .credentials-card{
+    width:calc(100% - 24px);
+    padding:19px 16px;
+    border-radius:20px;
+  }
+  .credentials-card .modal-head h2{font-size:21px}
+  .credential-item{padding:11px 12px}
+  .credential-value strong{font-size:15px}
+  .credentials-reminder{font-size:13px}
+}
+

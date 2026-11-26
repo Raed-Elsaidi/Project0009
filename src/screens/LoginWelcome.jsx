@@ -2,8 +2,8 @@ import React,{useEffect,useState}from'react'
 import{useNavigate}from'react-router-dom'
 import{ShieldCheck}from'lucide-react'
 import{currentProfile}from'../services/data'
-const labels={PROGRAMMER:'مبرمج النظام',MINISTRY:'مسؤول الإرشاد',DIRECTORATE:'رئيس القسم',PRINCIPAL:'المشرف التربوي',COUNSELOR:'المرشد التربوي'}
-const routes={PROGRAMMER:'/programmer-dashboard',MINISTRY:'/directorate-dashboard',DIRECTORATE:'/directorate-dashboard',PRINCIPAL:'/directorate-dashboard',COUNSELOR:'/weekly-program'}
+const labels={PROGRAMMER:'مبرمج النظام',MINISTRY:'مسؤول الإرشاد',DIRECTORATE:'رئيس القسم',PRINCIPAL:'المشرف/ة التربوي/ة',COUNSELOR:'المرشد التربوي',SCHOOL_PRINCIPAL:'مدير/ة المدرسة'}
+const routes={PROGRAMMER:'/programmer-dashboard',MINISTRY:'/directorate-dashboard',DIRECTORATE:'/directorate-dashboard',PRINCIPAL:'/directorate-dashboard',SCHOOL_PRINCIPAL:'/directorate-dashboard',COUNSELOR:'/weekly-program'}
 export default function LoginWelcome(){
  const navigate=useNavigate();const [profile,setProfile]=useState(null);const [count,setCount]=useState(2);const [error,setError]=useState('')
  useEffect(()=>{let alive=true;currentProfile().then(p=>{if(alive)setProfile(p)}).catch(e=>{setError(e.message||'تعذر تحميل بيانات الموظف.')});return()=>{alive=false}},[])

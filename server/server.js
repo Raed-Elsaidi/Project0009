@@ -187,7 +187,7 @@ async function verifyExamStylePassword(username, password) {
   });
   if (employeeError) {
     console.error('verify_employee_password RPC:', employeeError.message);
-    throw new Error('تعذر التحقق من كلمة المرور. تأكد من أن دالة verify_employee_password في Supabase تُرجع نتيجة متوافقة مع الخادم.');
+    throw new Error('تعذّر تسجيل الدخول حاليًا. يرجى المحاولة مرة أخرى، وإذا استمرت المشكلة تواصل مع الإدارة.');
   }
 
   const employeeRow = profileFromRpcResult(employeeValid);
@@ -524,12 +524,26 @@ app.post('/api/official-forms', async (req, res) => {
 
     let result;
     if (recordId) {
-      // Update is allowed only for an existing record owned by the signed-in counselor.
-      result = await db.from('official_form_records').update(payload)
-        .eq('id', recordId).eq('form_id', formId).eq('counselor_id', profile.id)
-        .select('id,form_id,school_year_id,semester_id,form_data,created_at,updated_at').maybeSingle();
-      if (!result.error && !result.data) return res.status(404).json({ error: 'لم يتم العثور على سجل الاجتماع المطلوب.' });
-    } else {
+        // Preserve the original signer names when an existing document is edited.
+        const { data: existingRecord, error: existingError } = await db.from('official_form_records')
+          .select('form_data')
+          .eq('id', recordId).eq('form_id', formId).eq('counselor_id', profile.id)
+          .maybeSingle();
+
+        if (existingError) throw existingError;
+        if (!existingRecord) {
+          return res.status(404).json({ error: 'لم يتم العثور على سجل الاجتماع المطلوب.' });
+        }
+
+        const originalSnapshot = existingRecord.form_data?._document_snapshot;
+        payload.form_data = originalSnapshot
+          ? { ...formData, _document_snapshot: originalSnapshot }
+          : formData;
+
+        result = await db.from('official_form_records').update(payload)
+          .eq('id', recordId).eq('form_id', formId).eq('counselor_id', profile.id)
+          .select('id,form_id,school_year_id,semester_id,form_data,created_at,updated_at').maybeSingle();
+      } else {
       // A new meeting always creates a separate row; it never overwrites an earlier meeting.
       result = await db.from('official_form_records').insert(payload)
         .select('id,form_id,school_year_id,semester_id,form_data,created_at,updated_at').single();

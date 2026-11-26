@@ -105,7 +105,7 @@ export default function Messages(){
     }catch(e){setError(e.message||'تعذر حذف الرسالة.')}
   }
 
-  const recipientLabel=r=>r?`${r.full_name} — ${r.role==='DIRECTORATE'?'رئيس القسم':r.role==='PRINCIPAL'?'المشرف التربوي':r.role==='MINISTRY'?'مسؤول الإرشاد':'المرشد التربوي'}`:'—'
+  const recipientLabel=r=>r?`${r.full_name} — ${r.role==='DIRECTORATE'?'رئيس القسم':r.role==='PRINCIPAL'?'المشرف/ة التربوي/ة':r.role==='MINISTRY'?'مسؤول الإرشاد':'المرشد التربوي'}`:'—'
 
   return <Page title="المراسلات" sub="مراسلات داخلية رسمية بين مستخدمي نظام الإرشاد التربوي" actions={<Button onClick={load} variant="secondary"><RefreshCw size={16}/> تحديث</Button>}>
     <div className="message-tabs">

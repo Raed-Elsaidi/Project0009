@@ -8,7 +8,7 @@ export const Page=({title,sub,actions,children,eyebrow})=>{
  const weeklyDate=params.get('date')||'';
  const weeklyPeriod=params.get('period')||'';
  return <section className={'page '+(fromWeekly?'from-weekly':'')}>
-  <div className="pagehead"><div><div className="eyebrow">{eyebrow || 'نظام المرشد التربوي'}</div><h1>{title}</h1><p>{sub}</p></div><div className="page-actions">{actions}</div></div>
+  <div className="pagehead"><div><div className="eyebrow">{eyebrow || 'نظام الإرشاد التربوي'}</div><h1>{title}</h1><p>{sub}</p></div><div className="page-actions">{actions}</div></div>
   {fromWeekly&&<div className="weekly-context-bar"><div><CalendarDays size={16}/><span>اليوم</span><strong>{weeklyDate||'—'}</strong></div><div><Clock3 size={16}/><span>الحصة</span><strong>{weeklyPeriod||'—'}</strong></div><em>العمل مرتبط بالبرنامج اليومي / الأسبوعي</em></div>}
   {children}
   {fromWeekly&&<div className="weekly-back-wrap"><button type="button" className="weekly-back-button" onClick={()=>navigate('/weekly-program')}><ArrowRight size={18}/> رجوع إلى شاشة الجدول اليومي / الأسبوعي</button></div>}

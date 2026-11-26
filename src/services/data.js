@@ -25,7 +25,47 @@ export async function currentProfile() {
   const { data, error } = await db().from('profiles').select('*, schools(id,name,code,directorate_id,lesson_duration_minutes), directorates(id,name,code)').eq('id', user.id).maybeSingle()
   if (error) throw error
   if (!data || data.is_active === false) return null
-  return data
+
+  let managerName = data.manager_name || ''
+
+  if (data.role === 'COUNSELOR' && data.school_id) {
+    const { data: managers, error: managerError } = await db()
+      .from('profiles')
+      .select('id,full_name')
+      .eq('role', 'SCHOOL_PRINCIPAL')
+      .eq('school_id', data.school_id)
+      .eq('is_active', true)
+      .limit(2)
+    if (managerError) throw managerError
+    managerName = managers?.length === 1 ? managers[0].full_name : ''
+  } else if (['PRINCIPAL', 'SCHOOL_PRINCIPAL'].includes(data.role) && data.directorate_id) {
+    const { data: managers, error: managerError } = await db()
+      .from('profiles')
+      .select('id,full_name')
+      .eq('role', 'DIRECTORATE')
+      .eq('directorate_id', data.directorate_id)
+      .eq('is_active', true)
+      .limit(2)
+    if (managerError) throw managerError
+    managerName = managers?.length === 1 ? managers[0].full_name : ''
+  }
+
+
+  return { ...data, manager_name: managerName }
+}
+
+export async function getSchoolManagerName(schoolId) {
+  if (!schoolId) return ''
+  const { data, error } = await db()
+    .from('profiles')
+    .select('id,full_name')
+    .eq('role', 'SCHOOL_PRINCIPAL')
+    .eq('school_id', schoolId)
+    .eq('is_active', true)
+    .limit(2)
+
+  if (error) throw error
+  return data?.length === 1 ? data[0].full_name : ''
 }
 
 
@@ -106,10 +146,15 @@ export async function updateMyProfile(payload) {
     full_name: String(payload.full_name || '').trim(),
     national_id: payload.national_id || null,
     phone: payload.phone || null,
-    manager_name: String(payload.manager_name || '').trim() || null
+    manager_name: String(payload.manager_name || '').trim() || null,
+    username: String(payload.username || '').trim().toLowerCase()
   }
 
   if (!updates.full_name) throw new Error('الاسم مطلوب.')
+  if (!updates.username) throw new Error('اسم المستخدم مطلوب.')
+  if (!/^[a-z0-9._-]{3,30}$/.test(updates.username)) {
+    throw new Error('اسم المستخدم يجب أن يكون من 3 إلى 30 حرفًا إنجليزيًا أو رقمًا، ويمكن استخدام النقطة والشرطة.')
+  }
   if (updates.national_id && !/^\d{9}$/.test(updates.national_id)) {
     throw new Error('رقم الهوية يجب أن يتكون من 9 أرقام.')
   }
@@ -122,7 +167,10 @@ export async function updateMyProfile(payload) {
     .select('*, schools(id,name,code,directorate_id), directorates(id,name,code)')
     .single()
 
-  if (error) throw error
+  if (error) {
+    if (error.code === '23505') throw new Error('اسم المستخدم مستخدم بالفعل، اختر اسمًا آخر.')
+    throw error
+  }
   return data
 }
 
@@ -135,6 +183,16 @@ export async function listStudents(schoolId=null) {
   return data || []
 }
 
+
+export async function listParliamentStudents(schoolId){
+  if(!schoolId) return []
+  const {data,error}=await db().from('students')
+    .select('*, grades(id,name), sections(id,name), school_years(id,name)')
+    .eq('school_id',schoolId)
+    .order('full_name')
+  if(error) throw error
+  return data||[]
+}
 
 export async function saveMySchoolLessonDuration(duration){
   const {data,error}=await db().rpc('save_my_school_lesson_duration',{
@@ -775,7 +833,7 @@ export async function listEmployeeProfiles(){
 export async function updateEmployeeProfile(profileId,payload){
   const patch={
     full_name:payload.full_name,national_id:payload.national_id||null,employee_number:payload.employee_number||null,
-    phone:payload.phone||null,gender:payload.gender||null,school_id:payload.school_id||null,
+    phone:payload.phone||null,gender:payload.gender||null,school_id:payload.school_id||null,role:payload.role||undefined,
     username:payload.username?.trim().toLowerCase()||undefined,job_title:payload.job_title||undefined,manager_name:payload.manager_name?.trim()||null
   }
   const {data,error}=await db().from('profiles').update(patch).eq('id',profileId).select('*, directorates(id,name,code), schools(id,name,code,directorate_id)').single()
@@ -793,6 +851,12 @@ export async function deleteEmployeeAccount(profileId){
   if(typeof localStorage!=='undefined' && localStorage.getItem('system_profile_id')===profileId) localStorage.removeItem('system_profile_id')
   return data||{ok:true}
 }
+export async function setEmployeeAccountActive(profileId,isActive){
+  const {data,error}=await db().from('profiles').update({is_active:!!isActive}).eq('id',profileId).select().single()
+  if(error) throw error
+  return data||{ok:true}
+}
+
 export async function assignCounselorsToSupervisor(supervisorId,counselorIds){
   const ids=counselorIds||[]
   const {error:clearError}=await db().from('profiles').update({supervisor_id:null}).eq('role','COUNSELOR').eq('supervisor_id',supervisorId)

@@ -7,7 +7,7 @@ const roleLabels={
   PROGRAMMER:'مبرمج النظام',
   MINISTRY:'مسؤول الإرشاد',
   DIRECTORATE:'رئيس القسم',
-  PRINCIPAL:'المشرف التربوي',
+  PRINCIPAL:'المشرف/ة التربوي/ة',
   SCHOOL_PRINCIPAL:'مدير المدرسة',
   COUNSELOR:'المرشد التربوي'
 }

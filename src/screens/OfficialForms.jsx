@@ -2,7 +2,7 @@ import React,{useEffect,useMemo,useState}from'react'
 import{useParams,useLocation,useNavigate}from'react-router-dom'
 import{Page,Card,Button,ErrorNotice}from'../components/UI'
 import{Maximize2,Printer,Save,X,Plus,History,Eye,Trash2,Edit}from'lucide-react'
-import{currentProfile,listActiveAcademicData,requireSemesterReportClient,listSchoolsByDirectorate,listStudents}from'../services/data'
+import{currentProfile,listActiveAcademicData,requireSemesterReportClient,listSchoolsByDirectorate,listStudents,listParliamentStudents,getSchoolManagerName}from'../services/data'
 import{listOfficialFormRecords,saveOfficialFormRecord,deleteOfficialFormRecord,listSchoolTeachers}from'../services/officialFormsApi'
 import MeetingFollowupEntry,{createMeetingRow}from'../components/officialForms/MeetingFollowupEntry'
 import MeetingFollowupPreview from'../components/officialForms/MeetingFollowupPreview'
@@ -64,7 +64,7 @@ export default function OfficialForms(){
  const[activeMeetingRecordId,setActiveMeetingRecordId]=useState(null), [deleteTarget,setDeleteTarget]=useState(null),[meetingRecords,setMeetingRecords]=useState([]),[showMeetingHistory,setShowMeetingHistory]=useState(false),[viewingHistorical,setViewingHistorical]=useState(false)
  const[teachers,setTeachers]=useState([])
  const[students,setStudents]=useState([])
- const initial=useMemo(()=>({school_year_id:'',semester_id:'',rows:[createMeetingRow(today,dayName(today))],values:{}}),[]);const[form,setForm]=useState(initial)
+ const initial=useMemo(()=>({school_year_id:'',semester_id:'',rows:[createMeetingRow(today,dayName(today))],values:{}}),[]);const[form,setForm]=useState(initial);const documentProfile=useMemo(()=>{const snap=form?._document_snapshot;if(!snap)return profile;return {...profile,full_name:snap.counselor_name||profile?.full_name,manager_name:snap.manager_name||profile?.manager_name}},[profile,form?._document_snapshot])
  const isGuidanceFollowup=GUIDANCE_FOLLOWUP_IDS.includes(id)
  // Hot-case records are entered once on the Hot Cases screen and reused by every official form.
  useEffect(()=>{
@@ -124,18 +124,46 @@ export default function OfficialForms(){
    }))
   }catch{setForm(prev=>({...prev,rows:[blankGuidanceRow()],values:{}}))}
  },[id,isGuidanceFollowup])
- useEffect(()=>{let alive=true;(async()=>{if(!['case-study','consultations-monitor','health-cases','dropout-followup'].includes(id)||!profile?.school_id){setStudents([]);return}try{const rows=await listStudents(profile.school_id);if(alive)setStudents(rows||[])}catch(e){if(alive)setError(e.message||'تعذر تحميل قائمة الطلاب.')}})();return()=>{alive=false}},[id,profile?.school_id])
+ useEffect(()=>{let alive=true;(async()=>{if(!['case-study','consultations-monitor','health-cases','dropout-followup','parliament-members'].includes(id)||!profile?.school_id){setStudents([]);return}try{const rows=id==='parliament-members'?await listParliamentStudents(profile.school_id):await listStudents(profile.school_id);if(alive)setStudents(rows||[])}catch(e){if(alive)setError(e.message||'تعذر تحميل قائمة الطلاب.')}})();return()=>{alive=false}},[id,profile?.school_id])
  useEffect(()=>{let alive=true;(async()=>{if(!['case-study','consultations-monitor','health-cases','dropout-followup'].includes(id)||!profile?.school_id){if(alive)setMeetingRecords([]);return}try{const records=await listOfficialFormRecords([id],form.school_year_id||'',form.semester_id||'',profile.school_id);if(alive)setMeetingRecords(records||[])}catch(e){if(alive)setError(e.message||'تعذر تحميل السجلات المحفوظة.')}})();return()=>{alive=false}},[id,profile?.school_id,form.school_year_id,form.semester_id])
  useEffect(()=>{if(!notice)return;const timer=window.setTimeout(()=>setNotice(''),2000);return()=>window.clearTimeout(timer)},[notice])
  useEffect(()=>{
   if(!profile?.school_id||!form.school_year_id||isGuidanceFollowup||id==='hot-case-notice'||['meeting-principal','meeting-teacher','meeting-parents','group-counseling-plan','group-session-details','semester-report'].includes(id))return
   try{const key=`official-form-${id}-${profile.school_id}-${form.school_year_id}`;const raw=localStorage.getItem(key);if(raw){const saved=JSON.parse(raw);if(saved&&typeof saved==='object')setForm(prev=>({...prev,...saved,school_year_id:form.school_year_id}))}}catch(e){console.warn('تعذر تحميل بيانات النموذج المحفوظة للمدرسة والسنة المحددتين',e)}
  },[id,profile?.school_id,form.school_year_id,isGuidanceFollowup])
- useEffect(()=>{let alive=true;(async()=>{try{const[p,a]=await Promise.all([currentProfile(),listActiveAcademicData()]);if(!alive)return;let effectiveProfile=p;const params=new URLSearchParams(location.search);const selectedSchoolId=params.get('school_id');const selectedYearId=params.get('school_year_id');const selectedCounselorName=params.get('counselor_name');if(selectedSchoolId&&p?.directorate_id){const schoolRows=await listSchoolsByDirectorate(p.directorate_id);const selectedSchool=schoolRows.find(x=>String(x.id)===String(selectedSchoolId));if(selectedSchool)effectiveProfile={...p,school_id:selectedSchool.id,schools:selectedSchool,full_name:selectedCounselorName||p.full_name}}if(!alive)return;setProfile(effectiveProfile);setAcademic(a||{years:[],semesters:[],grades:[]});const y=(a?.years||[]).find(x=>String(x.id)===String(selectedYearId))||(a?.years||[]).find(x=>x.is_active)||(a?.years||[])[0];const sem=(a?.semesters||[]).find(s=>s.school_year_id===y?.id&&new Date()>=new Date(s.start_date||'1900-01-01')&&new Date()<=new Date(s.end_date||'2999-12-31'))||(a?.semesters||[]).find(s=>s.school_year_id===y?.id);setForm(v=>({...v,school_year_id:y?.id||'',semester_id:sem?.id||''}))}catch(e){if(alive)setError(e.message||'تعذر تحميل بيانات النظام.')}finally{if(alive)setLoading(false)}})();return()=>{alive=false}},[location.search])
+ useEffect(()=>{let alive=true;(async()=>{try{const[p,a]=await Promise.all([currentProfile(),listActiveAcademicData()]);if(!alive)return;let effectiveProfile=p;
+const params=new URLSearchParams(location.search);
+const selectedSchoolId=params.get('school_id');
+const selectedYearId=params.get('school_year_id');
+const selectedCounselorName=params.get('counselor_name');
+
+if(selectedSchoolId&&p?.role==='DIRECTORATE'){
+  if(!p.directorate_id){
+    throw new Error('لا توجد مديرية مرتبطة بحسابك.');
+  }
+
+  const schoolRows=await listSchoolsByDirectorate(p.directorate_id);
+  const selectedSchool=schoolRows.find(
+    x=>String(x.id)===String(selectedSchoolId)
+  );
+
+  if(!selectedSchool){
+    throw new Error('غير مسموح لك بفتح نماذج مدرسة خارج مديريتك.');
+  }
+
+  const managerName=await getSchoolManagerName(selectedSchool.id);
+  effectiveProfile={
+    ...p,
+    school_id:selectedSchool.id,
+    schools:selectedSchool,
+    manager_name:managerName,
+    full_name:selectedCounselorName||p.full_name
+  };
+}if(!alive)return;setProfile(effectiveProfile);setAcademic(a||{years:[],semesters:[],grades:[]});const y=(a?.years||[]).find(x=>String(x.id)===String(selectedYearId))||(a?.years||[]).find(x=>x.is_active)||(a?.years||[])[0];const sem=(a?.semesters||[]).find(s=>s.school_year_id===y?.id&&new Date()>=new Date(s.start_date||'1900-01-01')&&new Date()<=new Date(s.end_date||'2999-12-31'))||(a?.semesters||[]).find(s=>s.school_year_id===y?.id);setForm(v=>({...v,school_year_id:y?.id||'',semester_id:sem?.id||''}))}catch(e){if(alive)setError(e.message||'تعذر تحميل بيانات النظام.')}finally{if(alive)setLoading(false)}})();return()=>{alive=false}},[location.search])
 
  // Both guidance follow-up forms use the same school-specific grade/section lists.
  useEffect(()=>{
-  if(!isGuidanceFollowup||!profile?.school_id){setSchoolSections([]);return}
+  if(!(isGuidanceFollowup||id==='parliament-members')||!profile?.school_id){setSchoolSections([]);return}
   let alive=true
   ;(async()=>{
    try{
@@ -146,7 +174,7 @@ export default function OfficialForms(){
    }catch(e){if(alive){setSchoolSections([]);setError(e.message||'تعذر تحميل شعب المدرسة.')}}
   })()
   return()=>{alive=false}
- },[isGuidanceFollowup,profile?.school_id])
+ },[isGuidanceFollowup,id,profile?.school_id])
 
  useEffect(()=>{
   if(id!=='meeting-teacher'||!profile?.school_id){
@@ -344,42 +372,42 @@ export default function OfficialForms(){
  const isSpecialMeeting=isPrincipalMeeting||isTeacherMeeting||isParentsMeeting
  const isDatabaseForm=['case-study','consultations-monitor','health-cases','dropout-followup'].includes(id)
  const save=async()=>{
-  if(viewingHistorical){setError('هذا اجتماع سابق للعرض فقط. اضغط «اجتماع جديد» لإدخال اجتماع آخر.');return}
-  if(!['meeting-principal','meeting-teacher','meeting-parents','case-study','consultations-monitor','health-cases','dropout-followup'].includes(id)){
-   try{const storageKey=`official-form-${id}-${profile?.school_id||'no-school'}-${form.school_year_id||'no-year'}`;if(id==='hot-case-notice'){const historyKey=`official-form-hot-case-notice-history-${profile?.school_id||'no-school'}-${form.school_year_id||'no-year'}`;const history=JSON.parse(localStorage.getItem(historyKey)||'[]');localStorage.setItem(historyKey,JSON.stringify([...history,{...form,saved_at:new Date().toISOString()}]));const cleared={...initial,school_year_id:form.school_year_id,semester_id:form.semester_id,values:{}};localStorage.setItem(storageKey,JSON.stringify(cleared));setForm(cleared)}else{localStorage.setItem(storageKey,JSON.stringify(form))}setNotice('تم حفظ بيانات النموذج بنجاح.')}
-   catch(e){setNotice('تعذر حفظ البيانات، حاول مرة أخرى.')}
-   return
+   if(viewingHistorical){setError('هذا اجتماع سابق للعرض فقط. اضغط «اجتماع جديد» لإدخال اجتماع آخر.');return}
+   const formToSave=form?._document_snapshot?form:{...form,_document_snapshot:{
+    counselor_name:profile?.full_name||'',
+    manager_name:profile?.manager_name||'',
+    school_name:profile?.schools?.name||'',
+    captured_at:new Date().toISOString()
+   }}
+   setForm(formToSave)
+   if(!['meeting-principal','meeting-teacher','meeting-parents','case-study','consultations-monitor','health-cases','dropout-followup'].includes(id)){
+    try{
+     const storageKey=`official-form-${id}-${profile?.school_id||'no-school'}-${formToSave.school_year_id||'no-year'}`
+     if(id==='hot-case-notice'){
+      const historyKey=`official-form-hot-case-notice-history-${profile?.school_id||'no-school'}-${formToSave.school_year_id||'no-year'}`
+      const history=JSON.parse(localStorage.getItem(historyKey)||'[]')
+      localStorage.setItem(historyKey,JSON.stringify([...history,{...formToSave,saved_at:new Date().toISOString()}]))
+      const cleared={...initial,school_year_id:formToSave.school_year_id,semester_id:formToSave.semester_id,values:{}}
+      localStorage.setItem(storageKey,JSON.stringify(cleared))
+      setForm(cleared)
+     }else{
+      localStorage.setItem(storageKey,JSON.stringify(formToSave))
+     }
+     setNotice('تم حفظ بيانات النموذج بنجاح.')
+    }catch(e){setNotice('تعذر حفظ البيانات، حاول مرة أخرى.')}
+    return
+   }
+   try{
+    const saved=await saveOfficialFormRecord({formId:id,profile,form:formToSave,recordId:activeMeetingRecordId})
+    if(saved?.id)setActiveMeetingRecordId(saved.id)
+    localStorage.removeItem(`official-form-${id}-draft`)
+    localStorage.removeItem(`official-form-${id}`)
+    const records=await listOfficialFormRecords([id],formToSave.school_year_id||'',formToSave.semester_id||'',profile?.school_id||'')
+    setMeetingRecords(records)
+    setNotice(activeMeetingRecordId?'تم تحديث الاجتماع الحالي.':'تم حفظ الاجتماع وإضافته إلى السجل.')
+   }catch(e){setError(e.message||'تعذر حفظ البيانات في قاعدة البيانات.')}
   }
-  try{
-   const saved=await saveOfficialFormRecord({formId:id,profile,form,recordId:activeMeetingRecordId})
-   if(saved?.id)setActiveMeetingRecordId(saved.id)
-   localStorage.removeItem(`official-form-${id}-draft`)
-   localStorage.removeItem(`official-form-${id}`)
-   const records=await listOfficialFormRecords([id],form.school_year_id||'',form.semester_id||'',profile?.school_id||'')
-   setMeetingRecords(records)
-   setNotice(activeMeetingRecordId?'تم تحديث الاجتماع الحالي.':'تم حفظ الاجتماع وإضافته إلى السجل.')
-  }catch(e){setError(e.message||'تعذر حفظ البيانات في قاعدة البيانات.')}
- }
- const handleGenericFormChange=nextForm=>{
-  if(viewingHistorical)return
-  setForm(nextForm)
-  if(id==='meeting-principal'||id==='meeting-teacher'||id==='meeting-parents'){
-   try{localStorage.setItem(`official-form-${id}-draft`,JSON.stringify({form:nextForm,recordId:activeMeetingRecordId}))}catch(e){console.warn('تعذر حفظ مسودة اجتماع مدير/ة المدرسة محليًا',e)}
-  }
- }
- const createNewPrincipalMeeting=()=>{
-  const date=new Date();const dateValue=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`
-  const weekdays=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت']
-  const next={school_year_id:form.school_year_id||'',semester_id:form.semester_id||'',rows:[],values:{'عدد الحضور':'','التاريخ':dateValue,'اليوم':weekdays[date.getDay()],'موضوع الاجتماع':'','الهدف من الاجتماع':'',...(isParentsMeeting?{'أولياء الأمور المشاركون':''}:isTeacherMeeting?{selected_teachers:[]}:{'اسم المعلم/ة':''}),'نقاط الاجتماع':['']}}
-  setForm(next);setActiveMeetingRecordId(null);setViewingHistorical(false);setShowPreview(false);setShowMeetingHistory(false);setError('')
-  try{localStorage.setItem(`official-form-${id}-draft`,JSON.stringify({form:next,recordId:null}))}catch{}
- }
- const openPreviousMeeting=record=>{
-  setForm(record.form_data||initial);setActiveMeetingRecordId(record.id);setViewingHistorical(true);setShowMeetingHistory(false);setShowPreview(true);setError('')
- }
- const meetingRecordDate=record=>record?.form_data?.values?.['التاريخ']||record?.form_data?.rows?.[0]?.['التاريخ']||record?.created_at||record?.updated_at||''
- const meetingRecordTopic=record=>record?.form_data?.values?.['موضوع الاجتماع']||record?.form_data?.rows?.[0]?.['الموضوع']||'اجتماع أولياء الأمور'
- const sortedMeetingRecords=[...meetingRecords].sort((a,b)=>String(meetingRecordDate(b)).localeCompare(String(meetingRecordDate(a))))
+  const sortedMeetingRecords=[...meetingRecords].sort((a,b)=>String(meetingRecordDate(b)).localeCompare(String(meetingRecordDate(a))))
  const databaseRecordDate=record=>record?.form_data?.values?.['التاريخ']||record?.form_data?.values?.['تاريخ فتح الحالة']||record?.form_data?.values?.['تاريخ التسرب']||record?.form_data?.rows?.[0]?.['التاريخ']||record?.created_at||record?.updated_at||''
  const databaseRecordTitle=record=>{const v=record?.form_data?.values||{};const r=record?.form_data?.rows?.[0]||{};return v['اسم الطالب']||v['الطالب']||r['الطالب/الشخص']||r['رمز الطالب']||v['موضوع الاستشارة']||'سجل محفوظ'}
  const openDatabaseRecord=record=>{setForm(record.form_data||initial);setActiveMeetingRecordId(record.id);setViewingHistorical(false);setShowMeetingHistory(false);setShowPreview(false);setError('')}
@@ -400,7 +428,7 @@ const confirmDeleteHealthCaseRecord=async()=>{
  const print=()=>window.print()
  const isMeeting=id==='meeting-followup', config=FORM_CONFIGS[id]||{fields:['البيانات','الملاحظات'],columns:[]}
  if(loading)return previewOnly?<div className="meeting-preview-overlay"><div className="meeting-preview-modal" style={{height:'auto',padding:28,textAlign:'center'}}>جارٍ تجهيز النموذج الرسمي...</div></div>:<Page title="النماذج الرسمية" sub="جارٍ تحميل البيانات تلقائيًا..."><Card><div className="loading">جارٍ تحميل بيانات المرشد والسنة الدراسية...</div></Card></Page>
- if(previewOnly)return <section className="page counselor-direct-preview-page"><div className="meeting-preview-overlay counselor-direct-preview" role="dialog" aria-modal="true"><div className="meeting-preview-modal"><div className="meeting-preview-toolbar"><div><strong>{title}</strong><span>النموذج الرسمي — معاينة مباشرة</span></div><div className="meeting-preview-actions"><Button variant="secondary" onClick={()=>document.querySelector('.counselor-direct-preview .official-document')?.requestFullscreen?.()}><Maximize2 size={15}/> عرض كامل</Button><Button variant="secondary" onClick={print}><Printer size={15}/> طباعة / PDF</Button><Button onClick={()=>navigate('/counselor-work-followup',{replace:true})}><X size={15}/> رجوع</Button></div></div><div className="meeting-paper-wrap">{isGuidanceFollowup?<GuidanceMeetingsFollowupPreview title={title} profile={profile} grades={academic.grades||[]} sections={schoolSections} form={form} academicYear={yearName}/>:isMeeting?<MeetingFollowupPreview profile={profile} form={form} academic={academicView}/>:<GenericOfficialPreview title={title} config={config} profile={profile} academic={academicView} form={form} records={meetingRecords} students={students}/>}</div></div></div></section>
+ if(previewOnly)return <section className="page counselor-direct-preview-page"><div className="meeting-preview-overlay counselor-direct-preview" role="dialog" aria-modal="true"><div className="meeting-preview-modal"><div className="meeting-preview-toolbar"><div><strong>{title}</strong><span>النموذج الرسمي — معاينة مباشرة</span></div><div className="meeting-preview-actions"><Button variant="secondary" onClick={()=>document.querySelector('.counselor-direct-preview .official-document')?.requestFullscreen?.()}><Maximize2 size={15}/> عرض كامل</Button><Button variant="secondary" onClick={print}><Printer size={15}/> طباعة / PDF</Button><Button onClick={()=>navigate('/counselor-work-followup',{replace:true})}><X size={15}/> رجوع</Button></div></div><div className="meeting-paper-wrap">{isGuidanceFollowup?<GuidanceMeetingsFollowupPreview title={title} profile={documentProfile} grades={academic.grades||[]} sections={schoolSections} form={form} academicYear={yearName}/>:isMeeting?<MeetingFollowupPreview profile={documentProfile} form={form} academic={academicView}/>:<GenericOfficialPreview title={title} config={config} profile={documentProfile} academic={academicView} form={form} records={meetingRecords} students={students}/>}</div></div></div></section>
  return <Page title={title} sub="أدخل البيانات مرة واحدة، واعرض النموذج الرسمي عند الحاجة.">
   {notice&&<div className="meeting-preview-overlay official-save-notice" role="alertdialog" aria-modal="true"><div style={{width:'min(420px,92vw)',background:'#fffdf8',border:'1px solid #e3d5bf',borderRadius:24,padding:'30px 24px',boxShadow:'0 20px 60px rgba(0,0,0,.22)',textAlign:'center'}}><div style={{fontSize:42,marginBottom:12}}>✓</div><h3 style={{margin:'0 0 12px',color:'#075b57'}}>تم الحفظ</h3><p style={{margin:'0 0 24px',color:'#655f55'}}>{notice}</p><Button onClick={()=>setNotice('')}>حسنًا</Button></div></div>}
   {error&&<ErrorNotice>{error}</ErrorNotice>}{deleteTarget&&<div role="dialog" aria-modal="true" style={{position:'fixed',inset:0,zIndex:10000,background:'rgba(20,25,23,.62)',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
@@ -416,7 +444,7 @@ const confirmDeleteHealthCaseRecord=async()=>{
    {isDatabaseForm&&<div className="meeting-entry-actions" style={{padding:'14px 18px',margin:0,borderBottom:'1px solid #e8ddcd',borderTop:0}}><Button onClick={createNewDatabaseRecord}><Plus size={16}/> سجل جديد</Button><Button variant="secondary" onClick={()=>setShowMeetingHistory(true)}><History size={16}/> السجلات المحفوظة ({meetingRecords.length})</Button>{activeMeetingRecordId&&<span style={{alignSelf:'center',fontSize:13,color:'#075b57'}}>تعديل سجل محفوظ</span>}</div>}
    {isSpecialMeeting&&<div className="meeting-entry-actions" style={{padding:'14px 18px',margin:0,borderBottom:'1px solid #e8ddcd',borderTop:0}}><Button onClick={createNewPrincipalMeeting}><Plus size={16}/> اجتماع جديد</Button><Button variant="secondary" onClick={()=>setShowMeetingHistory(true)}><History size={16}/> عرض سجل الاجتماعات ({meetingRecords.length})</Button>{viewingHistorical&&<Button variant="secondary" onClick={createNewPrincipalMeeting}>العودة لاجتماع جديد</Button>}</div>}
    {isSpecialMeeting&&viewingHistorical&&<div className="official-auto-note" style={{margin:'12px 18px'}}>أنت تعرض اجتماعًا سابقًا — العرض للقراءة فقط.</div>}
-   {id==='group-counseling-plan'?<GroupCounselingPlan formId={id}/>:id==='group-session-details'?<GroupAssessment/>:isGuidanceFollowup?<GuidanceMeetingsFollowupEntry meetingLabel={id==='career-guidance-followup'?'لقاءات التوجيه المهني':'لقاءات التوجيه الجمعي'} profile={profile} grades={(academic.grades||[]).filter(g=>!profile?.school_id||String(g.school_id)===String(profile.school_id))} sections={schoolSections} form={form} onChange={setForm} onShowPreview={()=>setShowPreview(true)} onSave={save}/>:isMeeting?<MeetingFollowupEntry profile={profile} academic={academicView} form={form} onChange={setForm} today={today} onShowPreview={()=>setShowPreview(true)} onSave={save}/>:id==='semester-report'?<SemesterReportCounts academic={academic} profile={profile}/>:<GenericOfficialForm config={config} title={title} profile={profile} academic={academicView} form={form} onChange={(viewingHistorical&&['hot-cases-monitor','hot-case-notice','hot-cases-school','hot-cases-directorate'].includes(id))?()=>{}:isSpecialMeeting?(viewingHistorical?()=>{}:handleGenericFormChange):setForm} onShowPreview={()=>setShowPreview(true)} onSave={viewingHistorical?()=>{}:save} teachers={teachers} students={students}/> }
+   {id==='group-counseling-plan'?<GroupCounselingPlan formId={id}/>:id==='group-session-details'?<GroupAssessment/>:isGuidanceFollowup?<GuidanceMeetingsFollowupEntry meetingLabel={id==='career-guidance-followup'?'لقاءات التوجيه المهني':'لقاءات التوجيه الجمعي'} profile={documentProfile} grades={(academic.grades||[]).filter(g=>!profile?.school_id||String(g.school_id)===String(profile.school_id))} sections={schoolSections} form={form} onChange={setForm} onShowPreview={()=>setShowPreview(true)} onSave={save}/>:isMeeting?<MeetingFollowupEntry profile={documentProfile} academic={academicView} form={form} onChange={setForm} today={today} onShowPreview={()=>setShowPreview(true)} onSave={save}/>:id==='semester-report'?<SemesterReportCounts academic={academic} profile={documentProfile}/>:<GenericOfficialForm config={config} title={title} profile={documentProfile} academic={academicView} form={form} onChange={(viewingHistorical&&['hot-cases-monitor','hot-case-notice','hot-cases-school','hot-cases-directorate'].includes(id))?()=>{}:isSpecialMeeting?(viewingHistorical?()=>{}:handleGenericFormChange):setForm} onShowPreview={()=>setShowPreview(true)} onSave={viewingHistorical?()=>{}:save} teachers={teachers} students={students} grades={(academic.grades||[]).filter(g=>!profile?.school_id||String(g.school_id)===String(profile.school_id))} sections={schoolSections}/> }
   </section></div>
   {id==='health-cases'&&<section style={{marginTop:22,padding:18,background:'#fffdf8',border:'1px solid #e5d8c5',borderRadius:16,direction:'rtl'}}>
 <h3 style={{margin:'0 0 14px',color:'#075b57'}}>سجلات الحالات الصحية ({meetingRecords.length})</h3>
@@ -428,6 +456,6 @@ const confirmDeleteHealthCaseRecord=async()=>{
   <div className="meeting-bottom-note">النموذج الرسمي مخفي افتراضيًا. اضغط «عرض النموذج الرسمي» لمعاينته أو طباعته أو حفظه PDF.</div>
   {showMeetingHistory&&isDatabaseForm&&<div className="meeting-preview-overlay" role="dialog" aria-modal="true"><div className="meeting-preview-modal" style={{height:'min(82vh,760px)',maxWidth:760}}><div className="meeting-preview-toolbar"><div><strong>السجلات المحفوظة — {title}</strong><span>اختر سجلًا لفتحه وتعديله</span></div><div className="meeting-preview-actions"><Button variant="secondary" onClick={()=>setShowMeetingHistory(false)}><X size={15}/> إغلاق</Button></div></div><div style={{padding:18,overflowY:'auto',direction:'rtl'}}>{meetingRecords.length?[...meetingRecords].sort((a,b)=>String(databaseRecordDate(b)).localeCompare(String(databaseRecordDate(a)))).map(record=><div key={record.id} style={{display:'flex',gap:12,alignItems:'center',justifyContent:'space-between',padding:'14px 12px',border:'1px solid #e5d8c5',borderRadius:14,marginBottom:10,background:'#fffdf8'}}><div style={{minWidth:0}}><strong style={{display:'block',color:'#075b57'}}>{databaseRecordTitle(record)}</strong><span style={{display:'block',fontSize:12,color:'#786f65',marginTop:5}}>التاريخ: {databaseRecordDate(record)?String(databaseRecordDate(record)).slice(0,10):'غير محدد'}</span></div><Button onClick={()=>openDatabaseRecord(record)}><Eye size={15}/> فتح وتعديل</Button></div>):<div style={{textAlign:'center',padding:36,color:'#81766a'}}>لا توجد سجلات محفوظة حتى الآن.</div>}</div></div></div>}
    {showMeetingHistory&&isSpecialMeeting&&<div className="meeting-preview-overlay" role="dialog" aria-modal="true"><div className="meeting-preview-modal" style={{height:'min(82vh,760px)',maxWidth:760}}><div className="meeting-preview-toolbar"><div><strong>{isParentsMeeting?'سجل اجتماعات أولياء الأمور':isTeacherMeeting?'سجل اجتماعات معلمي/ات المدرسة':'سجل اجتماعات مدير/ة المدرسة'}</strong><span>مرتبة من الأحدث إلى الأقدم حسب تاريخ الاجتماع</span></div><div className="meeting-preview-actions"><Button variant="secondary" onClick={()=>setShowMeetingHistory(false)}><X size={15}/> إغلاق</Button></div></div><div style={{padding:18,overflowY:'auto',direction:'rtl'}}>{sortedMeetingRecords.length?sortedMeetingRecords.map((record,index)=><div key={record.id} style={{display:'flex',gap:12,alignItems:'center',justifyContent:'space-between',padding:'14px 12px',border:'1px solid #e5d8c5',borderRadius:14,marginBottom:10,background:'#fffdf8'}}><div style={{minWidth:0}}><strong style={{display:'block',color:'#075b57'}}>{meetingRecordTopic(record)}</strong><span style={{display:'block',fontSize:12,color:'#786f65',marginTop:5}}>التاريخ: {meetingRecordDate(record)?new Date(`${String(meetingRecordDate(record)).slice(0,10)}T12:00:00`).toLocaleDateString('en-GB'):'غير محدد'} · عدد الحضور: {record.form_data?.values?.['عدد الحضور']||'—'}</span></div><Button onClick={()=>openPreviousMeeting(record)}><Eye size={15}/> عرض</Button></div>):<div style={{textAlign:'center',padding:36,color:'#81766a'}}>لا توجد اجتماعات محفوظة حتى الآن.</div>}</div></div></div>}
-  {showPreview&&<div className="meeting-preview-overlay" role="dialog" aria-modal="true"><div className="meeting-preview-modal"><div className="meeting-preview-toolbar"><div><strong>{viewingHistorical?'محضر اجتماع سابق':'النموذج الرسمي'}</strong><span>{viewingHistorical?'عرض سجل محفوظ — دون تعديل':'المعاينة الحية — البيانات محدثة مباشرة من نموذج الإدخال'}</span></div><div className="meeting-preview-actions"><Button variant="secondary" onClick={()=>document.querySelector('.meeting-preview-modal .official-document')?.requestFullscreen?.()}><Maximize2 size={15}/> عرض كامل</Button><Button variant="secondary" onClick={print}><Printer size={15}/> طباعة / PDF</Button>{!viewingHistorical&&<Button onClick={save}><Save size={15}/> حفظ</Button>}<Button variant="secondary" onClick={()=>setShowPreview(false)}><X size={15}/> إغلاق</Button></div></div><div className="meeting-paper-wrap">{isGuidanceFollowup?<GuidanceMeetingsFollowupPreview title={title} profile={profile} grades={academic.grades||[]} sections={schoolSections} form={form} academicYear={yearName}/>:isMeeting?<MeetingFollowupPreview profile={profile} form={form} academic={academicView}/>:<GenericOfficialPreview title={title} config={config} profile={profile} academic={academicView} form={form} records={meetingRecords} students={students}/>}</div></div></div>}
+  {showPreview&&<div className="meeting-preview-overlay" role="dialog" aria-modal="true"><div className="meeting-preview-modal"><div className="meeting-preview-toolbar"><div><strong>{viewingHistorical?'محضر اجتماع سابق':'النموذج الرسمي'}</strong><span>{viewingHistorical?'عرض سجل محفوظ — دون تعديل':'المعاينة الحية — البيانات محدثة مباشرة من نموذج الإدخال'}</span></div><div className="meeting-preview-actions"><Button variant="secondary" onClick={()=>document.querySelector('.meeting-preview-modal .official-document')?.requestFullscreen?.()}><Maximize2 size={15}/> عرض كامل</Button><Button variant="secondary" onClick={print}><Printer size={15}/> طباعة / PDF</Button>{!viewingHistorical&&<Button onClick={save}><Save size={15}/> حفظ</Button>}<Button variant="secondary" onClick={()=>setShowPreview(false)}><X size={15}/> إغلاق</Button></div></div><div className="meeting-paper-wrap">{isGuidanceFollowup?<GuidanceMeetingsFollowupPreview title={title} profile={documentProfile} grades={academic.grades||[]} sections={schoolSections} form={form} academicYear={yearName}/>:isMeeting?<MeetingFollowupPreview profile={documentProfile} form={form} academic={academicView}/>:<GenericOfficialPreview title={title} config={config} profile={documentProfile} academic={academicView} form={form} records={meetingRecords} students={students}/>}</div></div></div>}
  </Page>
 }

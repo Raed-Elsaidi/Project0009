@@ -124,11 +124,29 @@ export default function OfficialForms(){
    }))
   }catch{setForm(prev=>({...prev,rows:[blankGuidanceRow()],values:{}}))}
  },[id,isGuidanceFollowup])
- useEffect(()=>{let alive=true;(async()=>{if(!['case-study','consultations-monitor','health-cases','dropout-followup','parliament-members'].includes(id)||!profile?.school_id){setStudents([]);return}try{const rows=id==='parliament-members'?await listParliamentStudents(profile.school_id):await listStudents(profile.school_id);if(alive)setStudents(rows||[])}catch(e){if(alive)setError(e.message||'تعذر تحميل قائمة الطلاب.')}})();return()=>{alive=false}},[id,profile?.school_id])
+ useEffect(()=>{let alive=true;(async()=>{
+if(id!=='parliament-members'||!profile?.school_id)return
+try{
+const records=await listOfficialFormRecords(['parliament-members'],'','',profile.school_id)
+if(!alive)return
+if(records?.length){
+const record=records[0]
+setForm(record.form_data||initial)
+setActiveMeetingRecordId(record.id)
+}else{
+setActiveMeetingRecordId(null)
+}
+setViewingHistorical(false)
+}catch(e){if(alive)setError(e.message||'تعذر تحميل أعضاء البرلمان المحفوظين.')}
+})()
+return()=>{alive=false}
+},[id,profile?.school_id])
+
+useEffect(()=>{let alive=true;(async()=>{if(!['case-study','consultations-monitor','health-cases','dropout-followup','parliament-members'].includes(id)||!profile?.school_id){setStudents([]);return}try{const rows=id==='parliament-members'?await listParliamentStudents(profile.school_id):await listStudents(profile.school_id);if(alive)setStudents(rows||[])}catch(e){if(alive)setError(e.message||'تعذر تحميل قائمة الطلاب.')}})();return()=>{alive=false}},[id,profile?.school_id])
  useEffect(()=>{let alive=true;(async()=>{if(!['case-study','consultations-monitor','health-cases','dropout-followup'].includes(id)||!profile?.school_id){if(alive)setMeetingRecords([]);return}try{const records=await listOfficialFormRecords([id],form.school_year_id||'',form.semester_id||'',profile.school_id);if(alive)setMeetingRecords(records||[])}catch(e){if(alive)setError(e.message||'تعذر تحميل السجلات المحفوظة.')}})();return()=>{alive=false}},[id,profile?.school_id,form.school_year_id,form.semester_id])
  useEffect(()=>{if(!notice)return;const timer=window.setTimeout(()=>setNotice(''),2000);return()=>window.clearTimeout(timer)},[notice])
  useEffect(()=>{
-  if(!profile?.school_id||!form.school_year_id||isGuidanceFollowup||id==='hot-case-notice'||['meeting-principal','meeting-teacher','meeting-parents','group-counseling-plan','group-session-details','semester-report'].includes(id))return
+  if(!profile?.school_id||!form.school_year_id||isGuidanceFollowup||id==='parliament-members'||id==='hot-case-notice'||['meeting-principal','meeting-teacher','meeting-parents','group-counseling-plan','group-session-details','semester-report'].includes(id))return
   try{const key=`official-form-${id}-${profile.school_id}-${form.school_year_id}`;const raw=localStorage.getItem(key);if(raw){const saved=JSON.parse(raw);if(saved&&typeof saved==='object')setForm(prev=>({...prev,...saved,school_year_id:form.school_year_id}))}}catch(e){console.warn('تعذر تحميل بيانات النموذج المحفوظة للمدرسة والسنة المحددتين',e)}
  },[id,profile?.school_id,form.school_year_id,isGuidanceFollowup])
  useEffect(()=>{let alive=true;(async()=>{try{const[p,a]=await Promise.all([currentProfile(),listActiveAcademicData()]);if(!alive)return;let effectiveProfile=p;
@@ -380,7 +398,7 @@ if(selectedSchoolId&&p?.role==='DIRECTORATE'){
     captured_at:new Date().toISOString()
    }}
    setForm(formToSave)
-   if(!['meeting-principal','meeting-teacher','meeting-parents','case-study','consultations-monitor','health-cases','dropout-followup'].includes(id)){
+   if(!['meeting-principal','meeting-teacher','meeting-parents','case-study','consultations-monitor','health-cases','dropout-followup','parliament-members'].includes(id)){
     try{
      const storageKey=`official-form-${id}-${profile?.school_id||'no-school'}-${formToSave.school_year_id||'no-year'}`
      if(id==='hot-case-notice'){
@@ -402,9 +420,9 @@ if(selectedSchoolId&&p?.role==='DIRECTORATE'){
     if(saved?.id)setActiveMeetingRecordId(saved.id)
     localStorage.removeItem(`official-form-${id}-draft`)
     localStorage.removeItem(`official-form-${id}`)
-    const records=await listOfficialFormRecords([id],formToSave.school_year_id||'',formToSave.semester_id||'',profile?.school_id||'')
+    const records=await listOfficialFormRecords([id],id==='parliament-members'?'':formToSave.school_year_id||'',id==='parliament-members'?'':formToSave.semester_id||'',profile?.school_id||'')
     setMeetingRecords(records)
-    setNotice(activeMeetingRecordId?'تم تحديث الاجتماع الحالي.':'تم حفظ الاجتماع وإضافته إلى السجل.')
+    setNotice(id==='parliament-members'?(activeMeetingRecordId?'تم تحديث أعضاء البرلمان بنجاح.':'تم حفظ أعضاء البرلمان بنجاح.'):(activeMeetingRecordId?'تم تحديث الاجتماع الحالي.':'تم حفظ الاجتماع وإضافته إلى السجل.'))
    }catch(e){setError(e.message||'تعذر حفظ البيانات في قاعدة البيانات.')}
   }
   const sortedMeetingRecords=[...meetingRecords].sort((a,b)=>String(meetingRecordDate(b)).localeCompare(String(meetingRecordDate(a))))

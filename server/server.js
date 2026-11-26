@@ -287,7 +287,8 @@ const OFFICIAL_FORM_IDS = new Set([
   'case-study',
   'consultations-monitor',
   'health-cases',
-  'dropout-followup'
+  'dropout-followup',
+  'parliament-members'
 ]);
 
 

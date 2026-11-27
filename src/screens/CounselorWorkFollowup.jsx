@@ -16,7 +16,7 @@ const formGroups=[
  {title:'ملف التوجيه الجمعي',items:[['guidance-meetings-followup','نموذج متابعة لقاءات التوجيه الجمعي'],['guidance-meetings-monitor','نموذج رصد لقاءات التوجيه الجمعي']]},
  {title:'ملف التوجيه المهني',items:[['career-guidance-followup','نموذج متابعة لقاءات التوجيه المهني'],['career-guidance-monitor','نموذج رصد لقاءات التوجيه المهني']]},
  {title:'الملف الإداري',items:[['weekly-program-form','نموذج البرنامج اليومي/الأسبوعي لعمل المرشد التربوي'],['annual-plan','نموذج الخطة السنوية المعتمدة'],['plan','نموذج الخطة'],['semester-report','التقرير الفصلي حول إنجازات العمل في الخطة']]},
- {title:'ملف البرلمان',items:[['parliament-plan','خطة البرلمان'],['parliament-members','أسماء أعضاء البرلمان'],['parliament-team-meetings','اجتماعات فريق البرلمان'],['parliament-achievements','إنجازات البرلمان']]},
+ {title:'ملف البرلمان',items:[['parliament-plan','خطة البرلمان'],['parliament-members','أسماء أعضاء البرلمان'],['parliament-team-meetings','اجتماعات فريق البرلمان'],['parliament-team-training','تدريب الفريق'],['parliament-achievements','إنجازات البرلمان']]},
  {title:'ملف الاجتماعات',items:[['meeting-principal','نموذج اجتماعات مدير/ة المدرسة'],['meeting-teacher','نموذج اجتماعات المعلمين'],['meeting-parents','نموذج اجتماعات أولياء الأمور']]}
 ]
 

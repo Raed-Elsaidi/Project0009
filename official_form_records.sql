@@ -8,7 +8,8 @@ create table if not exists public.official_form_records (
     id uuid primary key default gen_random_uuid(),
     form_id text not null check (form_id in (
         'meeting-principal','meeting-teacher','meeting-parents',
-        'group-session-details','group-session-summary','group-counseling-plan'
+        'group-session-details','group-session-summary','group-counseling-plan',
+            'parliament-team-training'
     )),
     counselor_id uuid not null,
     school_id uuid,

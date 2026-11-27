@@ -15,7 +15,7 @@ const counselorItems=[
  {group:true,key:'group-direction',label:'التوجيه الجمعي',icon:MessageSquare,children:[['/official-forms/guidance-meetings-followup','نموذج متابعة لقاءات التوجيه الجمعي','guidance-meetings-followup']]},
  {group:true,key:'career-guidance',label:'التوجيه المهني',icon:BookOpen,children:[['/official-forms/career-guidance-followup','نموذج متابعة لقاءات التوجيه المهني','career-guidance-followup']]},
  {group:true,key:'activities',label:'الأنشطة',icon:Activity,children:[['/official-forms/visits','الزيارات','visits'],['/official-forms/newsletters','النشرات الإرشادية','newsletters'],['/official-forms/morning-radio','الإذاعة','morning-radio'],['/official-forms/seminars-workshops','الندوات','seminars-workshops'],['/official-forms/posters','الملصقات','posters'],['/official-forms/wall-magazine','مجلة حائط','wall-magazine'],['/activities','فعاليات','activities']]},
- {group:true,key:'parliament',label:'البرلمان',icon:Users,children:[['/official-forms/parliament-plan','الخطة','parliament-plan'],['/official-forms/parliament-members','الأسماء','parliament-members'],['/official-forms/parliament-team-meetings','اجتماعات الفريق','parliament-team-meetings'],['/official-forms/parliament-achievements','إنجازات','parliament-achievements']]},
+ {group:true,key:'parliament',label:'البرلمان',icon:Users,children:[['/official-forms/parliament-plan','الخطة','parliament-plan'],['/official-forms/parliament-members','الأسماء','parliament-members'],['/official-forms/parliament-team-meetings','اجتماعات الفريق','parliament-team-meetings'],['/official-forms/parliament-team-training','تدريب الفريق','parliament-team-training'],['/official-forms/parliament-achievements','إنجازات','parliament-achievements']]},
  {group:true,key:'student-consultations',label:'استشارات طلابية',icon:ClipboardList,children:[['/absence','الغياب','absence'],['/lateness','التأخر','lateness'],['/dropout','التسرّب','dropout'],['/official-forms/case-study','دراسة الحالة','cases'],['/hot-cases','الملف الساخن','hot-cases'],['/official-forms/consultations-monitor','رصد ومتابعة استشارات طلابية','consultations-monitor'],['/official-forms/health-cases','الحالات الصحية','health-cases']]},
  {group:true,key:'focused-interviews',label:'رصد ومتابعة المقابلات الفردية المركزة',icon:FileText,children:[['/focused-interviews','نموذج رصد ومتابعة المقابلات الفردية المركزة','focused-interviews'],['/transfer-requests','طلبات النقل الواردة','transfer-requests']]},
  {group:true,key:'interviews',label:'المقابلات',icon:UsersRound,children:[['/interviews?type=principal','مدير/ة','interviews'],['/interviews?type=teacher','معلم/ة','interviews'],['/interviews?type=student','طلاب','interviews'],['/interviews?type=parent','أولياء أمور','interviews'],['/interviews?type=institution','مؤسسات','interviews'],['/interviews?type=graduates','تدريب خريجي جامعات','interviews']]},
@@ -38,7 +38,7 @@ const OFFICIAL_FORM_PERMISSION_KEYS = new Set([
  'group-sessions-monitor','guidance-meetings-followup',
  'guidance-meetings-monitor','weekly-program-form','annual-plan','plan',
  'semester-report','career-guidance-monitor','career-guidance-followup',
- 'parliament-plan','parliament-members','parliament-team-meetings',
+ 'parliament-plan','parliament-members','parliament-team-meetings','parliament-team-training',
  'parliament-achievements','health-cases','meeting-principal',
  'meeting-teacher','meeting-parents','posters'
 ]);

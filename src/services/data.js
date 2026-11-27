@@ -37,7 +37,7 @@ export async function currentProfile() {
       .eq('is_active', true)
       .limit(2)
     if (managerError) throw managerError
-    managerName = managers?.length === 1 ? managers[0].full_name : ''
+    managerName = managers?.length === 1 ? (managers[0].full_name || data.manager_name || '') : (data.manager_name || '')
   } else if (['PRINCIPAL', 'SCHOOL_PRINCIPAL'].includes(data.role) && data.directorate_id) {
     const { data: managers, error: managerError } = await db()
       .from('profiles')
@@ -932,6 +932,7 @@ export const PERMISSION_CATALOG=[
  {key:'parliament-plan',label:'خطة البرلمان',section:'البرلمان'},
  {key:'parliament-members',label:'أعضاء البرلمان',section:'البرلمان'},
  {key:'parliament-team-meetings',label:'اجتماعات فريق البرلمان',section:'البرلمان'},
+ {key:'parliament-team-training',label:'تدريب الفريق',section:'البرلمان'},
  {key:'parliament-achievements',label:'إنجازات البرلمان',section:'البرلمان'},
  {key:'meeting-principal',label:'اجتماعات مدير المدرسة',section:'الاجتماعات'},
  {key:'meeting-teacher',label:'اجتماعات المعلمين',section:'الاجتماعات'},

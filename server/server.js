@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: new URL('./.env', import.meta.url).pathname });
 import express from 'express';
 import crypto from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
@@ -11,7 +13,7 @@ const {
   SUPABASE_SECRET_KEY,
   SUPABASE_JWT_SECRET,
   AUTH_API_PORT = '8901',
-  ALLOWED_ORIGIN = 'http://localhost:5189',
+  ALLOWED_ORIGIN = 'http://localhost:5173',
   BOOTSTRAP_SECRET
 } = process.env;
 

@@ -2,7 +2,7 @@ import React,{useEffect,useRef,useState}from'react'
 import{Button}from'../UI'
 import OfficialDocumentHeader from './OfficialDocumentHeader'
 import{Eye,Save,Paperclip,FileText,ExternalLink,Trash2}from'lucide-react'
-import{uploadParliamentAchievementAttachment,openParliamentAchievementAttachment,deleteParliamentAchievementAttachment}from'../../services/data'
+import{uploadParliamentAchievementAttachment,openParliamentAchievementAttachment,deleteParliamentAchievementAttachment,getParliamentAchievementAttachmentUrl}from'../../services/data'
 
 const ordinal=['الأول','الثاني','الثالث','الرابع','الخامس','السادس','السابع','الثامن','التاسع','العاشر','الحادي عشر','الثاني عشر','الثالث عشر','الرابع عشر','الخامس عشر','السادس عشر','السابع عشر','الثامن عشر','التاسع عشر','العشرون']
 
@@ -124,6 +124,19 @@ export default function ParliamentTeamTraining({profile,academic,form,onChange,o
 export function ParliamentTeamTrainingPreview({profile,academic,form}){
  const values=form?.values||{}
  const attachments=form?.attachments||[]
+ const [attachmentUrls,setAttachmentUrls]=useState({})
+ useEffect(()=>{
+  let alive=true
+  const load=async()=>{
+   const entries=await Promise.all(attachments.filter(file=>file.storage_path).map(async file=>{
+    try{return [file.storage_path,await getParliamentAchievementAttachmentUrl(file.storage_path)]}
+    catch{return [file.storage_path,null]}
+   }))
+   if(alive)setAttachmentUrls(Object.fromEntries(entries))
+  }
+  load()
+  return()=>{alive=false}
+ },[attachments])
  const number=Number(values.meeting_number)||1
  const meetingLabel=values['اللقاء']||`اللقاء ${ordinal[number-1]||number}`
 
@@ -136,12 +149,28 @@ export function ParliamentTeamTrainingPreview({profile,academic,form}){
   </div>
   <table className="official-doc-table" style={{width:'100%',borderCollapse:'collapse',marginTop:20}}>
    <tbody>
-    <tr><th style={cellStyle}>اللقاء</th><td style={cellStyle}>{meetingLabel}</td></tr>
+    <tr><th style={{...cellStyle,background:"#f5f1e9"}}>اللقاء</th><td style={cellStyle}>{meetingLabel}</td></tr>
     {fields.map(field=><tr key={field}>
      <th style={{...cellStyle,width:'27%',background:'#f5f1e9'}}>{field}</th>
      <td style={{...cellStyle,whiteSpace:'pre-wrap',lineHeight:1.9,minHeight:65}}>{values[field]||'—'}</td>
     </tr>)}
-    <tr><th style={cellStyle}>المرفقات</th><td style={cellStyle}>{attachments.length?attachments.map((file,i)=><div key={i}>{i+1}. {file.file_name||'ملف مرفق'}</div>):'لا توجد مرفقات'}</td></tr>
+    <tr><th style={{...cellStyle,background:"#f5f1e9"}}>المرفقات</th><td style={cellStyle}>
+     {attachments.length?attachments.map((file,i)=>{
+      const url=attachmentUrls[file.storage_path]
+      const mime=file.mime_type||''
+      const ext=(file.file_name||'').split('.').pop().toLowerCase()
+      const isImage=mime.startsWith('image/')||['png','jpg','jpeg','gif','webp','bmp'].includes(ext)
+      const isPdf=mime==='application/pdf'||ext==='pdf'
+      return <div key={file.storage_path||i} style={{marginBottom:18,breakInside:'avoid'}}>
+       <strong style={{display:'block',marginBottom:8}}>{i+1}. {file.file_name||'ملف مرفق'}</strong>
+       {url?<>
+        {isImage&&<img src={url} alt={file.file_name||'صورة مرفقة'} style={{display:'block',maxWidth:'100%',maxHeight:550,objectFit:'contain',margin:'8px auto',border:'1px solid #ddd',borderRadius:6}}/>}
+        {isPdf&&<iframe src={url} title={file.file_name||'ملف PDF'} style={{width:'100%',height:650,border:'1px solid #ccc',borderRadius:6,marginTop:8}}/>}
+        <a href={url} target="_blank" rel="noopener noreferrer" style={{display:'inline-block',marginTop:8,color:'#075b57',fontWeight:700}}>فتح المرفق</a>
+       </>:<span style={{color:'#8a6d3b'}}>جارٍ تجهيز المرفق أو تعذر تحميله.</span>}
+      </div>
+     }):'لا توجد مرفقات'}
+    </td></tr>
    </tbody>
   </table>
   <div style={{display:'flex',justifyContent:'space-between',gap:30,marginTop:65,textAlign:'center',breakInside:'avoid'}}>

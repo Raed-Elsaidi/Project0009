@@ -476,7 +476,7 @@ const confirmDeleteHealthCaseRecord=async()=>{
    <h3 style={{margin:'0 0 14px',color:'#075b57'}}>سجل اللقاءات التدريبية ({meetingRecords.length})</h3>
    {meetingRecords.length?[...meetingRecords].sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||''))).map((record,index)=><div key={record.id} style={{display:'flex',flexWrap:'wrap',gap:10,alignItems:'center',justifyContent:'space-between',padding:'12px',border:'1px solid #e5d8c5',borderRadius:12,marginBottom:9,background:'#fff'}}>
     <div style={{minWidth:0,flex:'1 1 160px'}}>
-     <strong style={{display:'block',color:'#075b57'}}>{databaseRecordTitle(record)||`اللقاء ${index+1}`}</strong>
+     <strong style={{display:'block',color:'#075b57'}}>{record.form_data?.values?.['اللقاء']||`اللقاء ${['الأول','الثاني','الثالث','الرابع','الخامس','السادس','السابع','الثامن','التاسع','العاشر','الحادي عشر','الثاني عشر','الثالث عشر','الرابع عشر','الخامس عشر','السادس عشر','السابع عشر','الثامن عشر','التاسع عشر','العشرون'][meetingRecords.length-index-1]||meetingRecords.length-index}`}</strong>
      <span style={{display:'block',fontSize:12,color:'#786f65',marginTop:4}}>تاريخ الحفظ: {record.created_at?String(record.created_at).slice(0,10):'—'}</span>
     </div>
     <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>

@@ -282,6 +282,8 @@ const OFFICIAL_FORM_IDS = new Set([
   'meeting-principal',
   'meeting-teacher',
   'meeting-parents',
+  'guidance-meetings-followup',
+  'career-guidance-followup',
   'group-session-details',
   'group-session-summary',
   'group-counseling-plan',

@@ -34,7 +34,7 @@ export const FORM_CONFIGS={
  'guidance-meetings-followup':{fields:['اسم المرشد/ة التربوي/ة'],columns:['اليوم/التاريخ','الصف','الشعبة','الحصة','الموضوع','الأهداف','الأنشطة','ملاحظات']},
  'guidance-meetings-monitor':{fields:['الموضوع','مجموع عدد اللقاءات','الصفوف','عدد المستفيدين','ملاحظات'],columns:['الموضوع','مجموع عدد اللقاءات','الصفوف','عدد المستفيدين','ملاحظات']},
  'weekly-program-form':{fields:['اليوم','التاريخ','النشاط/الفعالية','الفئة المستهدفة','المكان','الزمن','ملاحظات'],columns:['اليوم','التاريخ','النشاط/الفعالية','الفئة المستهدفة','المكان','الزمن','ملاحظات']},
- 'annual-plan':{annualPlan:true,multipleGoals:true,fields:['الهدف العام'],columns:['النشاط الاستراتيجي','9','10','11','12','1','2','3','4','5','المسؤول / جهة التنفيذ','ملاحظات']},
+ 'annual-plan':{annualPlan:true,multipleGoals:true,fields:['الهدف العام'],columns:[]},
  'career-guidance-monitor':{fields:['الهدف','الفئة المستهدفة','ملاحظات'],columns:['التاريخ','الموضوع','الصفوف المستفيدة','عدد الطلبة','ملاحظات']},
  'career-guidance-followup':{fields:['اسم المرشد/ة','ملاحظات عامة'],columns:['التاريخ','الحصة','الصف','الموضوع','الأهداف','الإجراءات','التوصيات']},
  'parliament-plan':{parliamentPlan:true,fields:['الهدف العام'],columns:['الهدف الخاص','الإجراءات والأنشطة','الفترة الزمنية','النتائج المتوقعة','ملاحظات','مهمة التنفيذ']},
@@ -67,6 +67,78 @@ const annualGoalFields=(values={})=>{
   goalKey:`الهدف الخاص ${i+1}`,
   outputs:[`المخرج الأول للهدف الخاص ${i+1}`,`المخرج الثاني للهدف الخاص ${i+1}`,`المخرج الثالث للهدف الخاص ${i+1}`]
  }))
+}
+
+const ANNUAL_ACTIVITY_OPTIONS=[
+ 'التوجيه الجمعي',
+ 'التوجيه المهني',
+ 'اجتماعات البرلمان الطلابي',
+ 'رصد ومتابعة المقابلات الفردية المركزة',
+ 'اجتماعات مدير/ة المدرسة',
+ 'اجتماعات المعلمين',
+ 'اجتماعات أولياء الأمور',
+ 'الزيارات',
+ 'النشرات الإرشادية',
+ 'الإذاعة الصباحية',
+ 'الندوات والمحاضرات وورش العمل',
+ 'الملصقات الإرشادية',
+ 'مجلة الحائط',
+ 'الفعاليات',
+ 'مقابلة مع مدير المدرسة (نفسية)',
+ 'مقابلة مع مدير المدرسة (سلوكية)',
+ 'مقابلة مع مدير المدرسة (تربوية)',
+ 'مقابلة مع معلم (نفسية)',
+ 'مقابلة مع معلم (سلوكية)',
+ 'مقابلة مع معلم (تربوية)',
+ 'مقابلة مع ولي الأمر (نفسية)',
+ 'مقابلة مع ولي الأمر (سلوكية)',
+ 'مقابلة مع ولي الأمر (تربوية)',
+ 'مقابلة مع مؤسسات أخرى (نفسية)',
+ 'مقابلة مع مؤسسات أخرى (سلوكية)',
+ 'مقابلة مع مؤسسات أخرى (تربوية)',
+ 'مقابلة مع تدريب خريجي الجامعات (نفسية)',
+ 'مقابلة مع تدريب خريجي الجامعات (سلوكية)',
+ 'مقابلة مع تدريب خريجي الجامعات (تربوية)'
+]
+const annualOutputRowsKey=(goalIndex,outputIndex)=>`annual_plan_goal_${goalIndex+1}_output_${outputIndex+1}_rows`
+const newAnnualActivityRow=()=>({activity:'','9':'','10':'','11':'','12':'','1':'','2':'','3':'','4':'','5':'',responsible:'',notes:''})
+
+function AnnualOutputActivityTable({rows=[],onChange,readOnly=false}){
+ const safeRows=Array.isArray(rows)?rows:[]
+ const columns=['النشاط الاستراتيجي','المجموع',...annualMonths,'المسؤول / جهة التنفيذ','ملاحظات']
+ const update=(index,key,value)=>onChange(safeRows.map((row,i)=>i===index?{...row,[key]:value}:row))
+ return <section className={`annual-output-activity ${readOnly?'is-preview':''}`}>
+  <div className="annual-output-table-wrap">
+   <table className="annual-output-table">
+    <colgroup>
+     <col/><col/>
+     {annualMonths.map(month=><col key={month}/>)}
+     <col/><col/>
+    </colgroup>
+    <thead>
+    <tr>
+     <th rowSpan={2}>النشاط الاستراتيجي</th>
+     <th rowSpan={2}></th>
+     <th colSpan={4}>الفصل الأول</th>
+     <th colSpan={5}>الفصل الثاني</th>
+     <th rowSpan={2}>المسؤول / جهة التنفيذ</th>
+     <th rowSpan={2}>ملاحظات</th>
+     {!readOnly&&<th rowSpan={2}>حذف</th>}
+    </tr>
+    <tr>{annualMonths.map(month=><th key={month}>{month}</th>)}</tr>
+   </thead>
+    <tbody>{safeRows.length?safeRows.map((row,index)=><tr key={index}>
+     <td>{readOnly?(row.activity||'—'):<select aria-label="اسم النشاط" value={row.activity||''} onChange={e=>update(index,'activity',e.target.value)}><option value="">اختر النشاط</option>{ANNUAL_ACTIVITY_OPTIONS.map(option=><option key={option} value={option}>{option}</option>)}</select>}</td>
+     <td className="annual-row-total">({annualRowTotal(row)})</td>
+     {annualMonths.map(month=><td key={month}>{readOnly?(row[month]||'—'):<input type="number" min="0" step="1" value={row[month]??''} aria-label={`شهر ${month}`} onChange={e=>update(index,month,e.target.value)}/>}</td>)}
+     <td>{readOnly?(row.responsible||'—'):<input value={row.responsible||''} aria-label="المسؤول أو جهة التنفيذ" onChange={e=>update(index,'responsible',e.target.value)}/>}</td>
+     <td>{readOnly?(row.notes||'—'):<textarea rows={2} value={row.notes||''} aria-label="ملاحظات" onChange={e=>update(index,'notes',e.target.value)}/>}</td>
+     {!readOnly&&<td><button type="button" className="official-delete-row" onClick={()=>onChange(safeRows.filter((_,i)=>i!==index))} aria-label="حذف النشاط"><Trash2 size={14}/></button></td>}
+    </tr>):<tr><td colSpan={columns.length+(readOnly?0:1)} className="annual-output-empty">لا توجد أنشطة مضافة</td></tr>}</tbody>
+   </table>
+  </div>
+  {!readOnly&&<Button variant="secondary" onClick={()=>onChange([...safeRows,newAnnualActivityRow()])}><Plus size={15}/> إضافة نشاط</Button>}
+ </section>
 }
 
 export default function GenericOfficialForm({config,title,profile,academic,form,students=[],grades=[],sections=[],teachers=[],onChange,onShowPreview,onSave}){
@@ -131,6 +203,10 @@ export default function GenericOfficialForm({config,title,profile,academic,form,
  const updateAttendance=(i,memberName,checked)=>{const current=Array.isArray(rows[i]?.['الحضور'])?rows[i]['الحضور']:String(rows[i]?.['الحضور']||'').split('،').map(x=>x.trim()).filter(Boolean);const next=checked?[...current,memberName]:current.filter(x=>x!==memberName);updateRow(i,'الحضور',next)}
  const add=()=>onChange({...form,rows:[...rows,newRow()]})
  const del=i=>onChange({...form,rows:rows.length>1?rows.filter((_,idx)=>idx!==i):isStudentRoster?[]:[newRow()]})
+ const updateAnnualOutputRows=(goalIndex,outputIndex,nextRows)=>{
+  const key=annualOutputRowsKey(goalIndex,outputIndex)
+  onChange({...form,values:{...(form.values||{}),[key]:nextRows}})
+ }
  const beginEditGoal=i=>{
   const n=i+1, ord=['الأول','الثاني','الثالث']
   setGoalDraft({goal:form.values?.[`الهدف الخاص ${n}`]||'',outputs:ord.map(o=>form.values?.[`المخرج ${o} للهدف الخاص ${n}`]||'')})
@@ -147,8 +223,10 @@ export default function GenericOfficialForm({config,title,profile,academic,form,
   for(let n=i+1;n<count;n++){
    values[`الهدف الخاص ${n}`]=old[`الهدف الخاص ${n+1}`]||''
    ord.forEach(o=>values[`المخرج ${o} للهدف الخاص ${n}`]=old[`المخرج ${o} للهدف الخاص ${n+1}`]||'')
+   for(let j=0;j<3;j++)values[annualOutputRowsKey(n-1,j)]=old[annualOutputRowsKey(n,j)]||[]
   }
   delete values[`الهدف الخاص ${count}`];ord.forEach(o=>delete values[`المخرج ${o} للهدف الخاص ${count}`])
+  for(let j=0;j<3;j++)delete values[annualOutputRowsKey(count-1,j)]
   values.annual_goal_count=Math.max(1,count-1)
   onChange({...form,values});setGoalDialog(null);setNotice('تم حذف الهدف بنجاح')
  }
@@ -204,7 +282,10 @@ export default function GenericOfficialForm({config,title,profile,academic,form,
       {annualGoalFields(form.values).map((goal,i)=><section className="annual-goal-card" key={goal.goalKey}>
        <h3>{goal.title}</h3>
        {inputFor(goal.title,form.values?.[goal.goalKey],v=>onChange({...form,values:{...(form.values||{}),[goal.goalKey]:v}}))}
-       <div className="annual-goal-outputs">{goal.outputs.map((label,j)=><React.Fragment key={label}>{inputFor(`المخرج ${goalOrdinal(j)} للهدف الخاص ${goalOrdinal(i)}`,form.values?.[label],v=>onChange({...form,values:{...(form.values||{}),[label]:v}}))}</React.Fragment>)}</div>
+       <div className="annual-goal-outputs">{goal.outputs.map((label,j)=><div className="annual-output-editor" key={label}>
+        {inputFor(`المخرج ${goalOrdinal(j)} للهدف الخاص ${goalOrdinal(i)}`,form.values?.[label],v=>onChange({...form,values:{...(form.values||{}),[label]:v}}))}
+        <AnnualOutputActivityTable rows={form.values?.[annualOutputRowsKey(i,j)]||[]} onChange={next=>updateAnnualOutputRows(i,j,next)}/>
+       </div>)}</div>
        <div style={{display:'flex',gap:8,justifyContent:'flex-start',marginTop:10}}><Button variant="secondary" onClick={()=>beginEditGoal(i)}>تعديل الهدف</Button><Button color="danger" onClick={()=>askDeleteGoal(i)}>حذف الهدف</Button></div>
       </section>)}
       <Button onClick={()=>onChange({...form,values:{...(form.values||{}),annual_goal_count:annualGoalFields(form.values).length+1}})}><Plus size={15}/> إضافة هدف خاص</Button>
@@ -260,7 +341,7 @@ export function GenericOfficialPreview({title,config,profile,academic,form,stude
   })();
   return()=>{active=false};
  },[config.parliamentAchievement,form.attachments]);
- return <div className={`official-document generic-official-document ${config.parliamentPlan?'parliament-plan-document':''}`}>
+ return <div className={`official-document generic-official-document ${config.parliamentPlan?'parliament-plan-document':''} ${config.annualPlan?'annual-plan-document':''}`}>
   <OfficialDocumentHeader profile={profile}/>
   <div className="official-doc-heading">
    <h1>{config.teacherMeeting?'نموذج اجتماعات معلمي/ات المدرسة':config.principalMeeting?'نموذج اجتماعات مدير/ة المدرسة':(config.parliamentPlan?'خطة البرلمان الطلابي':title)}</h1>
@@ -284,7 +365,16 @@ export function GenericOfficialPreview({title,config,profile,academic,form,stude
   </>}
   </section>:config.multipleGoals?<div className="generic-paper-fields annual-goals-preview">
    <div className="generic-paper-field"><strong>الهدف العام</strong><span>{vals['الهدف العام']||'.................................................................'}</span></div>
-   {annualGoalFields(vals).map((goal,i)=><section className="annual-goal-preview" key={goal.goalKey}><h3>{goal.title}</h3><div className="generic-paper-field"><strong>{goal.title}</strong><span>{vals[goal.goalKey]||'.................................................................'}</span></div>{goal.outputs.map((label,j)=><div className="generic-paper-field" key={label}><strong>المخرج {goalOrdinal(j)} للهدف الخاص {goalOrdinal(i)}</strong><span>{vals[label]||'.................................................................'}</span></div>)}</section>)}
+   {annualGoalFields(vals).map((goal,i)=><section className="annual-goal-preview" key={goal.goalKey}><h3>{goal.title}</h3><div className="generic-paper-field"><strong>{goal.title}</strong><span>{vals[goal.goalKey]||'.................................................................'}</span></div>{goal.outputs.map((label,j)=><section className="annual-output-preview" key={label}>
+    <div className="generic-paper-field">
+     <strong>المخرج {goalOrdinal(j)} للهدف الخاص {goalOrdinal(i)}</strong>
+     <span>{vals[label]||'.................................................................'}</span>
+    </div>
+    <AnnualOutputActivityTable
+     rows={vals[annualOutputRowsKey(i,j)]||[]}
+     readOnly
+    />
+   </section>)}</section>)}
   </div>:!config.hideFieldsInPreview&&config.fields?.length>0&&<div className={`generic-paper-fields ${config.parliamentPlan?'parliament-plan-goal':''}`}>{config.fields.map(f=><div className="generic-paper-field" key={f}><strong>{f}</strong><span>{vals[f]||'.................................................................'}</span></div>)}</div>}{cols.length>0&&<table className={`official-doc-table ${config.annualPlan?'annual-plan-table':''} ${config.parliamentTeamMeeting?'parliament-team-meetings-preview':''} ${config.parliamentAchievement?'parliament-achievements-preview':''} ${config.parliamentPlan?'parliament-plan-preview-table':''} ${config.healthCases?'health-cases-preview-table':''} ${config.consultationsMonitor?'consultations-monitor-preview-table':''} ${config.hotCasesPreviewHeader?'hot-cases-preview-header':''}`}>{config.healthCases&&<colgroup><col style={{width:'12%'}}/><col style={{width:'25%'}}/><col style={{width:'15%'}}/><col style={{width:'18%'}}/><col style={{width:'15%'}}/><col style={{width:'15%'}}/></colgroup>}{config.studentRoster&&<colgroup><col style={{width:"26%"}}/><col style={{width:"13%"}}/><col style={{width:"8%"}}/><col style={{width:"31%"}}/><col style={{width:"17%"}}/></colgroup>}{config.parliamentPlan&&<colgroup><col style={{width:'17%'}}/><col style={{width:'23%'}}/><col style={{width:'9%'}}/><col style={{width:'20%'}}/><col style={{width:'16%'}}/><col style={{width:'15%'}}/></colgroup>}{config.parliamentTeamMeeting&&<colgroup><col style={{width:'10%'}}/><col style={{width:'12%'}}/><col style={{width:'19%'}}/><col style={{width:'23%'}}/><col style={{width:'36%'}}/></colgroup>}{config.parliamentAchievement&&<colgroup><col style={{width:'10%'}}/><col style={{width:'13%'}}/><col style={{width:'24%'}}/><col style={{width:'20%'}}/><col style={{width:'33%'}}/></colgroup>}{config.annualPlan&&<colgroup><col style={{width:"22%"}}/>{Array.from({length:9},(_,i)=><col key={i} style={{width:"5.5%"}}/>)}<col style={{width:"14.25%"}}/><col style={{width:"14.25%"}}/></colgroup>}<thead>{config.annualPlan?<><tr><th rowSpan={2}>النشاط الاستراتيجي</th><th colSpan={4}>الفصل الأول</th><th colSpan={5}>الفصل الثاني</th><th rowSpan={2}>المسؤول / جهة التنفيذ</th><th rowSpan={2}>ملاحظات</th></tr><tr>{['9','10','11','12','1','2','3','4','5'].map(m=><th key={m}>{m}</th>)}</tr></>:<tr>{cols.map(c=><th key={c}>{c}</th>)}</tr>}</thead><tbody>{(rows.length?rows:[{}]).map((r,i)=><tr key={i}>{config.studentRoster?<><td>{r.name||r['اسم الطالب']||' '}</td><td>{r.grade||r['الصف']||' '}</td><td>{r.section||r['الشعبة']||' '}</td><td>{r.role||' '}</td><td>{r.notes||' '}</td></>:cols.map(c=><td key={c}>{config.annualPlan&&c==='النشاط الاستراتيجي'?`${annualRowLabel(r)} (${annualRowTotal(r)})`:c==='الحضور'?(Array.isArray(r[c])?r[c].join('، '):r[c]||' '):config.parliamentAchievement&&c==='اليوم'?(r[c]||(r['التاريخ']?new Intl.DateTimeFormat('ar',{weekday:'long'}).format(new Date(`${r['التاريخ']}T12:00:00`)):' ')):r[c]||' '}</td>)}</tr>)}</tbody></table>}{config.parliamentAchievement&&(form.attachments||[]).length>0&&<section className="parliament-achievement-print-attachments"><h3>المرفقات</h3>{form.attachments.map((a,i)=>{const url=achievementAttachmentUrls[a.storage_path]||'';const name=a.file_name||`مرفق ${i+1}`;const type=(a.mime_type||'').toLowerCase();const isImage=type.startsWith('image/')||/\.(png|jpe?g|gif|webp|bmp)$/i.test(name);const isPdf=type==='application/pdf'||/\.pdf$/i.test(name);const status=achievementAttachmentStatus[a.storage_path]||'loading';return <div className="parliament-achievement-print-attachment" key={a.storage_path||i}><strong>{name}</strong>{isImage&&url?<a className="parliament-achievement-image-link" href={url} target="_blank" rel="noreferrer"><img src={url} alt={name} loading="eager" decoding="sync" onError={e=>{e.currentTarget.style.display='none';setAchievementAttachmentStatus(prev=>({...prev,[a.storage_path]:'image-error'}))}}/></a>:isImage&&status==='loading'?<span>جارٍ تحميل معاينة الصورة…</span>:isImage?<span>تعذّر تحميل الصورة. استخدم رابط فتح / تنزيل المرفق.</span>:isPdf&&url?<iframe title={name} src={url} loading="eager"/>:null}{url&&<a href={url} target="_blank" rel="noreferrer">فتح / تنزيل المرفق: {name}</a>}{!url&&status==='loading'&&<span>جارٍ تجهيز المرفق للمعاينة…</span>}{!url&&status==='error'&&<span>تعذّر إنشاء رابط معاينة لهذا المرفق. تحقق من صلاحيات مخزن الملفات.</span>}</div>})}</section>}
   <div className="official-signature-block" style={(config.principalMeeting||config.teacherMeeting||config.parentsMeeting)?{direction:'rtl',textAlign:'left',justifyContent:'flex-start'}:undefined}>{(config.principalMeeting||config.teacherMeeting||config.parentsMeeting)?<div style={{textAlign:'left'}}><strong>توقيع المرشد/ة التربوي/ة</strong><span>{profile?.full_name||'........................'}</span></div>:<><div><strong>اسم وتوقيع المرشد/ة التربوي/ة</strong><span>{profile?.full_name||'........................'}</span></div><div><strong>اسم وتوقيع مدير/ة المدرسة</strong><span>{profile?.manager_name||'........................'}</span></div></>}</div>
  </div>

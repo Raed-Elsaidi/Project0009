@@ -4038,7 +4038,7 @@ body{
 .consultations-monitor-preview-table thead th{background:#f4e8ca!important;}
 
 /* Annual plan: editable monthly counts with a live row total. */
-.annual-plan-row-label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;text-align:center;line-height:1.35}
+.annual-plan-row-label{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;min-width:0;text-align:right;line-height:1.35}
 .annual-plan-row-label strong{font-size:inherit;overflow-wrap:anywhere}
 .annual-plan-row-label b{color:#075b57;font-weight:800;white-space:nowrap}
 .annual-plan-month-field{margin:0;min-width:0}
@@ -4362,3 +4362,281 @@ body{
   .credentials-reminder{font-size:13px}
 }
 
+
+/* Right-align activity names in the official annual plan preview and print */
+.generic-official-document .official-doc-table.annual-plan-table tbody td:first-child {
+  text-align: right !important;
+  direction: rtl;
+  padding-right: 7px;
+  padding-left: 4px;
+}
+
+/* تحسين حجم وتنسيق جداول الخطة السنوية */
+.annual-output-table{
+  font-size:9px !important;
+  table-layout:auto !important;
+  min-width:760px !important;
+  width:100% !important;
+}
+.annual-output-table th,
+.annual-output-table td{
+  font-size:9px !important;
+  line-height:1.35 !important;
+  padding:4px 3px !important;
+}
+.annual-output-table input,
+.annual-output-table select,
+.annual-output-table textarea{
+  font-size:9px !important;
+  line-height:1.3 !important;
+  padding:3px !important;
+}
+.annual-output-table-wrap{
+  max-width:100%;
+  overflow-x:auto !important;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* حدود واضحة لجميع خلايا جداول الخطة السنوية */
+.annual-output-table{
+  border:2px solid #315b55 !important;
+  border-collapse:collapse !important;
+  border-spacing:0 !important;
+}
+.annual-output-table thead th,
+.annual-output-table tbody td{
+  border:1px solid #315b55 !important;
+  outline:0 !important;
+}
+.annual-output-table thead th{
+  background:#e8eee9 !important;
+  font-weight:700 !important;
+}
+.annual-output-table tbody tr{
+  border-bottom:1px solid #315b55 !important;
+}
+.annual-output-table tbody td{
+  background:rgba(255,255,255,.65);
+}
+
+/* تنسيق عمود مجموع الأنشطة */
+.annual-output-table th:first-child,
+.annual-output-table td:first-child{
+  width:25% !important;
+  border-left:0 !important;
+}
+.annual-output-table th:nth-child(2),
+.annual-output-table td:nth-child(2){
+  width:9% !important;
+  min-width:65px !important;
+  border-right:0 !important;
+  font-weight:700;
+}
+
+/* تصغير أعمدة الأشهر وإظهار الفواصل بينها */
+.annual-output-table{
+  table-layout:fixed !important;
+}
+.annual-output-table thead tr:nth-child(2) th,
+.annual-output-table tbody td:nth-child(n+3):nth-child(-n+11){
+  width:4.5% !important;
+  min-width:32px !important;
+  max-width:42px !important;
+  padding:3px 1px !important;
+  border-left:1px solid #315b55 !important;
+  border-right:1px solid #315b55 !important;
+  text-align:center !important;
+}
+.annual-output-table tbody td:nth-child(n+3):nth-child(-n+11) input{
+  width:100% !important;
+  min-width:0 !important;
+  padding:2px 0 !important;
+  font-size:9px !important;
+  text-align:center !important;
+  box-sizing:border-box !important;
+}
+.annual-output-table thead tr:nth-child(2) th{
+  font-size:9px !important;
+  white-space:nowrap;
+}
+
+/* توسيع خانتي المسؤول والملاحظات */
+.annual-output-table th:nth-child(12),
+.annual-output-table td:nth-child(12){
+  width:17% !important;
+  min-width:125px !important;
+}
+.annual-output-table th:nth-child(13),
+.annual-output-table td:nth-child(13){
+  width:17% !important;
+  min-width:125px !important;
+}
+.annual-output-table td:nth-child(12) input,
+.annual-output-table td:nth-child(13) textarea{
+  width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+
+/* إصلاح عرض أعمدة المسؤول والملاحظات في الخطة السنوية */
+.annual-output-table{
+  table-layout:auto !important;
+  width:max-content !important;
+  min-width:100% !important;
+}
+.annual-output-table th:nth-child(12),
+.annual-output-table td:nth-child(12){
+  width:180px !important;
+  min-width:180px !important;
+  max-width:180px !important;
+}
+.annual-output-table th:nth-child(13),
+.annual-output-table td:nth-child(13){
+  width:200px !important;
+  min-width:200px !important;
+  max-width:200px !important;
+}
+.annual-output-table td:nth-child(12) input,
+.annual-output-table td:nth-child(13) textarea{
+  width:100% !important;
+  min-width:100% !important;
+  box-sizing:border-box !important;
+}
+.annual-output-table-wrap{
+  overflow-x:auto !important;
+  max-width:100% !important;
+}
+
+/* ضبط جداول الخطة السنوية لتناسب عرض ورقة A4 في النموذج الرسمي */
+.annual-output-preview{
+  width:100% !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+  overflow:visible !important;
+}
+.annual-output-preview .annual-output-table-wrap{
+  width:100% !important;
+  max-width:100% !important;
+  overflow:visible !important;
+}
+.annual-output-preview .annual-output-table{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  table-layout:fixed !important;
+  border-collapse:collapse !important;
+  font-size:7px !important;
+}
+.annual-output-preview .annual-output-table th,
+.annual-output-preview .annual-output-table td{
+  font-size:7px !important;
+  line-height:1.25 !important;
+  padding:3px 1px !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+}
+.annual-output-preview .annual-output-table th:first-child,
+.annual-output-preview .annual-output-table td:first-child{
+  width:18% !important;
+}
+.annual-output-preview .annual-output-table th:nth-child(2),
+.annual-output-preview .annual-output-table td:nth-child(2){
+  width:5% !important;
+  min-width:0 !important;
+}
+.annual-output-preview .annual-output-table th:nth-child(n+3):nth-child(-n+11),
+.annual-output-preview .annual-output-table td:nth-child(n+3):nth-child(-n+11){
+  width:4.5% !important;
+  min-width:0 !important;
+}
+.annual-output-preview .annual-output-table th:nth-child(12),
+.annual-output-preview .annual-output-table td:nth-child(12),
+.annual-output-preview .annual-output-table th:nth-child(13),
+.annual-output-preview .annual-output-table td:nth-child(13){
+  width:18.25% !important;
+  min-width:0 !important;
+}
+@media print{
+  .annual-output-preview .annual-output-table{
+    width:100% !important;
+    min-width:0 !important;
+    font-size:7px !important;
+  }
+  .annual-output-preview{
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+}
+
+/* إعادة توزيع عرض أعمدة جدول الخطة في معاينة A4 */
+.annual-output-preview .annual-output-table th:first-child,
+.annual-output-preview .annual-output-table td:first-child{
+  width:15% !important;
+}
+.annual-output-preview .annual-output-table th:nth-child(n+3):nth-child(-n+11),
+.annual-output-preview .annual-output-table td:nth-child(n+3):nth-child(-n+11){
+  width:5.2% !important;
+}
+.annual-output-preview .annual-output-table th:nth-child(12),
+.annual-output-preview .annual-output-table td:nth-child(12),
+.annual-output-preview .annual-output-table th:nth-child(13),
+.annual-output-preview .annual-output-table td:nth-child(13){
+  width:16.5% !important;
+}
+
+/* ضبط التوزيع النهائي لأعمدة جدول الخطة السنوية في A4 */
+.annual-output-preview .annual-output-table th:nth-child(2),
+.annual-output-preview .annual-output-table td:nth-child(2){
+  width:3.5% !important;
+  padding-left:0 !important;
+  padding-right:0 !important;
+}
+.annual-output-preview .annual-output-table th:nth-child(n+3):nth-child(-n+11),
+.annual-output-preview .annual-output-table td:nth-child(n+3):nth-child(-n+11){
+  width:5.35% !important;
+  padding:3px 2px !important;
+  text-align:center !important;
+}
+
+/* توزيع أعمدة جدول الخطة السنوية في معاينة A4 */
+.annual-output-preview .annual-output-table{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  table-layout:fixed !important;
+}
+.annual-output-preview .annual-output-table col:nth-child(1){width:14% !important}
+.annual-output-preview .annual-output-table col:nth-child(2){width:4% !important}
+.annual-output-preview .annual-output-table col:nth-child(n+3):nth-child(-n+11){width:5.5% !important}
+.annual-output-preview .annual-output-table col:nth-child(12){width:16.25% !important}
+.annual-output-preview .annual-output-table col:nth-child(13){width:16.25% !important}
+
+/* تصغير عناوين الأهداف الخاصة في النموذج الرسمي */
+.annual-plan-document .annual-goal-preview > h3{
+  font-size:18px !important;
+  line-height:1.4 !important;
+  margin:12px 0 !important;
+}
+
+.annual-plan-document .annual-goal-preview > h3{
+  font-size:16px !important;
+}
+
+/* توحيد حجم عناوين الهدف العام والأهداف الخاصة */
+.annual-plan-document .annual-goals-preview > .generic-paper-field strong{
+  font-size:18px !important;
+}
+.annual-plan-document .annual-goal-preview > h3{
+  font-size:18px !important;
+  line-height:1.4 !important;
+}
+
+/* توحيد حجم عنوان الهدف العام والهدف الخاص */
+.annual-plan-document .annual-goals-preview > .generic-paper-field:first-child strong{
+  font-size:18px !important;
+}
+.annual-plan-document .annual-goal-preview > h3{
+  font-size:18px !important;
+  font-weight:700 !important;
+  line-height:1.4 !important;
+}

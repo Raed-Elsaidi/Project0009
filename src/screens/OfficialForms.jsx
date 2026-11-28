@@ -43,7 +43,7 @@ const ANNUAL_SOURCES=[
  {table:'principal_meetings',label:'اجتماعات مدير/ة المدرسة',dates:['meeting_date','date','created_at']},
  {table:'teacher_meetings',label:'اجتماعات المعلمين',dates:['meeting_date','date','created_at']},
  {table:'parent_meetings',label:'اجتماعات أولياء الأمور',dates:['meeting_date','date','created_at']},
- {table:'activities',label:'الأنشطة الإرشادية',dates:['activity_date','date','event_date','created_at']}
+ {table:'school_events',label:'الفعاليات',dates:['event_date','created_at']}
 ]
 const annualDate=(row,keys)=>{
  for(const key of keys){
@@ -339,6 +339,42 @@ if(selectedSchoolId&&p?.role==='DIRECTORATE'){
      })
     }catch(e){errors.push(`${source.table}: ${e.message||'تعذر القراءة'}`)}
    }))
+   // Count activity records saved for this school and academic year.
+   const activityPlanSources=[
+    {formId:'visits',label:'الزيارات',mode:'rows'},
+    {formId:'newsletters',label:'النشرات الإرشادية',mode:'values'},
+    {formId:'morning-radio',label:'الإذاعة الصباحية',mode:'values'},
+    {formId:'seminars-workshops',label:'الندوات والمحاضرات وورش العمل',mode:'values'},
+    {formId:'posters',label:'الملصقات الإرشادية',mode:'rows'},
+    {formId:'wall-magazine',label:'مجلة الحائط',mode:'values'}
+   ]
+   const activityTotals=new Map(activityPlanSources.map(x=>[x.formId,{label:x.label,total:0,months:{}}]))
+   const belongsToSelectedYear=d=>{
+    if(!d?.year||!selectedYear?.start_date||!selectedYear?.end_date)return true
+    const sy=new Date(selectedYear.start_date).getFullYear(),ey=new Date(selectedYear.end_date).getFullYear()
+    return d.year>=Math.min(sy,ey)&&d.year<=Math.max(sy,ey)
+   }
+   activityPlanSources.forEach(source=>{
+    try{
+     const key=`official-form-${source.formId}-${profile.school_id||'no-school'}-${yearId||'no-year'}`
+     const saved=JSON.parse(localStorage.getItem(key)||'null')
+     if(!saved)return
+     const entries=source.mode==='rows'?(saved.rows||[]):(saved.values&&typeof saved.values==='object'?[saved.values]:[])
+     entries.forEach(entry=>{
+      if(!entry||typeof entry!=='object')return
+      const d=annualDate(entry,['التاريخ'])
+      if(!ANNUAL_MONTHS.includes(d.month)||!belongsToSelectedYear(d))return
+      const hasContent=Object.entries(entry).some(([k,v])=>
+       !['التاريخ','اليوم'].includes(k)&&
+       (Array.isArray(v)?v.length>0:String(v??'').trim()!=='')
+      )
+      if(!hasContent)return
+      const item=activityTotals.get(source.formId)
+      item.total++
+      item.months[d.month]=(item.months[d.month]||0)+1
+     })
+    }catch(e){errors.push(`${source.label}: ${e.message||'تعذر قراءة البيانات المحفوظة'}`)}
+   })
    // Read the three meeting forms from Supabase through the authenticated custom-JWT server.
    const meetingFormSources=[
     {formId:'meeting-principal',label:'اجتماعات مدير/ة المدرسة'},
@@ -384,8 +420,10 @@ if(selectedSchoolId&&p?.role==='DIRECTORATE'){
     return row
    }
    const generatedRows=[
-    ...ANNUAL_SOURCES.filter(source=>source.table!=='interviews').map(source=>makeAnnualRow(totals.get(source.label))),
-    ...Array.from(interviewTotals.values()).map(makeAnnualRow)
+     ...ANNUAL_SOURCES.filter(source=>!['interviews','school_events'].includes(source.table)).map(source=>makeAnnualRow(totals.get(source.label))),
+     ...activityPlanSources.map(source=>makeAnnualRow(activityTotals.get(source.formId))),
+     makeAnnualRow(totals.get('الفعاليات')),
+     ...Array.from(interviewTotals.values()).map(makeAnnualRow)
    ]
    // Preserve counselor-entered monthly figures when the annual plan is reopened.
    let savedRows=[]

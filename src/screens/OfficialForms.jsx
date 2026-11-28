@@ -63,6 +63,7 @@ export default function OfficialForms(){
  const{formId='meeting-followup'}=useParams();const location=useLocation();const navigate=useNavigate();const previewOnly=location.pathname.endsWith('/official')||new URLSearchParams(location.search).get('preview')==='1';const selected=useMemo(()=>forms.find(f=>f[0]===formId)||forms[0],[formId]);const[id,title]=selected
  const[showPreview,setShowPreview]=useState(previewOnly),[notice,setNotice]=useState(''),[profile,setProfile]=useState(null),[academic,setAcademic]=useState({years:[],semesters:[],grades:[]}),[schoolSections,setSchoolSections]=useState([]),[loading,setLoading]=useState(true),[error,setError]=useState('')
  const[activeMeetingRecordId,setActiveMeetingRecordId]=useState(null), [deleteTarget,setDeleteTarget]=useState(null),[meetingRecords,setMeetingRecords]=useState([]),[showMeetingHistory,setShowMeetingHistory]=useState(false),[viewingHistorical,setViewingHistorical]=useState(false)
+ const[annualPlanRecordId,setAnnualPlanRecordId]=useState(null)
  const[teachers,setTeachers]=useState([])
  const[students,setStudents]=useState([])
  const initial=useMemo(()=>({school_year_id:'',semester_id:'',rows:[createMeetingRow(today,dayName(today))],values:{}}),[]);const[form,setForm]=useState(initial);const documentProfile=useMemo(()=>{const snap=form?._document_snapshot;if(!snap)return profile;return {...profile,full_name:snap.counselor_name||profile?.full_name,manager_name:snap.manager_name||profile?.manager_name}},[profile,form?._document_snapshot])
@@ -285,6 +286,14 @@ if(selectedSchoolId&&p?.role==='DIRECTORATE'){
    const db=requireSemesterReportClient()
    const selectedYear=(academic.years||[]).find(y=>y.id===form.school_year_id)||(academic.years||[]).find(y=>y.is_active)||(academic.years||[])[0]
    const yearId=selectedYear?.id
+   let savedAnnualForm=null
+   try{
+    const annualRecords=await listOfficialFormRecords(["annual-plan"],yearId||"","",profile?.school_id||"")
+    if(!alive)return
+    const annualRecord=[...(annualRecords||[])].sort((a,b)=>String(b.updated_at||b.created_at||"").localeCompare(String(a.updated_at||a.created_at||"")))[0]
+    savedAnnualForm=annualRecord?.form_data||null
+    setAnnualPlanRecordId(annualRecord?.id||null)
+   }catch(e){errors.push("الخطة السنوية: "+(e.message||"تعذر تحميل السجل المحفوظ"))}
    let groupIds=[]
    try{
     const {data}=await db.from('group_counseling_groups').select('id').eq('counselor_id',profile.id)
@@ -426,8 +435,10 @@ if(selectedSchoolId&&p?.role==='DIRECTORATE'){
      ...Array.from(interviewTotals.values()).map(makeAnnualRow)
    ]
    // Preserve counselor-entered monthly figures when the annual plan is reopened.
-   let savedRows=[]
-   try{savedRows=JSON.parse(localStorage.getItem('official-form-annual-plan')||'null')?.rows||[]}catch{}
+   let savedRows=savedAnnualForm?.rows||[]
+   if(!savedAnnualForm){
+    try{savedRows=JSON.parse(localStorage.getItem('official-form-annual-plan')||'null')?.rows||[]}catch{}
+   }
    const savedByLabel=new Map(savedRows.map(row=>[String(row['النشاط الاستراتيجي']||'').replace(/\s*\(\d+\)\s*$/,''),row]))
    const rows=generatedRows.map(row=>{
     const saved=savedByLabel.get(String(row['النشاط الاستراتيجي']||'').replace(/\s*\(\d+\)\s*$/,''))
@@ -438,7 +449,7 @@ if(selectedSchoolId&&p?.role==='DIRECTORATE'){
     merged['النشاط الاستراتيجي']=`${String(row['النشاط الاستراتيجي']||'').replace(/\s*\(\d+\)\s*$/,'')} (${total})`
     return merged
    })
-   setForm(prev=>({...prev,rows}))
+   setForm(prev=>({...prev,...(savedAnnualForm||{}),school_year_id:yearId||prev.school_year_id,rows}))
    if(errors.length)setError('تعذر تحميل بعض الجداول: '+errors.join(' | '))
    else setError('')
   })().catch(e=>{if(alive)setError(e.message||'تعذر تحميل بيانات الخطة السنوية')})
@@ -460,7 +471,7 @@ if(selectedSchoolId&&p?.role==='DIRECTORATE'){
     captured_at:new Date().toISOString()
    }}
    setForm(formToSave)
-   if(!['meeting-principal','meeting-teacher','meeting-parents','case-study','consultations-monitor','health-cases','dropout-followup','parliament-members','parliament-team-training','guidance-meetings-followup','career-guidance-followup'].includes(id)){
+   if(!['annual-plan','meeting-principal','meeting-teacher','meeting-parents','case-study','consultations-monitor','health-cases','dropout-followup','parliament-members','parliament-team-training','guidance-meetings-followup','career-guidance-followup'].includes(id)){
     try{
      const storageKey=`official-form-${id}-${profile?.school_id||'no-school'}-${formToSave.school_year_id||'no-year'}`
      if(id==='hot-case-notice'){
@@ -478,13 +489,14 @@ if(selectedSchoolId&&p?.role==='DIRECTORATE'){
     return
    }
    try{
-    const saved=await saveOfficialFormRecord({formId:id,profile,form:formToSave,recordId:activeMeetingRecordId})
-    if(saved?.id)setActiveMeetingRecordId(saved.id)
+    const saved=await saveOfficialFormRecord({formId:id,profile,form:formToSave,recordId:id==='annual-plan'?annualPlanRecordId:activeMeetingRecordId})
+    if(saved?.id){if(id==='annual-plan')setAnnualPlanRecordId(saved.id);else setActiveMeetingRecordId(saved.id)}
     localStorage.removeItem(`official-form-${id}-draft`)
     localStorage.removeItem(`official-form-${id}`)
+    if(id==='annual-plan')localStorage.removeItem(`official-form-annual-plan-${profile?.school_id||'no-school'}-${formToSave.school_year_id||'no-year'}`)
     const records=await listOfficialFormRecords([id],id==='parliament-members'?'':formToSave.school_year_id||'',id==='parliament-members'?'':formToSave.semester_id||'',profile?.school_id||'')
     setMeetingRecords(records)
-    setNotice(id==='parliament-members'?(activeMeetingRecordId?'تم تحديث أعضاء البرلمان بنجاح.':'تم حفظ أعضاء البرلمان بنجاح.'):id==='parliament-team-training'?(activeMeetingRecordId?'تم تحديث اللقاء التدريبي بنجاح.':'تم حفظ اللقاء التدريبي بنجاح.'):(activeMeetingRecordId?'تم تحديث الاجتماع الحالي.':'تم حفظ الاجتماع وإضافته إلى السجل.'))
+    setNotice(id==='annual-plan'?(annualPlanRecordId?'تم تحديث الخطة السنوية بنجاح.':'تم حفظ الخطة السنوية بنجاح.'):id==='parliament-members'?(activeMeetingRecordId?'تم تحديث أعضاء البرلمان بنجاح.':'تم حفظ أعضاء البرلمان بنجاح.'):id==='parliament-team-training'?(activeMeetingRecordId?'تم تحديث اللقاء التدريبي بنجاح.':'تم حفظ اللقاء التدريبي بنجاح.'):(activeMeetingRecordId?'تم تحديث الاجتماع الحالي.':'تم حفظ الاجتماع وإضافته إلى السجل.'))
    }catch(e){setError(e.message||'تعذر حفظ البيانات في قاعدة البيانات.')}
   }
  const databaseRecordDate=record=>record?.form_data?.values?.['التاريخ']||record?.form_data?.values?.['تاريخ فتح الحالة']||record?.form_data?.values?.['تاريخ التسرب']||record?.form_data?.rows?.[0]?.['التاريخ']||record?.created_at||record?.updated_at||''
